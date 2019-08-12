@@ -22,6 +22,7 @@ namespace 码垛机
         public static RuanxianweiForm rxf = null;
         public HandSettingForm hsf = null;
         public IOSettingForm iof = null;
+        public AboutUsForm auf = null;
         private void userset_btn_Click(object sender, EventArgs e)
         {
             usf = new UserSettingForm();
@@ -72,6 +73,20 @@ namespace 码垛机
             }
 
            
+        }
+
+        private void aboutus_btn_Click(object sender, EventArgs e)
+        {
+            auf = new AboutUsForm();
+            this.Parent.FindForm().Hide();
+            this.Hide();
+
+            if (auf.ShowDialog() == DialogResult.OK)
+            {
+                this.Parent.FindForm().Show();
+                this.Show();
+            }
+
         }
         //private void closingWindow()
         //{

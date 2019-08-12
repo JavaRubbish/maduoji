@@ -35,6 +35,8 @@
             this.setting_btn = new System.Windows.Forms.Button();
             this.alarmhistory_btn = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -123,12 +125,22 @@
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.Color.Transparent;
-            this.panel2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel2.BackgroundImage")));
-            this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.panel2.Controls.Add(this.panel3);
             this.panel2.Location = new System.Drawing.Point(12, 2);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1218, 70);
             this.panel2.TabIndex = 5;
+            this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
+            // 
+            // panel3
+            // 
+            this.panel3.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel3.BackgroundImage")));
+            this.panel3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel3.Location = new System.Drawing.Point(0, 0);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(170, 70);
+            this.panel3.TabIndex = 0;
             // 
             // HomeForm
             // 
@@ -138,18 +150,19 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1242, 671);
-            this.Controls.Add(this.panel2);
             this.Controls.Add(this.alarmhistory_btn);
             this.Controls.Add(this.setting_btn);
             this.Controls.Add(this.historydata_btn);
             this.Controls.Add(this.work_btn);
             this.Controls.Add(this.panel1);
+            this.Controls.Add(this.panel2);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximumSize = new System.Drawing.Size(1260, 718);
             this.MinimumSize = new System.Drawing.Size(1260, 718);
             this.Name = "HomeForm";
-            this.Text = "Form1";
+            this.Text = "工作界面";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -163,6 +176,7 @@
         private System.Windows.Forms.Button setting_btn;
         private System.Windows.Forms.Button alarmhistory_btn;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel panel3;
     }
 }
 

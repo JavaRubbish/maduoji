@@ -375,7 +375,7 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "RuanxianweiForm";
-            this.Text = "RuanxianweiForm";
+            this.Text = "软限位设定";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RuanxianweiForm_FormClosing);
             this.Load += new System.EventHandler(this.RuanxianweiForm_Load);
             this.panel1.ResumeLayout(false);

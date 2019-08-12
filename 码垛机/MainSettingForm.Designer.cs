@@ -47,6 +47,7 @@
             this.aboutus_btn.TabIndex = 11;
             this.aboutus_btn.Text = "关于我们";
             this.aboutus_btn.UseVisualStyleBackColor = true;
+            this.aboutus_btn.Click += new System.EventHandler(this.aboutus_btn_Click);
             // 
             // ioset_btn
             // 

@@ -1332,7 +1332,7 @@
             this.Controls.Add(this.panelY);
             this.Controls.Add(this.panelZ);
             this.Name = "HandSettingForm";
-            this.Text = "HandSettingForm";
+            this.Text = "手动调试";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.HandSettingForm_FormClosing);
             this.Load += new System.EventHandler(this.HandSettingForm_Load);
             this.panel1.ResumeLayout(false);

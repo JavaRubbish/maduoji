@@ -116,6 +116,9 @@
             // 
             // listView1
             // 
+            this.listView1.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.listView1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("listView1.BackgroundImage")));
+            this.listView1.BackgroundImageTiled = true;
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,

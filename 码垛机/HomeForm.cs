@@ -57,6 +57,7 @@ namespace 码垛机
         /// <param name="e"></param>
         private void historydata_btn_Click(object sender, EventArgs e)
         {
+            this.Text = "历史数据";
             work_btn.BackColor = Color.FromArgb(220, 220, 220);
             historydata_btn.BackColor = Color.FromArgb(65, 105, 225);
             setting_btn.BackColor = Color.FromArgb(220, 220, 220);
@@ -96,6 +97,8 @@ namespace 码垛机
         /// <param name="e"></param>
         private void setting_btn_Click(object sender, EventArgs e)
         {
+            this.Text = "设置调试";
+
             work_btn.BackColor = Color.FromArgb(220, 220, 220);
             historydata_btn.BackColor = Color.FromArgb(220, 220, 220);
             setting_btn.BackColor = Color.FromArgb(65, 105, 225);
@@ -137,6 +140,8 @@ namespace 码垛机
         /// <param name="e"></param>
         private void alarmhistory_btn_Click(object sender, EventArgs e)
         {
+            this.Text = "报警历史";
+
             //发送指令查看报警历史
             BF.sendbuf[0] = 0xFA;
             BF.sendbuf[1] = 0x02;
@@ -186,6 +191,8 @@ namespace 码垛机
         /// <param name="e"></param>
         private void work_btn_Click(object sender, EventArgs e)
         {
+            this.Text = "工作界面";
+
             work_btn.BackColor = Color.FromArgb(65, 105, 225);
             historydata_btn.BackColor = Color.FromArgb(220,220,220);
             setting_btn.BackColor = Color.FromArgb(220, 220, 220);
@@ -341,6 +348,10 @@ namespace 码垛机
                 MainSettingForm.usf.setTextBox1Text(data1);                
             }
         }
-      
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
