@@ -132,7 +132,7 @@ namespace 码垛机
             BF.sendbuf[2] = 0x0D;
             BF.sendbuf[3] = 0x04;
             BF.sendbuf[4] = 0xF5;
-
+            SendMenuCommand(BF.sendbuf, 5);
         }
 
 
@@ -148,7 +148,7 @@ namespace 码垛机
             BF.sendbuf[2] = 0x0D;
             BF.sendbuf[3] = 0x01;
             BF.sendbuf[4] = 0xF5;
-
+            SendMenuCommand(BF.sendbuf, 5);
         }
 
         private void pause_btn_Click(object sender, EventArgs e)
@@ -158,6 +158,7 @@ namespace 码垛机
             BF.sendbuf[2] = 0x0D;
             BF.sendbuf[3] = 0x02;
             BF.sendbuf[4] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 5);
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -167,6 +168,7 @@ namespace 码垛机
             BF.sendbuf[2] = 0x0D;
             BF.sendbuf[3] = 0x03;
             BF.sendbuf[4] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 5);
         }
     }
 }

@@ -91,7 +91,6 @@ namespace 码垛机
         /// </summary>
         private void WriteToTxt()
         {
-            //FileStream fs = new FileStream(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
             System.IO.StreamWriter sw = new System.IO.StreamWriter("alarmhis.txt", false, System.Text.Encoding.GetEncoding("gb2312"));
             try
             {
@@ -141,7 +140,7 @@ namespace 码垛机
             string vline;
             while ((vline = sr.ReadLine()) != null)
             {
-                string[] vitems = vline.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] vitems = vline.Split(new string[] { " ","Date","Time","CurrentValue","DetailDescription" }, StringSplitOptions.RemoveEmptyEntries);
 
                 if (vitems.Length <= 0)
                 {
