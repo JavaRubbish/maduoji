@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,12 +17,12 @@ namespace 码垛机
         public AlarmHistoryForm()
         {
             InitializeComponent();
-            
+            ReadFromTxt();
         }
         /// <summary>
         /// 添加报警数据行
         /// </summary>
-        public void AddAlarmDataListViewItem(int value,string desc)
+        public void AddAlarmDataListViewItem(int value, string desc)
         {
             string date = DateTime.Now.ToString("yyyy-MM-dd");
             string time = DateTime.Now.ToShortTimeString().ToString();
@@ -28,11 +30,11 @@ namespace 码垛机
             CheckForIllegalCrossThreadCalls = false;
 
             ListViewItem lvi = new ListViewItem();
-                lvi.Text = date;
-                lvi.SubItems.Add(time);
-                lvi.SubItems.Add(value.ToString());
-                lvi.SubItems.Add(desc);
-                listView1.Items.Add(lvi);
+            lvi.Text = date;
+            lvi.SubItems.Add(time);
+            lvi.SubItems.Add(value.ToString());
+            lvi.SubItems.Add(desc);
+            listView1.Items.Add(lvi);
 
             WriteToTxt();
 
@@ -89,6 +91,7 @@ namespace 码垛机
         /// </summary>
         private void WriteToTxt()
         {
+            //FileStream fs = new FileStream(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
             System.IO.StreamWriter sw = new System.IO.StreamWriter("alarmhis.txt", false, System.Text.Encoding.GetEncoding("gb2312"));
             try
             {
@@ -122,6 +125,39 @@ namespace 码垛机
             {
                 if (sw != null) sw.Close();
             }
+        }
+
+        /// <summary>
+        /// 从txt文件读历史报警信息
+        /// </summary>
+        private void ReadFromTxt()
+        {
+            string fname = "C:\\Users\\John\\source\\repos\\码垛机\\码垛机\\bin\\Debug\\alarmhis.txt";
+            if (!System.IO.File.Exists(fname))
+            {
+                return;
+            }
+            StreamReader sr = new StreamReader(fname, Encoding.Default);
+            string vline;
+            while ((vline = sr.ReadLine()) != null)
+            {
+                string[] vitems = vline.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (vitems.Length <= 0)
+                {
+                    continue;
+                }
+                ListViewItem lvi = new ListViewItem();
+                lvi.Text = vitems[0];
+                for (int i = 1; i < vitems.Length; i++)
+                {
+                    lvi.SubItems.Add(vitems[i]);
+                }
+                listView1.Items.Add(lvi);
+
+            }
+            sr.Close();//读完一定要关闭流，否则会和上面的写进程冲突
+
         }
     }
 }
