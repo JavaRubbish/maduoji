@@ -337,7 +337,15 @@ namespace 码垛机
                     {
                         desc = "电路故障"; 
                     }
-                    ahf.AddAlarmDataListViewItem(data2,desc);
+                    if(!ahf.IsDisposed)
+                    {
+                        ahf.AddAlarmDataListViewItem(data2, desc);
+                    }
+                    else
+                    {
+                        ahf.AddAlarmDataListViewItem2(data2, desc);
+
+                    }
                    return;
                 }
 

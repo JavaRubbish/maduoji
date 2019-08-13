@@ -106,7 +106,9 @@
             // 
             // textBox3
             // 
+            this.textBox3.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.textBox3.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.textBox3.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.textBox3.Location = new System.Drawing.Point(819, 259);
             this.textBox3.Name = "textBox3";
             this.textBox3.PasswordChar = '*';
@@ -117,7 +119,9 @@
             // 
             // textBox2
             // 
+            this.textBox2.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.textBox2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.textBox2.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.textBox2.Location = new System.Drawing.Point(819, 157);
             this.textBox2.Name = "textBox2";
             this.textBox2.PasswordChar = '*';
@@ -128,7 +132,9 @@
             // 
             // textBox1
             // 
+            this.textBox1.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.textBox1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.textBox1.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.textBox1.Location = new System.Drawing.Point(819, 52);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(169, 30);
@@ -139,7 +145,9 @@
             // 
             // comboBox2
             // 
+            this.comboBox2.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.comboBox2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.comboBox2.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Items.AddRange(new object[] {
             "开",
@@ -149,6 +157,7 @@
             this.comboBox2.Size = new System.Drawing.Size(179, 28);
             this.comboBox2.TabIndex = 9;
             this.comboBox2.Text = "开";
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // dateTimePicker2
             // 
@@ -160,7 +169,9 @@
             // 
             // comboBox1
             // 
+            this.comboBox1.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.comboBox1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.comboBox1.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
             "管理员权限",

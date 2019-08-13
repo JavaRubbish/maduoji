@@ -40,5 +40,10 @@ namespace 码垛机
                 this.Close();
             }
         }
+
+        private void SplashForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

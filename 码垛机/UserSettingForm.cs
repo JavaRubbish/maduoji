@@ -78,5 +78,10 @@ namespace 码垛机
         {
             this.DialogResult = DialogResult.OK;
         }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

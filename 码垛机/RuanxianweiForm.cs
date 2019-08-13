@@ -31,73 +31,7 @@ namespace 码垛机
             comboBox4.Text = INIhelp.GetValue("O轴开关");
         }
 
-        private void panel2_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panel3_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-      
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-           
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label8_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label6_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox3_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-      
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-          
-        }
-
-        private void RuanxianweiForm_Load(object sender, EventArgs e)
-        {
-            
-        }
+  
         /// <summary>
         /// 保存设置(下发指令并且设置保存)
         /// </summary>
@@ -397,58 +331,19 @@ namespace 码垛机
             this.DialogResult = DialogResult.OK;
         }
 
-        
         private void textBox4_TextChanged(object sender, EventArgs e)
-        {          
+        {
 
         }
-       
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
-        {
-           
-        }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
-        
+
         }
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
-           
-        }
 
-        private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
-        {
-          
-        }
-        
-        private void textBox5_TextChanged(object sender, EventArgs e)
-        {
-            
-
-        }
-
-        private void textBox6_TextChanged(object sender, EventArgs e)
-        {
-            
-
-        }
-
-        private void textBox7_TextChanged(object sender, EventArgs e)
-        {
-            
-
-        }
-
-        private void textBox8_TextChanged(object sender, EventArgs e)
-        {
-           
-        }
-
-        private void textBox9_TextChanged(object sender, EventArgs e)
-        {
-           
         }
     }
 }

@@ -76,7 +76,8 @@
             this.Controls.Add(this.label1);
             this.DoubleBuffered = true;
             this.Name = "SplashForm";
-            this.Text = "SplashForm";
+            this.Text = "码垛机系统 V1.0";
+            this.Load += new System.EventHandler(this.SplashForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -36,7 +36,27 @@ namespace 码垛机
             lvi.SubItems.Add(desc);
             listView1.Items.Add(lvi);
 
+          //  MessageBox.Show(desc,"警告");
+
             WriteToTxt();
+
+        }
+
+        public void AddAlarmDataListViewItem2(int value, string desc)
+        {
+            string date = DateTime.Now.ToString("yyyy-MM-dd");
+            string time = DateTime.Now.ToShortTimeString().ToString();
+            List<string> datalist = new List<string>();
+            datalist.Add(date);
+            datalist.Add(time);
+            datalist.Add(value.ToString());
+            datalist.Add(desc);
+            
+            CheckForIllegalCrossThreadCalls = false;            
+
+            //  MessageBox.Show(desc,"警告");
+
+            WriteToTxt2(datalist);
 
         }
 
@@ -118,6 +138,36 @@ namespace 码垛机
                     sw.WriteLine(line);
                     line = "";
                 }
+                sw.Flush();
+            }
+            finally
+            {
+                if (sw != null) sw.Close();
+            }
+        }
+
+        /// <summary>
+        /// 当打开非报警界面，会将原先的listview变为空，导致写入出错
+        /// 这里做了特殊处理，将报警信息追加到之前的txt文本
+        /// </summary>
+        /// <param name="list"></param>
+        private void WriteToTxt2(List<string> list)
+        {
+            System.IO.StreamWriter sw = new System.IO.StreamWriter("alarmhis.txt", true, System.Text.Encoding.GetEncoding("gb2312"));
+            try
+            {
+                int len = 0;
+                string line = "";
+                string temp = "";                
+                    for (int j = 0; j < 4; j++)
+                    {
+                        temp = list[j];
+                        len = 30 - Encoding.Default.GetByteCount(temp) + temp.Length;
+                        temp = temp.PadRight(len, ' ');
+                        line += temp;
+                    }
+                    sw.WriteLine(line);
+                    line = "";                
                 sw.Flush();
             }
             finally

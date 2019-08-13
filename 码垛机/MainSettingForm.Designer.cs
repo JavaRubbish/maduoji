@@ -41,6 +41,7 @@
             // 
             this.aboutus_btn.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("aboutus_btn.BackgroundImage")));
             this.aboutus_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.aboutus_btn.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.aboutus_btn.Location = new System.Drawing.Point(861, 295);
             this.aboutus_btn.Name = "aboutus_btn";
             this.aboutus_btn.Size = new System.Drawing.Size(181, 69);
@@ -53,6 +54,7 @@
             // 
             this.ioset_btn.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("ioset_btn.BackgroundImage")));
             this.ioset_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ioset_btn.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.ioset_btn.Location = new System.Drawing.Point(511, 295);
             this.ioset_btn.Name = "ioset_btn";
             this.ioset_btn.Size = new System.Drawing.Size(181, 69);
@@ -65,6 +67,7 @@
             // 
             this.handset_btn.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("handset_btn.BackgroundImage")));
             this.handset_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.handset_btn.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.handset_btn.Location = new System.Drawing.Point(159, 295);
             this.handset_btn.Name = "handset_btn";
             this.handset_btn.Size = new System.Drawing.Size(181, 69);
@@ -77,6 +80,7 @@
             // 
             this.Upan_btn.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("Upan_btn.BackgroundImage")));
             this.Upan_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Upan_btn.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Upan_btn.Location = new System.Drawing.Point(861, 88);
             this.Upan_btn.Name = "Upan_btn";
             this.Upan_btn.Size = new System.Drawing.Size(181, 69);
@@ -88,6 +92,7 @@
             // 
             this.ruanxianweiset_btn.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("ruanxianweiset_btn.BackgroundImage")));
             this.ruanxianweiset_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ruanxianweiset_btn.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.ruanxianweiset_btn.Location = new System.Drawing.Point(511, 88);
             this.ruanxianweiset_btn.Name = "ruanxianweiset_btn";
             this.ruanxianweiset_btn.Size = new System.Drawing.Size(181, 69);
@@ -100,6 +105,7 @@
             // 
             this.userset_btn.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("userset_btn.BackgroundImage")));
             this.userset_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.userset_btn.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.userset_btn.Location = new System.Drawing.Point(159, 88);
             this.userset_btn.Name = "userset_btn";
             this.userset_btn.Size = new System.Drawing.Size(181, 69);
