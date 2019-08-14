@@ -12,17 +12,29 @@ namespace 码垛机
 {
     public partial class MainSettingForm : Form
     {
+        public static bool flag = false;
         public MainSettingForm()
         {
             InitializeComponent();
-            
+            if(INIhelp.GetValue("当前用户") != "管理员权限")
+            {
+                flag = true;
+            }
+            else
+            {
+                flag = false;
+            }           
         }
 
+        /// <summary>
+        /// 打开设置界面，根据权限设置是否禁用
+        /// </summary>
         public static UserSettingForm usf = null;
         public static RuanxianweiForm rxf = null;
         public HandSettingForm hsf = null;
         public IOSettingForm iof = null;
         public AboutUsForm auf = null;
+
         private void userset_btn_Click(object sender, EventArgs e)
         {
             usf = new UserSettingForm();
@@ -37,7 +49,11 @@ namespace 码垛机
 
         private void ruanxianweiset_btn_Click(object sender, EventArgs e)
         {
-            
+            if(flag)
+            {
+                MessageBox.Show("没有权限","警告");
+                return;
+            }            
             rxf = new RuanxianweiForm();
             this.Parent.FindForm().Hide();
             this.Hide();
@@ -50,6 +66,12 @@ namespace 码垛机
 
         private void handset_btn_Click(object sender, EventArgs e)
         {
+            if (flag)
+            {
+                MessageBox.Show("没有权限", "警告");
+                return;
+            }
+
             hsf = new HandSettingForm();
             this.Parent.FindForm().Hide();
             this.Hide();
@@ -62,6 +84,12 @@ namespace 码垛机
 
         private void ioset_btn_Click(object sender, EventArgs e)
         {
+            if (flag)
+            {
+                MessageBox.Show("没有权限", "警告");
+                return;
+            }
+
             iof = new IOSettingForm();
             this.Parent.FindForm().Hide();
             this.Hide();
@@ -88,12 +116,5 @@ namespace 码垛机
             }
 
         }
-        //private void closingWindow()
-        //{
-        //    if(usf != null || (!usf.IsDisposed))
-        //    {
-        //        this.Close();
-        //    }
-        //}
     }
 }

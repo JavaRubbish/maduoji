@@ -53,7 +53,7 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "日期";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label1.Click += new System.EventHandler(this.label1_Click);
+            
             // 
             // label2
             // 
@@ -65,7 +65,7 @@
             this.label2.TabIndex = 1;
             this.label2.Text = "时间";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label2.Click += new System.EventHandler(this.label2_Click);
+            
             // 
             // label3
             // 
@@ -88,7 +88,7 @@
             this.label4.TabIndex = 3;
             this.label4.Text = "描述";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label4.Click += new System.EventHandler(this.label4_Click);
+            
             // 
             // clr_btn
             // 
@@ -130,7 +130,7 @@
             this.listView1.TabIndex = 6;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+            
             // 
             // columnHeader1
             // 
@@ -172,7 +172,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "AlarmHistoryForm";
             this.Text = "AlarmHistoryForm";
-            this.Load += new System.EventHandler(this.AlarmHistoryForm_Load);
+            
             this.ResumeLayout(false);
 
         }

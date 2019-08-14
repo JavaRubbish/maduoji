@@ -20,7 +20,7 @@ namespace 码垛机
         }
 
         /// <summary>
-        /// 让顾客充值VIP跳过等待时间
+        /// 加载等待时间
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

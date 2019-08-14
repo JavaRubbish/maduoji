@@ -123,6 +123,7 @@ namespace 码垛机
                 //this.IsMdiContainer = true;
              
                 msf = new MainSettingForm();
+                
                 msf.TopLevel = false;
                 //msf.FormBorderStyle = FormBorderStyle.None;
                 panel1.Controls.Add(msf);
@@ -226,12 +227,6 @@ namespace 码垛机
 
             }
         }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
 
         /// <summary>
         /// 发送命令
@@ -355,11 +350,6 @@ namespace 码垛机
                 //  this.Invoke((EventHandler)(delegate{ }));
                 MainSettingForm.usf.setTextBox1Text(data1);                
             }
-        }
-
-        private void panel2_Paint(object sender, PaintEventArgs e)
-        {
-
         }
     }
 }

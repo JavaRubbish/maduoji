@@ -60,7 +60,7 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1218, 74);
             this.panel1.TabIndex = 0;
-            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            
             // 
             // 用户设置
             // 
@@ -71,7 +71,7 @@
             this.用户设置.Size = new System.Drawing.Size(106, 24);
             this.用户设置.TabIndex = 0;
             this.用户设置.Text = "用户设置";
-            this.用户设置.Click += new System.EventHandler(this.label1_Click);
+            
             // 
             // panel2
             // 
@@ -102,13 +102,11 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1108, 335);
             this.panel3.TabIndex = 0;
-            this.panel3.Paint += new System.Windows.Forms.PaintEventHandler(this.panel3_Paint);
+            
             // 
             // textBox3
             // 
-            this.textBox3.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.textBox3.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.textBox3.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.textBox3.Location = new System.Drawing.Point(819, 259);
             this.textBox3.Name = "textBox3";
             this.textBox3.PasswordChar = '*';
@@ -116,12 +114,11 @@
             this.textBox3.TabIndex = 12;
             this.textBox3.Text = "******";
             this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            
             // 
             // textBox2
             // 
-            this.textBox2.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.textBox2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.textBox2.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.textBox2.Location = new System.Drawing.Point(819, 157);
             this.textBox2.Name = "textBox2";
             this.textBox2.PasswordChar = '*';
@@ -129,25 +126,22 @@
             this.textBox2.TabIndex = 11;
             this.textBox2.Text = "******";
             this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            
             // 
             // textBox1
             // 
-            this.textBox1.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.textBox1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.textBox1.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.textBox1.Location = new System.Drawing.Point(819, 52);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(169, 30);
             this.textBox1.TabIndex = 10;
             this.textBox1.Text = "120秒";
             this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            
             // 
             // comboBox2
             // 
-            this.comboBox2.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.comboBox2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.comboBox2.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Items.AddRange(new object[] {
             "开",
@@ -157,7 +151,6 @@
             this.comboBox2.Size = new System.Drawing.Size(179, 28);
             this.comboBox2.TabIndex = 9;
             this.comboBox2.Text = "开";
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // dateTimePicker2
             // 
@@ -169,9 +162,7 @@
             // 
             // comboBox1
             // 
-            this.comboBox1.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.comboBox1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.comboBox1.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
             "管理员权限",
@@ -181,7 +172,7 @@
             this.comboBox1.Size = new System.Drawing.Size(179, 28);
             this.comboBox1.TabIndex = 6;
             this.comboBox1.Text = "管理员权限";
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            
             // 
             // label6
             // 
@@ -202,7 +193,7 @@
             this.label5.Size = new System.Drawing.Size(109, 20);
             this.label5.TabIndex = 4;
             this.label5.Text = "修改密码：";
-            this.label5.Click += new System.EventHandler(this.label5_Click);
+            
             // 
             // label4
             // 
@@ -213,7 +204,7 @@
             this.label4.Size = new System.Drawing.Size(109, 20);
             this.label4.TabIndex = 3;
             this.label4.Text = "背光时间：";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
+            
             // 
             // label3
             // 
@@ -245,7 +236,7 @@
             this.label1.Size = new System.Drawing.Size(109, 20);
             this.label1.TabIndex = 0;
             this.label1.Text = "切换用户：";
-            this.label1.Click += new System.EventHandler(this.label1_Click_1);
+            
             // 
             // ret_btn3
             // 
@@ -273,7 +264,7 @@
             this.Name = "UserSettingForm";
             this.Text = "用户设置";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UserSettingForm_FormClosing);
-            this.Load += new System.EventHandler(this.UserSettingForm_Load);
+            
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);

@@ -60,46 +60,6 @@ namespace 码垛机
 
         }
 
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-        private void dataGridView1_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void AlarmHistoryForm_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void dataGridView1_CellContentClick_2(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
         //按键清除报警信息
         private void clr_btn_Click(object sender, EventArgs e)
         {
