@@ -19,7 +19,7 @@ namespace 码垛机
 
         public static class BF
         {
-            public static byte[] sendbuf = new byte[50];
+            public static byte[] sendbuf = new byte[100];
         }
 
 

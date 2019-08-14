@@ -45,5 +45,10 @@ namespace 码垛机
         {
 
         }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
