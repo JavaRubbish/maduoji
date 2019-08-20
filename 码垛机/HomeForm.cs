@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -22,18 +23,39 @@ namespace 码垛机
             public static byte[] sendbuf = new byte[100];
         }
 
-
-
         public HomeForm()
         {
             InitializeComponent();
+            StartThread();
+            searchAlarmInfo();
+            initialIOSetting();
+        }
+
+        private void initialIOSetting()
+        {
+            INIhelp.SetValue(GlobalV.sts3, "0");
+            INIhelp.SetValue(GlobalV.sts4, "0");
+            INIhelp.SetValue(GlobalV.sts5, "0");
+            INIhelp.SetValue(GlobalV.sts6, "0");
+            INIhelp.SetValue(GlobalV.sts7, "0");
+            INIhelp.SetValue(GlobalV.sts8, "0");
+            INIhelp.SetValue(GlobalV.sts9, "0");
+            INIhelp.SetValue(GlobalV.sts10, "0");
+            INIhelp.SetValue(GlobalV.sts11, "0");
+            INIhelp.SetValue(GlobalV.sts12, "0");
+            INIhelp.SetValue(GlobalV.sts13, "0");
+            INIhelp.SetValue(GlobalV.sts14, "0");
+            INIhelp.SetValue(GlobalV.sts15, "0");
+            INIhelp.SetValue(GlobalV.sts16, "0");
+            INIhelp.SetValue(GlobalV.sts17, "0");
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             //默认使用端口一，波特率9600
-            initCommPara("COM1", 9600);
+            initCommPara("COM3", 9600);
    
+
             //初始化加载工作界面
             work_btn.BackColor = Color.FromArgb(65, 105, 225);
             wdf = new WorkingDetailForm();
@@ -47,9 +69,12 @@ namespace 码垛机
         public HistoryDataForm hf = null;
         public MainSettingForm msf = null;
         public static AlarmHistoryForm ahf = null;
-        public WorkingDetailForm wdf = null;
-       // public UserSettingForm usf = null;
-
+        public static WorkingDetailForm wdf = null;
+        // public UserSettingForm usf = null;
+        
+        //标志位，用于只在工作界面才发送坐标请求指令
+        public static bool xinlei = true;
+        public static bool fight = true;
         /// <summary>
         /// 历史数据
         /// </summary>
@@ -74,14 +99,13 @@ namespace 码垛机
             if (wdf != null)
             {
                 wdf.Close();
+                xinlei = false;
             }
             //判断该子窗口是否已经打开过
             if (hf == null || hf.IsDisposed)
             {
-                //this.IsMdiContainer = true;
                 hf = new HistoryDataForm();
                 hf.TopLevel = false;//设置为非顶级窗口
-                //hf.FormBorderStyle = FormBorderStyle.None;//窗体为非边框样式
                 panel1.Controls.Add(hf);
                 hf.Show();
             }
@@ -113,8 +137,9 @@ namespace 码垛机
                 ahf.Close();
             }
             if (wdf != null)
-            {
+            {               
                 wdf.Close();
+                xinlei = false;
             }
 
             if (msf == null || msf.IsDisposed)
@@ -125,7 +150,6 @@ namespace 码垛机
                 msf = new MainSettingForm();
                 
                 msf.TopLevel = false;
-                //msf.FormBorderStyle = FormBorderStyle.None;
                 panel1.Controls.Add(msf);
                 msf.Show();
             }
@@ -141,15 +165,7 @@ namespace 码垛机
         /// <param name="e"></param>
         private void alarmhistory_btn_Click(object sender, EventArgs e)
         {
-            this.Text = "报警历史";
-
-            //发送指令查看报警历史
-            BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x02;
-            BF.sendbuf[2] = 0x0E;
-            BF.sendbuf[3] = 0x01;
-            BF.sendbuf[4] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 5);
+            this.Text = "报警历史";         
 
             work_btn.BackColor = Color.FromArgb(220, 220, 220);
             historydata_btn.BackColor = Color.FromArgb(220, 220, 220);
@@ -167,16 +183,14 @@ namespace 码垛机
             if (wdf != null)
             {
                 wdf.Close();
+                xinlei = false;
             }
 
             if (ahf == null || ahf.IsDisposed)
             {
 
-                //this.IsMdiContainer = true;
-
                 ahf = new AlarmHistoryForm();
                 ahf.TopLevel = false;
-                //msf.FormBorderStyle = FormBorderStyle.None;
                 panel1.Controls.Add(ahf);
                 ahf.Show();
             }
@@ -214,13 +228,13 @@ namespace 码垛机
             if (wdf == null || wdf.IsDisposed)
             {
 
-                //this.IsMdiContainer = true;
-
                 wdf = new WorkingDetailForm();
                 wdf.TopLevel = false;
-                //msf.FormBorderStyle = FormBorderStyle.None;
                 panel1.Controls.Add(wdf);
                 wdf.Show();
+                //请求坐标
+                xinlei = true;
+                StartThread();
             }
             else
             {
@@ -241,13 +255,12 @@ namespace 码垛机
             {
                     if (!sp.IsOpen)
                     {
-                        initCommPara("COM1",9600);
+                        initCommPara("COM3",9600);
                     }
                     sp.Write(command, 0, len);               
             }
             catch (System.Exception ex)
             {
-
                 MessageBox.Show("串口无法打开");
             }
 
@@ -277,13 +290,66 @@ namespace 码垛机
         }
 
         /// <summary>
+        /// 开启一个线程，每隔一段时间请求坐标
+        /// </summary>
+        public static void StartThread()
+        {
+            Thread thread = new Thread(new ThreadStart(GetCoordinate));
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+        public static void GetCoordinate()
+        {
+            while (xinlei)
+            {
+                //每隔1s请求一次坐标
+                fight = false;
+                Thread.Sleep(1051);
+                BF.sendbuf[0] = 0xFA;
+                BF.sendbuf[1] = 0x01;
+                BF.sendbuf[2] = 0xEE;
+                BF.sendbuf[3] = 0xF5;
+                SendMenuCommand(BF.sendbuf, 4);
+                fight = true;
+                searchAlarmInfo();
+            }
+        }
+
+
+        public static void searchAlarmInfo()
+        {
+            Thread thread = new Thread(new ThreadStart(requestAlrInfo));
+            thread.IsBackground = true;
+            thread.Start();
+        }
+        public static void requestAlrInfo()
+        {
+            while (fight)
+            {
+                xinlei = false;
+                //发送指令查看报警历史
+                Thread.Sleep(1101);
+                BF.sendbuf[0] = 0xFA;
+                BF.sendbuf[1] = 0x02;
+                BF.sendbuf[2] = 0x0E;
+                BF.sendbuf[3] = 0x01;
+                BF.sendbuf[4] = 0xF5;
+                SendMenuCommand(BF.sendbuf, 5);
+                xinlei = true;
+                StartThread();
+            }
+        }
+
+
+        /// <summary>
         /// 接收数据并解析
         /// </summary>
         //private int SendStatus = 0;
-      
+
         static void  comm_DataReceived(object sender,SerialDataReceivedEventArgs e)
         {
-            byte[] binary_data_1 = new byte[50];      
+            byte[] binary_data_1 = new byte[100];      
             List<byte> buffer = new List<byte>(512);
 
             int n = sp.BytesToRead;
@@ -301,7 +367,6 @@ namespace 码垛机
                     buffer.CopyTo(0,binary_data_1,0,len + 3);//复制一条完整数据到具体的数据缓存
                     data_1_cached = true;
                     buffer.RemoveRange(0,len + 3);//正确分析一条数据，从缓存中移除数据
-
                 }
                 else
                 {
@@ -313,24 +378,28 @@ namespace 码垛机
             {
                 string data1;
                 int data2;
-                //报警信息的处理
+                int x_value;
+                int z_value;
+                int y_value;
+                int o_value;
+                //解析报警信息
                 //第三个数据用于判断是否是报警信息数据
-                if(binary_data_1[2] == 0xAF)
+                if ((binary_data_1[1] == 0x02) && (binary_data_1[2] == 0x0E))
                 {
                     
                     string desc;
                     //将16进制字符串转为10进制整型数
                     data2 =Convert.ToInt32(binary_data_1[3].ToString("X2"),16);
-                    if((data2 > 0) && (data2 <= 100)){
+                    if(data2 == 1){
                          desc = "电机故障";
                     }
-                    else if((data2 > 100) && (data2 <= 200))
+                    else if(data2 == 2)
                     {
-                         desc = "机械手故障";
+                         desc = "硬限位故障";
                     }
                     else
                     {
-                        desc = "电路故障"; 
+                        desc = "软限位故障"; 
                     }
                     if(!ahf.IsDisposed)
                     {
@@ -339,16 +408,40 @@ namespace 码垛机
                     else
                     {
                         ahf.AddAlarmDataListViewItem2(data2, desc);
-
                     }
                    return;
                 }
 
-                //普通数据的处理
-                 data1 = binary_data_1[2].ToString("X2") + " " + binary_data_1[3].ToString("X2") + " " + binary_data_1[4].ToString("X2")
-                    + " " + binary_data_1[5].ToString("X2") + " " + binary_data_1[6].ToString("X2") + " " + binary_data_1[7].ToString("X2");
-                //  this.Invoke((EventHandler)(delegate{ }));
-                MainSettingForm.usf.setTextBox1Text(data1);                
+                //解析坐标数据
+                if((binary_data_1[1] == 0x0E) && (binary_data_1[2] == 0x0E))
+                {
+                    var myByteArray1 = new byte[4];
+                    var myByteArray2 = new byte[4];
+                    var myByteArray3 = new byte[4];
+                    for (int i = 0; i < 4; i++)
+                    {
+                        myByteArray1[i] = binary_data_1[i + 3];
+                    }
+                    for (int i = 0; i < 4; i++)
+                    {
+                        myByteArray2[i] = binary_data_1[i + 7];
+                    }
+                    for (int i = 0; i < 4; i++)
+                    {
+                        myByteArray3[i] = binary_data_1[i + 11];
+                    }
+                    //字节数组转16进制字符串
+                    string xstr = byteToHex.byteToHexStr(myByteArray1, 4);
+                    string ystr = byteToHex.byteToHexStr(myByteArray2, 4);
+                    string zstr = byteToHex.byteToHexStr(myByteArray3, 4);
+                    //16进制字符串转10进制整数
+                    x_value = Int32.Parse(xstr, System.Globalization.NumberStyles.HexNumber);
+                    y_value = Int32.Parse(ystr, System.Globalization.NumberStyles.HexNumber);
+                    z_value = Int32.Parse(zstr, System.Globalization.NumberStyles.HexNumber);
+                    o_value = Convert.ToInt32(binary_data_1[15].ToString("X2"), 16);
+                    wdf.SetCoordinate(x_value,z_value,y_value,o_value);
+                    return;
+                }
             }
         }
     }

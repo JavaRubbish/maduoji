@@ -36,12 +36,18 @@ namespace 码垛机
             lvi.SubItems.Add(desc);
             listView1.Items.Add(lvi);
 
-          //  MessageBox.Show(desc,"警告");
+            MessageBox.Show(desc,"警告");
 
             WriteToTxt();
 
         }
 
+        /// <summary>
+        /// 报警信息窗口关闭时，直接将报警数据追加到txt文本中，而不是写在listview中
+        /// 因为listview随报警信息窗体的关闭而不可用
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="desc"></param>
         public void AddAlarmDataListViewItem2(int value, string desc)
         {
             string date = DateTime.Now.ToString("yyyy-MM-dd");
@@ -54,7 +60,7 @@ namespace 码垛机
             
             CheckForIllegalCrossThreadCalls = false;            
 
-            //  MessageBox.Show(desc,"警告");
+            MessageBox.Show(desc,"警告");
 
             WriteToTxt2(datalist);
 

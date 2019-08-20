@@ -415,6 +415,7 @@
             this.label18.Size = new System.Drawing.Size(23, 25);
             this.label18.TabIndex = 7;
             this.label18.Text = "0";
+            this.label18.Click += new System.EventHandler(this.label18_Click);
             // 
             // label17
             // 
@@ -425,7 +426,6 @@
             this.label17.Size = new System.Drawing.Size(46, 25);
             this.label17.TabIndex = 6;
             this.label17.Text = "O轴";
-            this.label17.Click += new System.EventHandler(this.label17_Click);
             // 
             // label16
             // 
@@ -466,7 +466,6 @@
             this.label13.Size = new System.Drawing.Size(43, 25);
             this.label13.TabIndex = 2;
             this.label13.Text = "X轴";
-            this.label13.Click += new System.EventHandler(this.label13_Click);
             // 
             // label12
             // 
@@ -490,7 +489,6 @@
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(357, 238);
             this.panel5.TabIndex = 0;
-            this.panel5.Paint += new System.Windows.Forms.PaintEventHandler(this.panel5_Paint);
             // 
             // clr_btn4
             // 

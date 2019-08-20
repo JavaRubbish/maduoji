@@ -579,8 +579,24 @@ namespace 码垛机
 
         private void button15_Click(object sender, EventArgs e)
         {
-            textBox1.ReadOnly = false;
-            textBox2.ReadOnly = false;
+            string str1 = textBox1.Text;
+            if (str1 == "")
+            {
+                return;
+            }
+            int id1 = Convert.ToInt32(str1);
+            byte[] iByte1 = toBytes.intToBytes(id1);//4位
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x07;
+            BF.sendbuf[2] = 0x0A;
+            BF.sendbuf[3] = 0x02;
+            BF.sendbuf[4] = 0x01;
+            BF.sendbuf[5] = iByte1[0];
+            BF.sendbuf[6] = iByte1[1];
+            BF.sendbuf[7] = iByte1[2];
+            BF.sendbuf[8] = iByte1[3];
+            BF.sendbuf[9] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 10);
 
         }
 
@@ -793,21 +809,69 @@ namespace 码垛机
 
         private void button9_Click(object sender, EventArgs e)
         {
-            textBox5.ReadOnly = false;
-            textBox6.ReadOnly = false;
+            string str6 = textBox6.Text;
+            if (str6 == "")
+            {
+                return;
+            }
+            int id6 = Convert.ToInt32(str6);
+            byte[] iByte6 = toBytes.intToBytes(id6);//4位
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x07;
+            BF.sendbuf[2] = 0x0A;
+            BF.sendbuf[3] = 0x02;
+            BF.sendbuf[4] = 0x03;
+            BF.sendbuf[5] = iByte6[0];
+            BF.sendbuf[6] = iByte6[1];
+            BF.sendbuf[7] = iByte6[2];
+            BF.sendbuf[8] = iByte6[3];
+            BF.sendbuf[9] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 10);
 
         }
 
         private void button35_Click(object sender, EventArgs e)
         {
-            textBox13.ReadOnly = false;
-            textBox14.ReadOnly = false;
+            string str14 = textBox14.Text;
+            if (str14 == "")
+            {
+                return;
+            }
+            int id14 = Convert.ToInt32(str14);
+            byte[] iByte14 = toBytes.intToBytes(id14);//4位
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x07;
+            BF.sendbuf[2] = 0x0A;
+            BF.sendbuf[3] = 0x02;
+            BF.sendbuf[4] = 0x04;
+            BF.sendbuf[5] = iByte14[0];
+            BF.sendbuf[6] = iByte14[1];
+            BF.sendbuf[7] = iByte14[2];
+            BF.sendbuf[8] = iByte14[3];
+            BF.sendbuf[9] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 10);
         }
 
         private void button25_Click(object sender, EventArgs e)
         {
-            textBox9.ReadOnly = false;
-            textBox10.ReadOnly = false;
+            string str10 = textBox10.Text;
+            if (str10 == "")
+            {
+                return;
+            }
+            int id10 = Convert.ToInt32(str10);
+            byte[] iByte10 = toBytes.intToBytes(id10);//4位
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x07;
+            BF.sendbuf[2] = 0x0A;
+            BF.sendbuf[3] = 0x02;
+            BF.sendbuf[4] = 0x02;
+            BF.sendbuf[5] = iByte10[0];
+            BF.sendbuf[6] = iByte10[1];
+            BF.sendbuf[7] = iByte10[2];
+            BF.sendbuf[8] = iByte10[3];
+            BF.sendbuf[9] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 10);
         }
 
         private void HandSettingForm_Load(object sender, EventArgs e)
@@ -823,6 +887,91 @@ namespace 码垛机
         private void textBox6_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void panelZ_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x02;
+            BF.sendbuf[2] = 0x01;
+            BF.sendbuf[3] = 0x03;
+            BF.sendbuf[4] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 5);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x02;
+            BF.sendbuf[2] = 0x01;
+            BF.sendbuf[3] = 0x04;
+            BF.sendbuf[4] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 5);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x02;
+            BF.sendbuf[2] = 0x01;
+            BF.sendbuf[3] = 0x03;
+            BF.sendbuf[4] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 5);
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x02;
+            BF.sendbuf[2] = 0x01;
+            BF.sendbuf[3] = 0x03;
+            BF.sendbuf[4] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 5);
+        }
+
+        private void button45_Click(object sender, EventArgs e)
+        {
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x02;
+            BF.sendbuf[2] = 0x01;
+            BF.sendbuf[3] = 0x03;
+            BF.sendbuf[4] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 5);
+        }
+
+        private void button46_Click(object sender, EventArgs e)
+        {
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x02;
+            BF.sendbuf[2] = 0x01;
+            BF.sendbuf[3] = 0x04;
+            BF.sendbuf[4] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 5);
+        }
+
+        private void button47_Click(object sender, EventArgs e)
+        {
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x02;
+            BF.sendbuf[2] = 0x01;
+            BF.sendbuf[3] = 0x03;
+            BF.sendbuf[4] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 5);
+        }
+
+        private void button48_Click(object sender, EventArgs e)
+        {
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x02;
+            BF.sendbuf[2] = 0x01;
+            BF.sendbuf[3] = 0x04;
+            BF.sendbuf[4] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 5);
         }
     }
 }

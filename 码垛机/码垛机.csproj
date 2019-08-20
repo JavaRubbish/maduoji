@@ -58,6 +58,8 @@
     <Compile Include="AlarmHistoryForm.Designer.cs">
       <DependentUpon>AlarmHistoryForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="byteToHex.cs" />
+    <Compile Include="GlobalV.cs" />
     <Compile Include="HomeForm.cs">
       <SubType>Form</SubType>
     </Compile>

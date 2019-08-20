@@ -1089,7 +1089,7 @@
             this.button29.Size = new System.Drawing.Size(126, 83);
             this.button29.TabIndex = 1;
             this.button29.UseVisualStyleBackColor = true;
-            this.button29.Click += new System.EventHandler(this.button29_Click);
+            
             // 
             // panel31
             // 
@@ -1147,7 +1147,7 @@
             this.button31.Size = new System.Drawing.Size(126, 83);
             this.button31.TabIndex = 0;
             this.button31.UseVisualStyleBackColor = true;
-            this.button31.Click += new System.EventHandler(this.button31_Click);
+            
             // 
             // panel33
             // 

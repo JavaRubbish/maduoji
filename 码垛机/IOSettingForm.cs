@@ -18,9 +18,7 @@ namespace 码垛机
         {
             InitializeComponent();
 
-            //System.Drawing.Drawing2D.GraphicsPath path1 = new System.Drawing.Drawing2D.GraphicsPath();
-            //path1.AddEllipse(this.button5.ClientRectangle);
-            //this.button5.Region = new Region(path1);
+            getStatus();
         }
 
         private void IOSettingForm_Load(object sender, EventArgs e)
@@ -67,10 +65,297 @@ namespace 码垛机
 
         private void ret_btn1_Click(object sender, EventArgs e)
         {
+            saveStatus();
+
             this.Close();
             this.DialogResult = DialogResult.OK;
         }
 
+        /// <summary>
+        /// 保存指示灯状态，怎么遍历简化代码？
+        /// </summary>
+
+        private void saveStatus()
+        {
+            
+            if(button3.BackColor == Color.Transparent)
+            {
+                INIhelp.SetValue(GlobalV.sts3,"0");
+            }
+            if (button3.BackColor == Color.Red)
+            {
+                INIhelp.SetValue(GlobalV.sts3, "1");
+            }
+
+            if (button4.BackColor == Color.Transparent)
+            {
+                INIhelp.SetValue(GlobalV.sts4, "0");
+           }
+            if (button4.BackColor == Color.Red)
+            {
+                INIhelp.SetValue(GlobalV.sts4, "1");
+            }
+
+            if (button5.BackColor == Color.Transparent)
+            {
+                INIhelp.SetValue(GlobalV.sts5, "0");
+            }
+            if (button5.BackColor == Color.Red)
+            {
+                INIhelp.SetValue(GlobalV.sts5, "1");
+            }
+
+            if (button6.BackColor == Color.Transparent)
+            {
+                INIhelp.SetValue(GlobalV.sts6, "0");
+            }
+            if (button6.BackColor == Color.Red)
+            {
+                INIhelp.SetValue(GlobalV.sts6, "1");
+            }
+
+            if (button7.BackColor == Color.Transparent)
+            {
+                INIhelp.SetValue(GlobalV.sts7, "0");
+            }
+            if (button7.BackColor == Color.Red)
+            {
+                INIhelp.SetValue(GlobalV.sts7, "1");
+            }
+
+            if (button8.BackColor == Color.Transparent)
+            {
+                INIhelp.SetValue(GlobalV.sts8, "0");
+            }
+            if (button8.BackColor == Color.Red)
+            {
+                INIhelp.SetValue(GlobalV.sts8, "1");
+            }
+
+            if (button9.BackColor == Color.Transparent)
+            {
+                INIhelp.SetValue(GlobalV.sts9, "0");
+            }
+            if (button9.BackColor == Color.Red)
+            {
+                INIhelp.SetValue(GlobalV.sts9, "1");
+            }
+
+            if (button10.BackColor == Color.Transparent)
+            {
+                INIhelp.SetValue(GlobalV.sts10, "0");
+            }
+            if (button10.BackColor == Color.Red)
+            {
+                INIhelp.SetValue(GlobalV.sts10, "1");
+            }
+
+            if (button11.BackColor == Color.Transparent)
+            {
+                INIhelp.SetValue(GlobalV.sts11, "0");
+            }
+            if (button11.BackColor == Color.Red)
+            {
+                INIhelp.SetValue(GlobalV.sts11, "1");
+            }
+
+            if (button12.BackColor == Color.Transparent)
+            {
+                INIhelp.SetValue(GlobalV.sts12, "0");
+            }
+            if (button12.BackColor == Color.Red)
+            {
+                INIhelp.SetValue(GlobalV.sts12, "1");
+            }
+
+            if (button13.BackColor == Color.Transparent)
+            {
+                INIhelp.SetValue(GlobalV.sts13, "0");
+            }
+            if (button13.BackColor == Color.Red)
+            {
+                INIhelp.SetValue(GlobalV.sts13, "1");
+            }
+
+            if (button14.BackColor == Color.Transparent)
+            {
+                INIhelp.SetValue(GlobalV.sts14, "0");
+            }
+            if (button14.BackColor == Color.Red)
+            {
+                INIhelp.SetValue(GlobalV.sts14, "1");
+            }
+
+            if (button15.BackColor == Color.Transparent)
+            {
+                INIhelp.SetValue(GlobalV.sts15, "0");
+            }
+            if (button15.BackColor == Color.Red)
+            {
+                INIhelp.SetValue(GlobalV.sts15, "1");
+            }
+
+            if (button16.BackColor == Color.Transparent)
+            {
+                INIhelp.SetValue(GlobalV.sts16, "0");
+            }
+            if (button16.BackColor == Color.Red)
+            {
+                INIhelp.SetValue(GlobalV.sts16, "1");
+            }
+
+            if (button17.BackColor == Color.Transparent)
+            {
+                INIhelp.SetValue(GlobalV.sts17, "0");
+            }
+            if (button17.BackColor == Color.Red)
+            {
+                INIhelp.SetValue(GlobalV.sts17, "1");
+            }
+        }
+
+        /// <summary>
+        /// 获取指示灯状态
+        /// </summary>
+        private void getStatus()
+        {
+
+            if (INIhelp.GetValue(GlobalV.sts3) == "1")
+            {
+                button3.BackColor = Color.Red;
+            }
+            if (INIhelp.GetValue(GlobalV.sts3) == "0")
+            {
+                button3.BackColor = Color.Transparent;
+            }
+
+            if (INIhelp.GetValue(GlobalV.sts4) == "1")
+            {
+                button4.BackColor = Color.Red;
+            }
+            if (INIhelp.GetValue(GlobalV.sts4) == "0")
+            {
+                button4.BackColor = Color.Transparent;
+            }
+
+            if (INIhelp.GetValue(GlobalV.sts5) == "1")
+            {
+                button5.BackColor = Color.Red;
+            }
+            if (INIhelp.GetValue(GlobalV.sts5) == "0")
+            {
+                button5.BackColor = Color.Transparent;
+            }
+
+            if (INIhelp.GetValue(GlobalV.sts6) == "1")
+            {
+               button6.BackColor = Color.Red;
+            }
+            if (INIhelp.GetValue(GlobalV.sts6) == "0")
+            {
+               button6.BackColor = Color.Transparent;
+            }
+
+            if (INIhelp.GetValue(GlobalV.sts7) == "1")
+            {
+               button7.BackColor = Color.Red;
+             }
+            if (INIhelp.GetValue(GlobalV.sts7) == "0")
+            {
+               button7.BackColor = Color.Transparent;
+             }
+
+            if (INIhelp.GetValue(GlobalV.sts8) == "1")
+            {
+               button8.BackColor = Color.Red;
+             }
+            if (INIhelp.GetValue(GlobalV.sts8) == "0")
+            {
+               button8.BackColor = Color.Transparent;
+            }
+
+            if (INIhelp.GetValue(GlobalV.sts9) == "1")
+            {
+               button9.BackColor = Color.Red;
+            }
+            if (INIhelp.GetValue(GlobalV.sts9) == "0")
+            {
+               button9.BackColor = Color.Transparent;
+            }
+
+            if (INIhelp.GetValue(GlobalV.sts10) == "1")
+            {
+               button10.BackColor = Color.Red;
+            }
+            if (INIhelp.GetValue(GlobalV.sts10) == "0")
+            {
+               button10.BackColor = Color.Transparent;
+            }
+
+            if (INIhelp.GetValue(GlobalV.sts11) == "1")
+            {
+               button11.BackColor = Color.Red;
+            }
+            if (INIhelp.GetValue(GlobalV.sts11) == "0")
+            {
+               button11.BackColor = Color.Transparent;
+            }
+
+            if (INIhelp.GetValue(GlobalV.sts12) == "1")
+            {
+               button12.BackColor = Color.Red;
+            }
+            if (INIhelp.GetValue(GlobalV.sts12) == "0")
+            {
+               button12.BackColor = Color.Transparent;
+            }
+
+            if (INIhelp.GetValue(GlobalV.sts13) == "1")
+            {
+               button13.BackColor = Color.Red;
+            }
+            if (INIhelp.GetValue(GlobalV.sts13) == "0")
+            {
+               button13.BackColor = Color.Transparent;
+            }
+
+            if (INIhelp.GetValue(GlobalV.sts14) == "1")
+            {
+               button14.BackColor = Color.Red;
+            }
+            if (INIhelp.GetValue(GlobalV.sts14) == "0")
+            {
+               button14.BackColor = Color.Transparent;
+            }
+
+            if (INIhelp.GetValue(GlobalV.sts15) == "1")
+            {
+               button15.BackColor = Color.Red;
+            }
+            if (INIhelp.GetValue(GlobalV.sts15) == "0")
+            {
+               button15.BackColor = Color.Transparent;
+            }
+
+            if (INIhelp.GetValue(GlobalV.sts16) == "1")
+            {
+               button16.BackColor = Color.Red;
+            }
+            if (INIhelp.GetValue(GlobalV.sts16) == "0")
+            {
+               button16.BackColor = Color.Transparent;
+            }
+
+            if (INIhelp.GetValue(GlobalV.sts17) == "1")
+            {
+               button17.BackColor = Color.Red;
+            }
+            if (INIhelp.GetValue(GlobalV.sts17) == "0")
+            {
+               button17.BackColor = Color.Transparent;
+            }
+        }
+       
         private void IOSettingForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             this.DialogResult = DialogResult.OK;
@@ -81,12 +366,25 @@ namespace 码垛机
 
         }
 
+
+        /// <summary>
+        /// 一键获取输入点监控状态
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void IN_btn_Click(object sender, EventArgs e)
         {
             IN_btn.BackColor = Color.FromArgb(118, 153, 223);
             OUT_btn.BackColor = Color.FromArgb(237, 236, 236);
             panelIN.Visible = true;
             panelOUT.Visible = false;
+
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x02;
+            BF.sendbuf[2] = 0x0C;
+            BF.sendbuf[3] = 0x02;
+            BF.sendbuf[4] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 5);
         }
 
         private void OUT_btn_Click(object sender, EventArgs e)
@@ -97,6 +395,11 @@ namespace 码垛机
             panelIN.Visible = false;
         }
 
+        /// <summary>
+        /// 下发指令设置各个IO输出灯的状态（红灯置位，灰色清零）
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button3_Click(object sender, EventArgs e)
         {
             if(button3.BackColor == Color.Transparent)
@@ -517,14 +820,5 @@ namespace 码垛机
             }
         }
 
-        private void button31_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button29_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }
