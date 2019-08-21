@@ -53,8 +53,10 @@ namespace 码垛机
             BF.sendbuf[3] = 0x01;
             BF.sendbuf[4] = 0x01;
             BF.sendbuf[5] = 0xF5;
-
             SendMenuCommand(BF.sendbuf, 6);
+            textBox1.Text = "0";
+            textBox2.Text = "0";
+
         }
 
         private void ret_btn4_Click(object sender, EventArgs e)
@@ -138,9 +140,9 @@ namespace 码垛机
             BF.sendbuf[3] = 0x01;
             BF.sendbuf[4] = 0x04;
             BF.sendbuf[5] = 0xF5;
-
             SendMenuCommand(BF.sendbuf, 6);
-
+            textBox13.Text = "0";
+            textBox14.Text = "0";
         }
 
         /// <summary>
@@ -554,9 +556,11 @@ namespace 码垛机
             BF.sendbuf[1] = 0x03;
             BF.sendbuf[2] = 0x0A;
             BF.sendbuf[3] = 0x01;
-            BF.sendbuf[4] = 0x03;
+            BF.sendbuf[4] = 0x02;
             BF.sendbuf[5] = 0xF5;
             SendMenuCommand(BF.sendbuf, 6);
+            textBox9.Text = "0";
+            textBox10.Text = "0";
         }
         /// <summary>
         /// Z轴回原点
@@ -569,12 +573,12 @@ namespace 码垛机
             BF.sendbuf[1] = 0x03;
             BF.sendbuf[2] = 0x0A;
             BF.sendbuf[3] = 0x01;
-            BF.sendbuf[4] = 0x02;
+            BF.sendbuf[4] = 0x03;
             BF.sendbuf[5] = 0xF5;
-
             SendMenuCommand(BF.sendbuf, 6);
+            textBox5.Text = "0";
+            textBox6.Text = "0";
         }
-
 
 
         private void button15_Click(object sender, EventArgs e)
@@ -957,11 +961,12 @@ namespace 码垛机
         private void button47_Click(object sender, EventArgs e)
         {
             BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x02;
-            BF.sendbuf[2] = 0x01;
-            BF.sendbuf[3] = 0x03;
-            BF.sendbuf[4] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 5);
+            BF.sendbuf[1] = 0x03;
+            BF.sendbuf[2] = 0x0A;
+            BF.sendbuf[3] = 0x05;
+            BF.sendbuf[4] = 0x03;
+            BF.sendbuf[5] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 6);
         }
 
         private void button48_Click(object sender, EventArgs e)

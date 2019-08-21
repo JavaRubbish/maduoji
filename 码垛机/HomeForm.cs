@@ -16,7 +16,7 @@ namespace 码垛机
     {
 
         public static SerialPort sp = new SerialPort();
-        private StringBuilder builder = new StringBuilder();
+        public static SerialPort sp2 = new SerialPort();
 
         public static class BF
         {
@@ -53,8 +53,9 @@ namespace 码垛机
         private void Form1_Load(object sender, EventArgs e)
         {
             //默认使用端口一，波特率9600
-            initCommPara("COM3", 9600);
-   
+            initCommPara(sp,"COM3", 9600);
+            initCommPara(sp2, "COM5", 9600);
+
 
             //初始化加载工作界面
             work_btn.BackColor = Color.FromArgb(65, 105, 225);
@@ -254,7 +255,7 @@ namespace 码垛机
             {
                     if (!sp.IsOpen)
                     {
-                        initCommPara("COM3",9600);
+                        initCommPara(sp,"COM3",9600);
                     }
                     sp.Write(command, 0, len);               
             }
@@ -270,7 +271,7 @@ namespace 码垛机
         /// </summary>
         /// <param name="comName"></param>
         /// <param name="baudRate"></param>
-        public static void initCommPara(string comName,int baudRate)
+        public static void initCommPara(SerialPort sp,string comName,int baudRate)
         {
             try
             {
@@ -284,7 +285,7 @@ namespace 码垛机
 
             }catch
             {
-                MessageBox.Show("串口打开失败!", "系统提示");
+                MessageBox.Show(comName + "串口打开失败!", "系统提示");
             }
         }
 
@@ -400,14 +401,14 @@ namespace 码垛机
                     {
                         desc = "软限位故障"; 
                     }
-                    if(!ahf.IsDisposed)
-                    {
-                        ahf.AddAlarmDataListViewItem(data2, desc);
-                    }
-                    else
-                    {
-                        ahf.AddAlarmDataListViewItem2(data2, desc);
-                    }
+                    //if(!ahf.IsDisposed)
+                    //{
+                    //    ahf.AddAlarmDataListViewItem(data2, desc);
+                    //}
+                    //else
+                    //{
+                    //    ahf.AddAlarmDataListViewItem2(data2, desc);
+                    //}
                    return;
                 }
 
@@ -441,14 +442,18 @@ namespace 码垛机
                     wdf.SetCoordinate(x_value,z_value,y_value,o_value);
                     return;
                 }
-
+                //解析IO状态数据
                 if((binary_data_1[1] == 0x04) && (binary_data_1[2] == 0x0C))
                 {
                     int group1 = Convert.ToInt32(Convert.ToString(binary_data_1[5], 16), 16);
                     int group2 = Convert.ToInt32(Convert.ToString(binary_data_1[4], 16), 16);
                     int group3 = Convert.ToInt32(Convert.ToString(binary_data_1[3], 16), 16);
                     MainSettingForm.iof.getIOStatus(group1,group2,group3);
+                    return;
                 }
+
+                //接收扫码枪数据
+
             }
         }
     }

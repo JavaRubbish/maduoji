@@ -1571,8 +1571,8 @@
             this.Controls.Add(this.ret_btn1);
             this.Controls.Add(this.OUT_btn);
             this.Controls.Add(this.IN_btn);
-            this.Controls.Add(this.panelOUT);
             this.Controls.Add(this.panelIN);
+            this.Controls.Add(this.panelOUT);
             this.Name = "IOSettingForm";
             this.Text = "IO调试";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.IOSettingForm_FormClosing);
