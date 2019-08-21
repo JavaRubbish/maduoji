@@ -26,6 +26,10 @@ namespace 码垛机
             // this.FormBorderStyle = FormBorderStyle.None;
             GraphicsPath myPath = new GraphicsPath();
             myPath.AddEllipse(5, 5, 50, 50);
+            GraphicsPath myPath2 = new GraphicsPath();
+            myPath2.AddEllipse(4, 4, 40, 40);
+            this.button1.Region = new Region(myPath2);
+            this.button2.Region = new Region(myPath2);
             this.button3.Region = new Region(myPath);
             this.button4.Region = new Region(myPath);
             this.button5.Region = new Region(myPath);
@@ -41,21 +45,28 @@ namespace 码垛机
             this.button15.Region = new Region(myPath);
             this.button16.Region = new Region(myPath);
             this.button17.Region = new Region(myPath);
-            this.button18.Region = new Region(myPath);
-            this.button19.Region = new Region(myPath);
-            this.button20.Region = new Region(myPath);
-            this.button21.Region = new Region(myPath);
-            this.button22.Region = new Region(myPath);
-            this.button23.Region = new Region(myPath);
-            this.button24.Region = new Region(myPath);
-            this.button25.Region = new Region(myPath);
-            this.button26.Region = new Region(myPath);
-            this.button27.Region = new Region(myPath);
-            this.button28.Region = new Region(myPath);
-            this.button29.Region = new Region(myPath);
-            this.button30.Region = new Region(myPath);
-            this.button31.Region = new Region(myPath);
-            this.button32.Region = new Region(myPath);
+            this.button18.Region = new Region(myPath2);
+            this.button19.Region = new Region(myPath2);
+            this.button20.Region = new Region(myPath2);
+            this.button21.Region = new Region(myPath2);
+            this.button22.Region = new Region(myPath2);
+            this.button23.Region = new Region(myPath2);
+            this.button24.Region = new Region(myPath2);
+            this.button25.Region = new Region(myPath2);
+            this.button26.Region = new Region(myPath2);
+            this.button27.Region = new Region(myPath2);
+            this.button28.Region = new Region(myPath2);
+            this.button29.Region = new Region(myPath2);
+            this.button30.Region = new Region(myPath2);
+            this.button31.Region = new Region(myPath2);
+            this.button32.Region = new Region(myPath2);
+            this.button33.Region = new Region(myPath2);
+            this.button34.Region = new Region(myPath2);
+            this.button35.Region = new Region(myPath2);
+            this.button36.Region = new Region(myPath2);
+            this.button37.Region = new Region(myPath2);
+            this.button38.Region = new Region(myPath2);
+            this.button39.Region = new Region(myPath2);
         }
 
         private void label2_Click(object sender, EventArgs e)
@@ -385,6 +396,228 @@ namespace 码垛机
             BF.sendbuf[3] = 0x02;
             BF.sendbuf[4] = 0xF5;
             SendMenuCommand(BF.sendbuf, 5);
+        }
+
+        public void getIOStatus(int a,int b,int c)
+        {
+            if ((a & 1) == 1) {
+                button2.BackColor = Color.Red;
+            }
+            if((a & 1) == 0)
+            {
+                button2.BackColor = Color.Transparent;
+            }
+
+            if (((a & (1<<1))>>1) == 1)
+            {
+                button1.BackColor = Color.Red;
+            }
+            if (((a & (1 << 1)) >> 1) == 0)
+            {
+                button1.BackColor = Color.Transparent;
+            }
+
+            if (((a & (1 << 2)) >> 2) == 1)
+            {
+                button18.BackColor = Color.Red;
+            }
+            if (((a & (1 << 2)) >> 2) == 0)
+            {
+                button18.BackColor = Color.Transparent;
+            }
+
+            if (((a & (1 << 3)) >> 3) == 1)
+            {
+                button19.BackColor = Color.Red;
+            }
+            if (((a & (1 << 3)) >> 3) == 0)
+            {
+                button19.BackColor = Color.Transparent;
+            }
+
+            if (((a & (1 << 4)) >> 4) == 1)
+            {
+                button20.BackColor = Color.Red;
+            }
+            if (((a & (1 << 4)) >> 4) == 0)
+            {
+                button20.BackColor = Color.Transparent;
+            }
+
+            if (((a & (1 << 5)) >> 5) == 1)
+            {
+                button21.BackColor = Color.Red;
+            }
+            if (((a & (1 << 5)) >> 5) == 0)
+            {
+                button21.BackColor = Color.Transparent;
+            }
+
+            if (((a & (1 << 6)) >> 6) == 1)
+            {
+                button22.BackColor = Color.Red;
+            }
+            if (((a & (1 << 6)) >> 6) == 0)
+            {
+                button22.BackColor = Color.Transparent;
+            }
+
+            if (((a & (1 << 7)) >> 7) == 1)
+            {
+                button23.BackColor = Color.Red;
+            }
+            if (((a & (1 << 7)) >> 7) == 0)
+            {
+                button23.BackColor = Color.Transparent;
+            }
+
+
+            //******************************************
+            if ((b & 1) == 1)
+            {
+                button24.BackColor = Color.Red;
+            }
+            if ((b & 1) == 0)
+            {
+                button24.BackColor = Color.Transparent;
+            }
+
+            if (((b & (1 << 1)) >> 1) == 1)
+            {
+                button25.BackColor = Color.Red;
+            }
+            if (((b & (1 << 1)) >> 1) == 0)
+            {
+                button25.BackColor = Color.Transparent;
+            }
+
+            if (((b & (1 << 2)) >> 2) == 1)
+            {
+                button26.BackColor = Color.Red;
+            }
+            if (((b & (1 << 2)) >> 2) == 0)
+            {
+                button26.BackColor = Color.Transparent;
+            }
+
+            if (((b & (1 << 3)) >> 3) == 1)
+            {
+                button27.BackColor = Color.Red;
+            }
+            if (((b & (1 << 3)) >> 3) == 0)
+            {
+                button27.BackColor = Color.Transparent;
+            }
+
+            if (((b & (1 << 4)) >> 4) == 1)
+            {
+                button28.BackColor = Color.Red;
+            }
+            if (((b & (1 << 4)) >> 4) == 0)
+            {
+                button28.BackColor = Color.Transparent;
+            }
+
+            if (((b & (1 << 5)) >> 5) == 1)
+            {
+                button29.BackColor = Color.Red;
+            }
+            if (((b & (1 << 5)) >> 5) == 0)
+            {
+                button29.BackColor = Color.Transparent;
+            }
+
+            if (((b & (1 << 6)) >> 6) == 1)
+            {
+                button32.BackColor = Color.Red;
+            }
+            if (((b & (1 << 6)) >> 6) == 0)
+            {
+                button32.BackColor = Color.Transparent;
+            }
+
+            if (((b & (1 << 7)) >> 7) == 1)
+            {
+                button34.BackColor = Color.Red;
+            }
+            if (((b & (1 << 7)) >> 7) == 0)
+            {
+                button34.BackColor = Color.Transparent;
+            }
+
+            //**************************************
+            if ((c & 1) == 1)
+            {
+                button36.BackColor = Color.Red;
+            }
+            if ((c & 1) == 0)
+            {
+                button36.BackColor = Color.Transparent;
+            }
+
+            if (((c & (1 << 1)) >> 1) == 1)
+            {
+                button38.BackColor = Color.Red;
+            }
+            if (((c & (1 << 1)) >> 1) == 0)
+            {
+                button38.BackColor = Color.Transparent;
+            }
+
+            if (((c & (1 << 2)) >> 2) == 1)
+            {
+                button30.BackColor = Color.Red;
+            }
+            if (((c & (1 << 2)) >> 2) == 0)
+            {
+                button30.BackColor = Color.Transparent;
+            }
+
+            if (((c & (1 << 3)) >> 3) == 1)
+            {
+                button31.BackColor = Color.Red;
+            }
+            if (((c & (1 << 3)) >> 3) == 0)
+            {
+                button31.BackColor = Color.Transparent;
+            }
+
+            if (((c & (1 << 4)) >> 4) == 1)
+            {
+                button33.BackColor = Color.Red;
+            }
+            if (((c & (1 << 4)) >> 4) == 0)
+            {
+                button33.BackColor = Color.Transparent;
+            }
+
+            if (((c & (1 << 5)) >> 5) == 1)
+            {
+                button35.BackColor = Color.Red;
+            }
+            if (((c & (1 << 5)) >> 5) == 0)
+            {
+                button35.BackColor = Color.Transparent;
+            }
+
+            if (((c & (1 << 6)) >> 6) == 1)
+            {
+                button37.BackColor = Color.Red;
+            }
+            if (((c & (1 << 6)) >> 6) == 0)
+            {
+                button37.BackColor = Color.Transparent;
+            }
+
+            if (((c & (1 << 7)) >> 7) == 1)
+            {
+                button39.BackColor = Color.Red;
+            }
+            if (((c & (1 << 7)) >> 7) == 0)
+            {
+                button39.BackColor = Color.Transparent;
+            }
+
         }
 
         private void OUT_btn_Click(object sender, EventArgs e)
@@ -820,5 +1053,83 @@ namespace 码垛机
             }
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel24_Paint(object sender, PaintEventArgs e)
+        {
+                    }
+
+        private void panel21_Paint(object sender, PaintEventArgs e)
+        {
+                    }
+
+        private void panel18_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void panel23_Paint(object sender, PaintEventArgs e)
+        {
+
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel24_Paint_1(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label16_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label35_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel21_Paint_1(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label11_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panelOUT_Paint_1(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

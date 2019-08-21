@@ -70,7 +70,6 @@ namespace 码垛机
         public MainSettingForm msf = null;
         public static AlarmHistoryForm ahf = null;
         public static WorkingDetailForm wdf = null;
-        // public UserSettingForm usf = null;
         
         //标志位，用于只在工作界面才发送坐标请求指令
         public static bool xinlei = true;
@@ -441,6 +440,14 @@ namespace 码垛机
                     o_value = Convert.ToInt32(binary_data_1[15].ToString("X2"), 16);
                     wdf.SetCoordinate(x_value,z_value,y_value,o_value);
                     return;
+                }
+
+                if((binary_data_1[1] == 0x04) && (binary_data_1[2] == 0x0C))
+                {
+                    int group1 = Convert.ToInt32(Convert.ToString(binary_data_1[5], 16), 16);
+                    int group2 = Convert.ToInt32(Convert.ToString(binary_data_1[4], 16), 16);
+                    int group3 = Convert.ToInt32(Convert.ToString(binary_data_1[3], 16), 16);
+                    MainSettingForm.iof.getIOStatus(group1,group2,group3);
                 }
             }
         }

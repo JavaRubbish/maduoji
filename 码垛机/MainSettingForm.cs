@@ -32,7 +32,7 @@ namespace 码垛机
         public static UserSettingForm usf = null;
         public static RuanxianweiForm rxf = null;
         public HandSettingForm hsf = null;
-        public IOSettingForm iof = null;
+        public static IOSettingForm iof = null;
         public AboutUsForm auf = null;
 
         private void userset_btn_Click(object sender, EventArgs e)
