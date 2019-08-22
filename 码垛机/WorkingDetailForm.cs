@@ -83,7 +83,7 @@ namespace 码垛机
             HomeForm.xinlei = true;
             HomeForm.fight = true;
         }
-
+            
         private void pause_btn_Click(object sender, EventArgs e)
         {
             HomeForm.xinlei = false;

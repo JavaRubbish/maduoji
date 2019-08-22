@@ -31,10 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IOSettingForm));
             this.IN_btn = new System.Windows.Forms.Button();
             this.OUT_btn = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.label2 = new System.Windows.Forms.Label();
             this.panel5 = new System.Windows.Forms.Panel();
             this.label30 = new System.Windows.Forms.Label();
             this.button13 = new System.Windows.Forms.Button();
@@ -155,12 +151,6 @@
             this.panel18 = new System.Windows.Forms.Panel();
             this.label5 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
-            this.panel34 = new System.Windows.Forms.Panel();
-            this.label3 = new System.Windows.Forms.Label();
-            this.panel35 = new System.Windows.Forms.Panel();
-            this.label4 = new System.Windows.Forms.Label();
-            this.panel1.SuspendLayout();
-            this.panel2.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -202,8 +192,6 @@
             this.panel30.SuspendLayout();
             this.panel24.SuspendLayout();
             this.panel18.SuspendLayout();
-            this.panel34.SuspendLayout();
-            this.panel35.SuspendLayout();
             this.SuspendLayout();
             // 
             // IN_btn
@@ -229,45 +217,6 @@
             this.OUT_btn.Text = "输出点";
             this.OUT_btn.UseVisualStyleBackColor = false;
             this.OUT_btn.Click += new System.EventHandler(this.OUT_btn_Click);
-            // 
-            // panel1
-            // 
-            this.panel1.BackColor = System.Drawing.Color.Transparent;
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(76, 289);
-            this.panel1.TabIndex = 2;
-            // 
-            // label1
-            // 
-            this.label1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label1.Location = new System.Drawing.Point(20, 106);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(30, 84);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "单阀双路";
-            // 
-            // panel2
-            // 
-            this.panel2.BackColor = System.Drawing.Color.Transparent;
-            this.panel2.Controls.Add(this.label2);
-            this.panel2.Location = new System.Drawing.Point(0, 304);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(76, 138);
-            this.panel2.TabIndex = 3;
-            // 
-            // label2
-            // 
-            this.label2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label2.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label2.Location = new System.Drawing.Point(23, 27);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(30, 84);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "单阀单路";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // panel5
             // 
@@ -753,8 +702,6 @@
             this.panelOUT.Controls.Add(this.panel4);
             this.panelOUT.Controls.Add(this.panel3);
             this.panelOUT.Controls.Add(this.panel5);
-            this.panelOUT.Controls.Add(this.panel2);
-            this.panelOUT.Controls.Add(this.panel1);
             this.panelOUT.Location = new System.Drawing.Point(12, 141);
             this.panelOUT.Name = "panelOUT";
             this.panelOUT.Size = new System.Drawing.Size(1219, 443);
@@ -788,8 +735,6 @@
             this.panelIN.Controls.Add(this.panel30);
             this.panelIN.Controls.Add(this.panel24);
             this.panelIN.Controls.Add(this.panel18);
-            this.panelIN.Controls.Add(this.panel34);
-            this.panelIN.Controls.Add(this.panel35);
             this.panelIN.Location = new System.Drawing.Point(12, 141);
             this.panelIN.Name = "panelIN";
             this.panelIN.Size = new System.Drawing.Size(1219, 443);
@@ -831,7 +776,7 @@
             // 
             this.panel20.Controls.Add(this.label7);
             this.panel20.Controls.Add(this.button18);
-            this.panel20.Location = new System.Drawing.Point(473, 2);
+            this.panel20.Location = new System.Drawing.Point(406, 2);
             this.panel20.Name = "panel20";
             this.panel20.Size = new System.Drawing.Size(142, 96);
             this.panel20.TabIndex = 57;
@@ -1193,7 +1138,7 @@
             // 
             this.panel37.Controls.Add(this.label37);
             this.panel37.Controls.Add(this.button33);
-            this.panel37.Location = new System.Drawing.Point(473, 340);
+            this.panel37.Location = new System.Drawing.Point(405, 340);
             this.panel37.Name = "panel37";
             this.panel37.Size = new System.Drawing.Size(142, 96);
             this.panel37.TabIndex = 44;
@@ -1223,7 +1168,7 @@
             // 
             this.panel36.Controls.Add(this.label36);
             this.panel36.Controls.Add(this.button32);
-            this.panel36.Location = new System.Drawing.Point(473, 230);
+            this.panel36.Location = new System.Drawing.Point(406, 230);
             this.panel36.Name = "panel36";
             this.panel36.Size = new System.Drawing.Size(142, 96);
             this.panel36.TabIndex = 43;
@@ -1253,7 +1198,7 @@
             // 
             this.panel26.Controls.Add(this.label13);
             this.panel26.Controls.Add(this.button24);
-            this.panel26.Location = new System.Drawing.Point(473, 115);
+            this.panel26.Location = new System.Drawing.Point(406, 115);
             this.panel26.Name = "panel26";
             this.panel26.Size = new System.Drawing.Size(142, 96);
             this.panel26.TabIndex = 42;
@@ -1283,7 +1228,7 @@
             // 
             this.panel33.Controls.Add(this.label35);
             this.panel33.Controls.Add(this.button31);
-            this.panel33.Location = new System.Drawing.Point(279, 339);
+            this.panel33.Location = new System.Drawing.Point(221, 339);
             this.panel33.Name = "panel33";
             this.panel33.Size = new System.Drawing.Size(142, 96);
             this.panel33.TabIndex = 41;
@@ -1314,10 +1259,11 @@
             // 
             this.panel31.Controls.Add(this.label18);
             this.panel31.Controls.Add(this.button29);
-            this.panel31.Location = new System.Drawing.Point(279, 230);
+            this.panel31.Location = new System.Drawing.Point(220, 230);
             this.panel31.Name = "panel31";
             this.panel31.Size = new System.Drawing.Size(142, 96);
             this.panel31.TabIndex = 40;
+            this.panel31.Paint += new System.Windows.Forms.PaintEventHandler(this.panel31_Paint);
             // 
             // label18
             // 
@@ -1344,7 +1290,7 @@
             // 
             this.panel25.Controls.Add(this.label12);
             this.panel25.Controls.Add(this.button23);
-            this.panel25.Location = new System.Drawing.Point(279, 116);
+            this.panel25.Location = new System.Drawing.Point(221, 116);
             this.panel25.Name = "panel25";
             this.panel25.Size = new System.Drawing.Size(142, 96);
             this.panel25.TabIndex = 39;
@@ -1374,7 +1320,7 @@
             // 
             this.panel19.Controls.Add(this.label6);
             this.panel19.Controls.Add(this.button1);
-            this.panel19.Location = new System.Drawing.Point(279, 0);
+            this.panel19.Location = new System.Drawing.Point(219, 0);
             this.panel19.Name = "panel19";
             this.panel19.Size = new System.Drawing.Size(142, 96);
             this.panel19.TabIndex = 38;
@@ -1404,10 +1350,11 @@
             // 
             this.panel32.Controls.Add(this.label19);
             this.panel32.Controls.Add(this.button30);
-            this.panel32.Location = new System.Drawing.Point(88, 340);
+            this.panel32.Location = new System.Drawing.Point(24, 340);
             this.panel32.Name = "panel32";
             this.panel32.Size = new System.Drawing.Size(142, 96);
             this.panel32.TabIndex = 37;
+            this.panel32.Paint += new System.Windows.Forms.PaintEventHandler(this.panel32_Paint);
             // 
             // label19
             // 
@@ -1434,7 +1381,7 @@
             // 
             this.panel30.Controls.Add(this.label17);
             this.panel30.Controls.Add(this.button28);
-            this.panel30.Location = new System.Drawing.Point(88, 230);
+            this.panel30.Location = new System.Drawing.Point(23, 230);
             this.panel30.Name = "panel30";
             this.panel30.Size = new System.Drawing.Size(142, 96);
             this.panel30.TabIndex = 36;
@@ -1464,7 +1411,7 @@
             // 
             this.panel24.Controls.Add(this.label11);
             this.panel24.Controls.Add(this.button22);
-            this.panel24.Location = new System.Drawing.Point(88, 116);
+            this.panel24.Location = new System.Drawing.Point(24, 116);
             this.panel24.Name = "panel24";
             this.panel24.Size = new System.Drawing.Size(142, 96);
             this.panel24.TabIndex = 35;
@@ -1495,7 +1442,7 @@
             // 
             this.panel18.Controls.Add(this.label5);
             this.panel18.Controls.Add(this.button2);
-            this.panel18.Location = new System.Drawing.Point(88, 2);
+            this.panel18.Location = new System.Drawing.Point(24, 2);
             this.panel18.Name = "panel18";
             this.panel18.Size = new System.Drawing.Size(142, 96);
             this.panel18.TabIndex = 21;
@@ -1524,42 +1471,6 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // panel34
-            // 
-            this.panel34.Controls.Add(this.label3);
-            this.panel34.Location = new System.Drawing.Point(0, 304);
-            this.panel34.Name = "panel34";
-            this.panel34.Size = new System.Drawing.Size(76, 138);
-            this.panel34.TabIndex = 3;
-            // 
-            // label3
-            // 
-            this.label3.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label3.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label3.Location = new System.Drawing.Point(23, 27);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(30, 84);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "单阀单路";
-            // 
-            // panel35
-            // 
-            this.panel35.Controls.Add(this.label4);
-            this.panel35.Location = new System.Drawing.Point(0, 0);
-            this.panel35.Name = "panel35";
-            this.panel35.Size = new System.Drawing.Size(76, 289);
-            this.panel35.TabIndex = 2;
-            // 
-            // label4
-            // 
-            this.label4.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label4.Location = new System.Drawing.Point(20, 106);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(30, 84);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "单阀双路";
-            // 
             // IOSettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -1571,14 +1482,12 @@
             this.Controls.Add(this.ret_btn1);
             this.Controls.Add(this.OUT_btn);
             this.Controls.Add(this.IN_btn);
-            this.Controls.Add(this.panelIN);
             this.Controls.Add(this.panelOUT);
+            this.Controls.Add(this.panelIN);
             this.Name = "IOSettingForm";
             this.Text = "IO调试";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.IOSettingForm_FormClosing);
             this.Load += new System.EventHandler(this.IOSettingForm_Load);
-            this.panel1.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();
             this.panel3.ResumeLayout(false);
@@ -1659,8 +1568,6 @@
             this.panel24.PerformLayout();
             this.panel18.ResumeLayout(false);
             this.panel18.PerformLayout();
-            this.panel34.ResumeLayout(false);
-            this.panel35.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1669,8 +1576,6 @@
 
         private System.Windows.Forms.Button IN_btn;
         private System.Windows.Forms.Button OUT_btn;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel4;
@@ -1701,15 +1606,9 @@
         private System.Windows.Forms.Button button15;
         private System.Windows.Forms.Button button16;
         private System.Windows.Forms.Button button17;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button ret_btn1;
         private System.Windows.Forms.Panel panelOUT;
         private System.Windows.Forms.Panel panelIN;
-        private System.Windows.Forms.Panel panel34;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Panel panel35;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label30;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label label25;

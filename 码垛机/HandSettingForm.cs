@@ -595,10 +595,10 @@ namespace 码垛机
             BF.sendbuf[2] = 0x0A;
             BF.sendbuf[3] = 0x02;
             BF.sendbuf[4] = 0x01;
-            BF.sendbuf[5] = iByte1[0];
-            BF.sendbuf[6] = iByte1[1];
-            BF.sendbuf[7] = iByte1[2];
-            BF.sendbuf[8] = iByte1[3];
+            BF.sendbuf[5] = iByte1[3];
+            BF.sendbuf[6] = iByte1[2];
+            BF.sendbuf[7] = iByte1[1];
+            BF.sendbuf[8] = iByte1[0];
             BF.sendbuf[9] = 0xF5;
             SendMenuCommand(BF.sendbuf, 10);
 
@@ -825,10 +825,10 @@ namespace 码垛机
             BF.sendbuf[2] = 0x0A;
             BF.sendbuf[3] = 0x02;
             BF.sendbuf[4] = 0x03;
-            BF.sendbuf[5] = iByte6[0];
-            BF.sendbuf[6] = iByte6[1];
-            BF.sendbuf[7] = iByte6[2];
-            BF.sendbuf[8] = iByte6[3];
+            BF.sendbuf[5] = iByte6[3];
+            BF.sendbuf[6] = iByte6[2];
+            BF.sendbuf[7] = iByte6[1];
+            BF.sendbuf[8] = iByte6[0];
             BF.sendbuf[9] = 0xF5;
             SendMenuCommand(BF.sendbuf, 10);
 
@@ -848,10 +848,10 @@ namespace 码垛机
             BF.sendbuf[2] = 0x0A;
             BF.sendbuf[3] = 0x02;
             BF.sendbuf[4] = 0x04;
-            BF.sendbuf[5] = iByte14[0];
-            BF.sendbuf[6] = iByte14[1];
-            BF.sendbuf[7] = iByte14[2];
-            BF.sendbuf[8] = iByte14[3];
+            BF.sendbuf[5] = iByte14[3];
+            BF.sendbuf[6] = iByte14[2];
+            BF.sendbuf[7] = iByte14[1];
+            BF.sendbuf[8] = iByte14[0];
             BF.sendbuf[9] = 0xF5;
             SendMenuCommand(BF.sendbuf, 10);
         }
@@ -870,10 +870,10 @@ namespace 码垛机
             BF.sendbuf[2] = 0x0A;
             BF.sendbuf[3] = 0x02;
             BF.sendbuf[4] = 0x02;
-            BF.sendbuf[5] = iByte10[0];
-            BF.sendbuf[6] = iByte10[1];
-            BF.sendbuf[7] = iByte10[2];
-            BF.sendbuf[8] = iByte10[3];
+            BF.sendbuf[5] = iByte10[3];
+            BF.sendbuf[6] = iByte10[2];
+            BF.sendbuf[7] = iByte10[1];
+            BF.sendbuf[8] = iByte10[0];
             BF.sendbuf[9] = 0xF5;
             SendMenuCommand(BF.sendbuf, 10);
         }
@@ -901,11 +901,12 @@ namespace 码垛机
         private void button1_Click(object sender, EventArgs e)
         {
             BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x02;
-            BF.sendbuf[2] = 0x01;
-            BF.sendbuf[3] = 0x03;
-            BF.sendbuf[4] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 5);
+            BF.sendbuf[1] = 0x03;
+            BF.sendbuf[2] = 0x0A;
+            BF.sendbuf[3] = 0x05;
+            BF.sendbuf[4] = 0x03;
+            BF.sendbuf[5] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 6);
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -921,41 +922,45 @@ namespace 码垛机
         private void button3_Click(object sender, EventArgs e)
         {
             BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x02;
-            BF.sendbuf[2] = 0x01;
-            BF.sendbuf[3] = 0x03;
-            BF.sendbuf[4] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 5);
+            BF.sendbuf[1] = 0x03;
+            BF.sendbuf[2] = 0x0A;
+            BF.sendbuf[3] = 0x05;
+            BF.sendbuf[4] = 0x04;
+            BF.sendbuf[5] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 6);
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
             BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x02;
-            BF.sendbuf[2] = 0x01;
-            BF.sendbuf[3] = 0x03;
-            BF.sendbuf[4] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 5);
+            BF.sendbuf[1] = 0x03;
+            BF.sendbuf[2] = 0x0A;
+            BF.sendbuf[3] = 0x05;
+            BF.sendbuf[4] = 0x04;
+            BF.sendbuf[5] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 6);
         }
 
         private void button45_Click(object sender, EventArgs e)
         {
             BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x02;
-            BF.sendbuf[2] = 0x01;
-            BF.sendbuf[3] = 0x03;
-            BF.sendbuf[4] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 5);
+            BF.sendbuf[1] = 0x03;
+            BF.sendbuf[2] = 0x0A;
+            BF.sendbuf[3] = 0x05;
+            BF.sendbuf[4] = 0x03;
+            BF.sendbuf[5] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 6);
         }
 
         private void button46_Click(object sender, EventArgs e)
         {
             BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x02;
-            BF.sendbuf[2] = 0x01;
-            BF.sendbuf[3] = 0x04;
-            BF.sendbuf[4] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 5);
+            BF.sendbuf[1] = 0x03;
+            BF.sendbuf[2] = 0x0A;
+            BF.sendbuf[3] = 0x05;
+            BF.sendbuf[4] = 0x04;
+            BF.sendbuf[5] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 6);
         }
 
         private void button47_Click(object sender, EventArgs e)
@@ -972,11 +977,12 @@ namespace 码垛机
         private void button48_Click(object sender, EventArgs e)
         {
             BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x02;
-            BF.sendbuf[2] = 0x01;
-            BF.sendbuf[3] = 0x04;
-            BF.sendbuf[4] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 5);
+            BF.sendbuf[1] = 0x03;
+            BF.sendbuf[2] = 0x0A;
+            BF.sendbuf[3] = 0x05;
+            BF.sendbuf[4] = 0x04;
+            BF.sendbuf[5] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 6);
         }
     }
 }

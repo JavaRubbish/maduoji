@@ -26,6 +26,7 @@ namespace 码垛机
         public HomeForm()
         {
             InitializeComponent();
+
             StartThread();
             searchAlarmInfo();
             initialIOSetting();
@@ -52,17 +53,21 @@ namespace 码垛机
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //默认使用端口一，波特率9600
-            initCommPara(sp,"COM3", 9600);
-            initCommPara(sp2, "COM5", 9600);
-
-
             //初始化加载工作界面
             work_btn.BackColor = Color.FromArgb(65, 105, 225);
             wdf = new WorkingDetailForm();
             wdf.TopLevel = false;
             panel1.Controls.Add(wdf);
             wdf.Show();
+
+            ahf = new AlarmHistoryForm();
+            ahf.TopLevel = false;
+            panel1.Controls.Add(ahf);
+
+            //默认使用端口一，波特率9600
+            initCommPara(sp,"COM3", 9600);
+            initCommPara(sp2, "COM5", 9600);
+
         }
         /// <summary>
         /// 解决重复打开子窗口问题
@@ -165,7 +170,9 @@ namespace 码垛机
         /// <param name="e"></param>
         private void alarmhistory_btn_Click(object sender, EventArgs e)
         {
-            this.Text = "报警历史";         
+            this.Text = "报警历史";
+
+            ahf.Show();
 
             work_btn.BackColor = Color.FromArgb(220, 220, 220);
             historydata_btn.BackColor = Color.FromArgb(220, 220, 220);
@@ -186,18 +193,18 @@ namespace 码垛机
                 xinlei = false;
             }
 
-            if (ahf == null || ahf.IsDisposed)
-            {
+            //if (ahf == null || ahf.IsDisposed)
+            //{
 
-                ahf = new AlarmHistoryForm();
-                ahf.TopLevel = false;
-                panel1.Controls.Add(ahf);
-                ahf.Show();
-            }
-            else
-            {
+            //    ahf = new AlarmHistoryForm();
+            //    ahf.TopLevel = false;
+            //    panel1.Controls.Add(ahf);
+            //    ahf.Show();
+            //}
+            //else
+            //{
 
-            }
+            //}
         }
         /// <summary>
         /// 工作界面
@@ -255,7 +262,7 @@ namespace 码垛机
             {
                     if (!sp.IsOpen)
                     {
-                        initCommPara(sp,"COM3",9600);
+                    initCommPara(sp,"COM3",9600);
                     }
                     sp.Write(command, 0, len);               
             }
@@ -263,7 +270,6 @@ namespace 码垛机
             {
                 MessageBox.Show("串口无法打开");
             }
-
         }
 
         /// <summary>
@@ -304,15 +310,16 @@ namespace 码垛机
             while (xinlei)
             {
                 //每隔1s请求一次坐标
-                fight = false;
+               // fight = false;
                 Thread.Sleep(1051);
                 BF.sendbuf[0] = 0xFA;
-                BF.sendbuf[1] = 0x01;
-                BF.sendbuf[2] = 0xEE;
-                BF.sendbuf[3] = 0xF5;
-                SendMenuCommand(BF.sendbuf, 4);
-                fight = true;
-                searchAlarmInfo();
+                BF.sendbuf[1] = 0x02;
+                BF.sendbuf[2] = 0x0E;
+                BF.sendbuf[3] = 0x03;
+                BF.sendbuf[4] = 0xF5;
+                SendMenuCommand(BF.sendbuf, 5);
+                //fight = true;
+               // searchAlarmInfo();
             }
         }
 
@@ -327,7 +334,7 @@ namespace 码垛机
         {
             while (fight)
             {
-                xinlei = false;
+               // xinlei = false;
                 //发送指令查看报警历史
                 Thread.Sleep(1101);
                 BF.sendbuf[0] = 0xFA;
@@ -337,7 +344,7 @@ namespace 码垛机
                 BF.sendbuf[4] = 0xF5;
                 SendMenuCommand(BF.sendbuf, 5);
                 xinlei = true;
-                StartThread();
+                //StartThread();
             }
         }
 
@@ -401,14 +408,14 @@ namespace 码垛机
                     {
                         desc = "软限位故障"; 
                     }
-                    //if(!ahf.IsDisposed)
-                    //{
-                    //    ahf.AddAlarmDataListViewItem(data2, desc);
-                    //}
-                    //else
-                    //{
-                    //    ahf.AddAlarmDataListViewItem2(data2, desc);
-                    //}
+                    if(!ahf.IsDisposed)
+                    {
+                        ahf.AddAlarmDataListViewItem(data2, desc);
+                    }
+                    else
+                    {
+                        ahf.AddAlarmDataListViewItem2(data2, desc);
+                    }
                    return;
                 }
 

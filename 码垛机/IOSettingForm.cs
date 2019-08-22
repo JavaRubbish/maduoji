@@ -9,11 +9,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using static 码垛机.HomeForm;
+using System.Threading;
 
 namespace 码垛机
 {
     public partial class IOSettingForm : Form
     {
+        //设置标志位，轮询判断IO输入灯的状态信息
+        public static bool ioflag = true;
         public IOSettingForm()
         {
             InitializeComponent();
@@ -77,7 +80,7 @@ namespace 码垛机
         private void ret_btn1_Click(object sender, EventArgs e)
         {
             saveStatus();
-
+            ioflag = false;
             this.Close();
             this.DialogResult = DialogResult.OK;
         }
@@ -390,234 +393,245 @@ namespace 码垛机
             panelIN.Visible = true;
             panelOUT.Visible = false;
 
-            BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x02;
-            BF.sendbuf[2] = 0x0C;
-            BF.sendbuf[3] = 0x02;
-            BF.sendbuf[4] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 5);
+            Thread thread = new Thread(new ThreadStart(sendInputRequest));
+            thread.IsBackground = true;
+            thread.Start();
+
+        }
+        public static void sendInputRequest()
+        {
+            while (ioflag)
+            {
+                Thread.Sleep(1000);
+                BF.sendbuf[0] = 0xFA;
+                BF.sendbuf[1] = 0x02;
+                BF.sendbuf[2] = 0x0C;
+                BF.sendbuf[3] = 0x02;
+                BF.sendbuf[4] = 0xF5;
+                SendMenuCommand(BF.sendbuf, 5);
+            }
+           
         }
 
         public void getIOStatus(int a,int b,int c)
         {
-            if ((a & 1) == 1) {
-                button2.BackColor = Color.Red;
-            }
-            if((a & 1) == 0)
-            {
-                button2.BackColor = Color.Transparent;
-            }
+                if ((a & 1) == 1) {
+                    button2.BackColor = Color.Red;
+                }
+                if ((a & 1) == 0)
+                {
+                    button2.BackColor = Color.Transparent;
+                }
 
-            if (((a & (1<<1))>>1) == 1)
-            {
-                button1.BackColor = Color.Red;
-            }
-            if (((a & (1 << 1)) >> 1) == 0)
-            {
-                button1.BackColor = Color.Transparent;
-            }
+                if (((a & (1 << 1)) >> 1) == 1)
+                {
+                    button1.BackColor = Color.Red;
+                }
+                if (((a & (1 << 1)) >> 1) == 0)
+                {
+                    button1.BackColor = Color.Transparent;
+                }
 
-            if (((a & (1 << 2)) >> 2) == 1)
-            {
-                button18.BackColor = Color.Red;
-            }
-            if (((a & (1 << 2)) >> 2) == 0)
-            {
-                button18.BackColor = Color.Transparent;
-            }
+                if (((a & (1 << 2)) >> 2) == 1)
+                {
+                    button18.BackColor = Color.Red;
+                }
+                if (((a & (1 << 2)) >> 2) == 0)
+                {
+                    button18.BackColor = Color.Transparent;
+                }
 
-            if (((a & (1 << 3)) >> 3) == 1)
-            {
-                button19.BackColor = Color.Red;
-            }
-            if (((a & (1 << 3)) >> 3) == 0)
-            {
-                button19.BackColor = Color.Transparent;
-            }
+                if (((a & (1 << 3)) >> 3) == 1)
+                {
+                    button19.BackColor = Color.Red;
+                }
+                if (((a & (1 << 3)) >> 3) == 0)
+                {
+                    button19.BackColor = Color.Transparent;
+                }
 
-            if (((a & (1 << 4)) >> 4) == 1)
-            {
-                button20.BackColor = Color.Red;
-            }
-            if (((a & (1 << 4)) >> 4) == 0)
-            {
-                button20.BackColor = Color.Transparent;
-            }
+                if (((a & (1 << 4)) >> 4) == 1)
+                {
+                    button20.BackColor = Color.Red;
+                }
+                if (((a & (1 << 4)) >> 4) == 0)
+                {
+                    button20.BackColor = Color.Transparent;
+                }
 
-            if (((a & (1 << 5)) >> 5) == 1)
-            {
-                button21.BackColor = Color.Red;
-            }
-            if (((a & (1 << 5)) >> 5) == 0)
-            {
-                button21.BackColor = Color.Transparent;
-            }
+                if (((a & (1 << 5)) >> 5) == 1)
+                {
+                    button21.BackColor = Color.Red;
+                }
+                if (((a & (1 << 5)) >> 5) == 0)
+                {
+                    button21.BackColor = Color.Transparent;
+                }
 
-            if (((a & (1 << 6)) >> 6) == 1)
-            {
-                button22.BackColor = Color.Red;
-            }
-            if (((a & (1 << 6)) >> 6) == 0)
-            {
-                button22.BackColor = Color.Transparent;
-            }
+                if (((a & (1 << 6)) >> 6) == 1)
+                {
+                    button22.BackColor = Color.Red;
+                }
+                if (((a & (1 << 6)) >> 6) == 0)
+                {
+                    button22.BackColor = Color.Transparent;
+                }
 
-            if (((a & (1 << 7)) >> 7) == 1)
-            {
-                button23.BackColor = Color.Red;
-            }
-            if (((a & (1 << 7)) >> 7) == 0)
-            {
-                button23.BackColor = Color.Transparent;
-            }
+                if (((a & (1 << 7)) >> 7) == 1)
+                {
+                    button23.BackColor = Color.Red;
+                }
+                if (((a & (1 << 7)) >> 7) == 0)
+                {
+                    button23.BackColor = Color.Transparent;
+                }
 
 
-            //******************************************
-            if ((b & 1) == 1)
-            {
-                button24.BackColor = Color.Red;
-            }
-            if ((b & 1) == 0)
-            {
-                button24.BackColor = Color.Transparent;
-            }
+                //******************************************
+                if ((b & 1) == 1)
+                {
+                    button24.BackColor = Color.Red;
+                }
+                if ((b & 1) == 0)
+                {
+                    button24.BackColor = Color.Transparent;
+                }
 
-            if (((b & (1 << 1)) >> 1) == 1)
-            {
-                button25.BackColor = Color.Red;
-            }
-            if (((b & (1 << 1)) >> 1) == 0)
-            {
-                button25.BackColor = Color.Transparent;
-            }
+                if (((b & (1 << 1)) >> 1) == 1)
+                {
+                    button25.BackColor = Color.Red;
+                }
+                if (((b & (1 << 1)) >> 1) == 0)
+                {
+                    button25.BackColor = Color.Transparent;
+                }
 
-            if (((b & (1 << 2)) >> 2) == 1)
-            {
-                button26.BackColor = Color.Red;
-            }
-            if (((b & (1 << 2)) >> 2) == 0)
-            {
-                button26.BackColor = Color.Transparent;
-            }
+                if (((b & (1 << 2)) >> 2) == 1)
+                {
+                    button26.BackColor = Color.Red;
+                }
+                if (((b & (1 << 2)) >> 2) == 0)
+                {
+                    button26.BackColor = Color.Transparent;
+                }
 
-            if (((b & (1 << 3)) >> 3) == 1)
-            {
-                button27.BackColor = Color.Red;
-            }
-            if (((b & (1 << 3)) >> 3) == 0)
-            {
-                button27.BackColor = Color.Transparent;
-            }
+                if (((b & (1 << 3)) >> 3) == 1)
+                {
+                    button27.BackColor = Color.Red;
+                }
+                if (((b & (1 << 3)) >> 3) == 0)
+                {
+                    button27.BackColor = Color.Transparent;
+                }
 
-            if (((b & (1 << 4)) >> 4) == 1)
-            {
-                button28.BackColor = Color.Red;
-            }
-            if (((b & (1 << 4)) >> 4) == 0)
-            {
-                button28.BackColor = Color.Transparent;
-            }
+                if (((b & (1 << 4)) >> 4) == 1)
+                {
+                    button28.BackColor = Color.Red;
+                }
+                if (((b & (1 << 4)) >> 4) == 0)
+                {
+                    button28.BackColor = Color.Transparent;
+                }
 
-            if (((b & (1 << 5)) >> 5) == 1)
-            {
-                button29.BackColor = Color.Red;
-            }
-            if (((b & (1 << 5)) >> 5) == 0)
-            {
-                button29.BackColor = Color.Transparent;
-            }
+                if (((b & (1 << 5)) >> 5) == 1)
+                {
+                    button29.BackColor = Color.Red;
+                }
+                if (((b & (1 << 5)) >> 5) == 0)
+                {
+                    button29.BackColor = Color.Transparent;
+                }
 
-            if (((b & (1 << 6)) >> 6) == 1)
-            {
-                button32.BackColor = Color.Red;
-            }
-            if (((b & (1 << 6)) >> 6) == 0)
-            {
-                button32.BackColor = Color.Transparent;
-            }
+                if (((b & (1 << 6)) >> 6) == 1)
+                {
+                    button32.BackColor = Color.Red;
+                }
+                if (((b & (1 << 6)) >> 6) == 0)
+                {
+                    button32.BackColor = Color.Transparent;
+                }
 
-            if (((b & (1 << 7)) >> 7) == 1)
-            {
-                button34.BackColor = Color.Red;
-            }
-            if (((b & (1 << 7)) >> 7) == 0)
-            {
-                button34.BackColor = Color.Transparent;
-            }
+                if (((b & (1 << 7)) >> 7) == 1)
+                {
+                    button34.BackColor = Color.Red;
+                }
+                if (((b & (1 << 7)) >> 7) == 0)
+                {
+                    button34.BackColor = Color.Transparent;
+                }
 
-            //**************************************
-            if ((c & 1) == 1)
-            {
-                button36.BackColor = Color.Red;
-            }
-            if ((c & 1) == 0)
-            {
-                button36.BackColor = Color.Transparent;
-            }
+                //**************************************
+                if ((c & 1) == 1)
+                {
+                    button36.BackColor = Color.Red;
+                }
+                if ((c & 1) == 0)
+                {
+                    button36.BackColor = Color.Transparent;
+                }
 
-            if (((c & (1 << 1)) >> 1) == 1)
-            {
-                button38.BackColor = Color.Red;
-            }
-            if (((c & (1 << 1)) >> 1) == 0)
-            {
-                button38.BackColor = Color.Transparent;
-            }
+                if (((c & (1 << 1)) >> 1) == 1)
+                {
+                    button38.BackColor = Color.Red;
+                }
+                if (((c & (1 << 1)) >> 1) == 0)
+                {
+                    button38.BackColor = Color.Transparent;
+                }
 
-            if (((c & (1 << 2)) >> 2) == 1)
-            {
-                button30.BackColor = Color.Red;
-            }
-            if (((c & (1 << 2)) >> 2) == 0)
-            {
-                button30.BackColor = Color.Transparent;
-            }
+                if (((c & (1 << 2)) >> 2) == 1)
+                {
+                    button30.BackColor = Color.Red;
+                }
+                if (((c & (1 << 2)) >> 2) == 0)
+                {
+                    button30.BackColor = Color.Transparent;
+                }
 
-            if (((c & (1 << 3)) >> 3) == 1)
-            {
-                button31.BackColor = Color.Red;
-            }
-            if (((c & (1 << 3)) >> 3) == 0)
-            {
-                button31.BackColor = Color.Transparent;
-            }
+                if (((c & (1 << 3)) >> 3) == 1)
+                {
+                    button31.BackColor = Color.Red;
+                }
+                if (((c & (1 << 3)) >> 3) == 0)
+                {
+                    button31.BackColor = Color.Transparent;
+                }
 
-            if (((c & (1 << 4)) >> 4) == 1)
-            {
-                button33.BackColor = Color.Red;
-            }
-            if (((c & (1 << 4)) >> 4) == 0)
-            {
-                button33.BackColor = Color.Transparent;
-            }
+                if (((c & (1 << 4)) >> 4) == 1)
+                {
+                    button33.BackColor = Color.Red;
+                }
+                if (((c & (1 << 4)) >> 4) == 0)
+                {
+                    button33.BackColor = Color.Transparent;
+                }
 
-            if (((c & (1 << 5)) >> 5) == 1)
-            {
-                button35.BackColor = Color.Red;
-            }
-            if (((c & (1 << 5)) >> 5) == 0)
-            {
-                button35.BackColor = Color.Transparent;
-            }
+                if (((c & (1 << 5)) >> 5) == 1)
+                {
+                    button35.BackColor = Color.Red;
+                }
+                if (((c & (1 << 5)) >> 5) == 0)
+                {
+                    button35.BackColor = Color.Transparent;
+                }
 
-            if (((c & (1 << 6)) >> 6) == 1)
-            {
-                button37.BackColor = Color.Red;
-            }
-            if (((c & (1 << 6)) >> 6) == 0)
-            {
-                button37.BackColor = Color.Transparent;
-            }
+                if (((c & (1 << 6)) >> 6) == 1)
+                {
+                    button37.BackColor = Color.Red;
+                }
+                if (((c & (1 << 6)) >> 6) == 0)
+                {
+                    button37.BackColor = Color.Transparent;
+                }
 
-            if (((c & (1 << 7)) >> 7) == 1)
-            {
-                button39.BackColor = Color.Red;
-            }
-            if (((c & (1 << 7)) >> 7) == 0)
-            {
-                button39.BackColor = Color.Transparent;
-            }
-
+                if (((c & (1 << 7)) >> 7) == 1)
+                {
+                    button39.BackColor = Color.Red;
+                }
+                if (((c & (1 << 7)) >> 7) == 0)
+                {
+                    button39.BackColor = Color.Transparent;
+                }
         }
 
         private void OUT_btn_Click(object sender, EventArgs e)
@@ -1128,6 +1142,16 @@ namespace 码垛机
         }
 
         private void panelOUT_Paint_1(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void panel32_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void panel31_Paint(object sender, PaintEventArgs e)
         {
 
         }
