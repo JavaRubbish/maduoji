@@ -400,7 +400,7 @@
             // 
             this.label19.AutoSize = true;
             this.label19.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label19.Location = new System.Drawing.Point(155, 148);
+            this.label19.Location = new System.Drawing.Point(155, 110);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(23, 25);
             this.label19.TabIndex = 8;
@@ -410,7 +410,7 @@
             // 
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label18.Location = new System.Drawing.Point(155, 109);
+            this.label18.Location = new System.Drawing.Point(154, 149);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(23, 25);
             this.label18.TabIndex = 7;
@@ -431,7 +431,7 @@
             // 
             this.label16.AutoSize = true;
             this.label16.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label16.Location = new System.Drawing.Point(63, 148);
+            this.label16.Location = new System.Drawing.Point(63, 109);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(42, 25);
             this.label16.TabIndex = 5;
@@ -441,7 +441,7 @@
             // 
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label15.Location = new System.Drawing.Point(63, 108);
+            this.label15.Location = new System.Drawing.Point(62, 148);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(43, 25);
             this.label15.TabIndex = 4;
@@ -540,9 +540,9 @@
             this.label22.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label22.Location = new System.Drawing.Point(188, 17);
             this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(56, 25);
+            this.label22.Size = new System.Drawing.Size(23, 25);
             this.label22.TabIndex = 4;
-            this.label22.Text = "6666";
+            this.label22.Text = "0";
             // 
             // label21
             // 

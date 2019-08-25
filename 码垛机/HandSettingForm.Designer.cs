@@ -557,22 +557,28 @@
             // button9
             // 
             this.button9.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button9.Location = new System.Drawing.Point(515, 29);
+            this.button9.Image = ((System.Drawing.Image)(resources.GetObject("button9.Image")));
+            this.button9.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button9.Location = new System.Drawing.Point(507, 29);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(123, 61);
+            this.button9.Size = new System.Drawing.Size(136, 61);
             this.button9.TabIndex = 8;
             this.button9.Text = "坐标矫正";
+            this.button9.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // button16
             // 
             this.button16.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button16.Location = new System.Drawing.Point(242, 29);
+            this.button16.Image = ((System.Drawing.Image)(resources.GetObject("button16.Image")));
+            this.button16.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button16.Location = new System.Drawing.Point(234, 29);
             this.button16.Name = "button16";
-            this.button16.Size = new System.Drawing.Size(123, 61);
+            this.button16.Size = new System.Drawing.Size(136, 61);
             this.button16.TabIndex = 7;
             this.button16.Text = "回零";
+            this.button16.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.button16.UseVisualStyleBackColor = true;
             this.button16.Click += new System.EventHandler(this.button16_Click);
             // 
@@ -831,10 +837,10 @@
             // 
             // panelY
             // 
-            this.panelY.Controls.Add(this.panel10);
             this.panelY.Controls.Add(this.panel11);
             this.panelY.Controls.Add(this.panel12);
             this.panelY.Controls.Add(this.panel13);
+            this.panelY.Controls.Add(this.panel10);
             this.panelY.Location = new System.Drawing.Point(14, 141);
             this.panelY.Name = "panelY";
             this.panelY.Size = new System.Drawing.Size(1217, 439);
@@ -853,22 +859,28 @@
             // button25
             // 
             this.button25.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button25.Location = new System.Drawing.Point(515, 29);
+            this.button25.Image = ((System.Drawing.Image)(resources.GetObject("button25.Image")));
+            this.button25.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button25.Location = new System.Drawing.Point(507, 29);
             this.button25.Name = "button25";
-            this.button25.Size = new System.Drawing.Size(123, 61);
+            this.button25.Size = new System.Drawing.Size(136, 61);
             this.button25.TabIndex = 8;
             this.button25.Text = "坐标矫正";
+            this.button25.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.button25.UseVisualStyleBackColor = true;
             this.button25.Click += new System.EventHandler(this.button25_Click);
             // 
             // button26
             // 
             this.button26.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button26.Location = new System.Drawing.Point(242, 29);
+            this.button26.Image = ((System.Drawing.Image)(resources.GetObject("button26.Image")));
+            this.button26.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button26.Location = new System.Drawing.Point(234, 29);
             this.button26.Name = "button26";
-            this.button26.Size = new System.Drawing.Size(123, 61);
+            this.button26.Size = new System.Drawing.Size(136, 61);
             this.button26.TabIndex = 7;
             this.button26.Text = "回零";
+            this.button26.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.button26.UseVisualStyleBackColor = true;
             this.button26.Click += new System.EventHandler(this.button26_Click);
             // 
@@ -1149,22 +1161,28 @@
             // button35
             // 
             this.button35.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button35.Location = new System.Drawing.Point(515, 29);
+            this.button35.Image = ((System.Drawing.Image)(resources.GetObject("button35.Image")));
+            this.button35.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button35.Location = new System.Drawing.Point(507, 29);
             this.button35.Name = "button35";
-            this.button35.Size = new System.Drawing.Size(123, 61);
+            this.button35.Size = new System.Drawing.Size(136, 61);
             this.button35.TabIndex = 8;
             this.button35.Text = "坐标矫正";
+            this.button35.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.button35.UseVisualStyleBackColor = true;
             this.button35.Click += new System.EventHandler(this.button35_Click);
             // 
             // button36
             // 
             this.button36.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button36.Location = new System.Drawing.Point(242, 29);
+            this.button36.Image = ((System.Drawing.Image)(resources.GetObject("button36.Image")));
+            this.button36.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button36.Location = new System.Drawing.Point(234, 29);
             this.button36.Name = "button36";
-            this.button36.Size = new System.Drawing.Size(123, 61);
+            this.button36.Size = new System.Drawing.Size(136, 61);
             this.button36.TabIndex = 7;
             this.button36.Text = "回零";
+            this.button36.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.button36.UseVisualStyleBackColor = true;
             this.button36.Click += new System.EventHandler(this.button36_Click);
             // 

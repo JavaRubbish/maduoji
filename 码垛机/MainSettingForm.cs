@@ -16,6 +16,7 @@ namespace 码垛机
         public MainSettingForm()
         {
             InitializeComponent();
+            HomeForm.xinlei = false;
             if(INIhelp.GetValue("当前用户") != "管理员权限")
             {
                 flag = true;
@@ -31,7 +32,7 @@ namespace 码垛机
         /// </summary>
         public static UserSettingForm usf = null;
         public static RuanxianweiForm rxf = null;
-        public HandSettingForm hsf = null;
+        public static HandSettingForm hsf = null;
         public static IOSettingForm iof = null;
         public AboutUsForm auf = null;
 

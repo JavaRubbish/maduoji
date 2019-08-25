@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static 码垛机.HomeForm;
@@ -13,6 +14,7 @@ namespace 码垛机
 {
     public partial class HandSettingForm : Form
     {
+        public static bool huilingflag = true;
         public HandSettingForm()
         {
             InitializeComponent();
@@ -25,8 +27,20 @@ namespace 码垛机
             textBox11.Text = INIhelp.GetValue("Y轴寸动步进");
             textBox16.Text = INIhelp.GetValue("O轴连动速度");
             textBox15.Text = INIhelp.GetValue("O轴寸动步进");
+
+            HomeForm.xinlei = true;
+            HomeForm.StartThread();
         }
 
+        public void getXYZOCoordinate(int a,int b,int c,int d)
+        {
+            CheckForIllegalCrossThreadCalls = false;
+            textBox1.Text = a.ToString();    
+            textBox10.Text = b.ToString();
+            textBox6.Text = c.ToString();
+            textBox14.Text = d.ToString();
+
+        }
 
         private void panel3_Paint(object sender, PaintEventArgs e)
         {
@@ -57,6 +71,17 @@ namespace 码垛机
             textBox1.Text = "0";
             textBox2.Text = "0";
 
+            //是否已经回原点查询
+            while (huilingflag)
+            {             
+                BF.sendbuf[0] = 0xFA;
+                BF.sendbuf[1] = 0x02;
+                BF.sendbuf[2] = 0x0E;
+                BF.sendbuf[3] = 0x04;
+                BF.sendbuf[4] = 0xF5;
+                SendMenuCommand(BF.sendbuf, 5);
+                Thread.Sleep(1000);                
+            }
         }
 
         private void ret_btn4_Click(object sender, EventArgs e)
@@ -70,6 +95,7 @@ namespace 码垛机
             INIhelp.SetValue("O轴连动速度",textBox16.Text);
             INIhelp.SetValue("O轴寸动步进",textBox15.Text);
 
+            HomeForm.xinlei = false;
             this.Close();
             this.DialogResult = DialogResult.OK;
         }
@@ -143,6 +169,18 @@ namespace 码垛机
             SendMenuCommand(BF.sendbuf, 6);
             textBox13.Text = "0";
             textBox14.Text = "0";
+
+            //是否已经回原点查询
+            while (huilingflag)
+            {
+                BF.sendbuf[0] = 0xFA;
+                BF.sendbuf[1] = 0x02;
+                BF.sendbuf[2] = 0x0E;
+                BF.sendbuf[3] = 0x04;
+                BF.sendbuf[4] = 0xF5;
+                SendMenuCommand(BF.sendbuf, 5);
+                Thread.Sleep(1000);
+            }
         }
 
         /// <summary>
@@ -561,6 +599,18 @@ namespace 码垛机
             SendMenuCommand(BF.sendbuf, 6);
             textBox9.Text = "0";
             textBox10.Text = "0";
+
+            //是否已经回原点查询
+            while (huilingflag)
+            {
+                BF.sendbuf[0] = 0xFA;
+                BF.sendbuf[1] = 0x02;
+                BF.sendbuf[2] = 0x0E;
+                BF.sendbuf[3] = 0x04;
+                BF.sendbuf[4] = 0xF5;
+                SendMenuCommand(BF.sendbuf, 5);
+                Thread.Sleep(1000);
+            }
         }
         /// <summary>
         /// Z轴回原点
@@ -578,6 +628,18 @@ namespace 码垛机
             SendMenuCommand(BF.sendbuf, 6);
             textBox5.Text = "0";
             textBox6.Text = "0";
+
+            //是否已经回原点查询
+            while (huilingflag)
+            {
+                BF.sendbuf[0] = 0xFA;
+                BF.sendbuf[1] = 0x02;
+                BF.sendbuf[2] = 0x0E;
+                BF.sendbuf[3] = 0x04;
+                BF.sendbuf[4] = 0xF5;
+                SendMenuCommand(BF.sendbuf, 5);
+                Thread.Sleep(1000);
+            }
         }
 
 

@@ -16,7 +16,8 @@ namespace 码垛机
     {
 
         public static SerialPort sp = new SerialPort();
-        public static SerialPort sp2 = new SerialPort();
+       // public static SerialPort sp2 = new SerialPort();
+       // public static SerialPort sp3 = new SerialPort();
 
         public static class BF
         {
@@ -64,9 +65,9 @@ namespace 码垛机
             ahf.TopLevel = false;
             panel1.Controls.Add(ahf);
 
-            //默认使用端口一，波特率9600
+            //默认使用端口3，波特率9600
             initCommPara(sp,"COM3", 9600);
-            initCommPara(sp2, "COM5", 9600);
+           // initCommPara(sp2, "COM5", 9600);
 
         }
         /// <summary>
@@ -76,7 +77,7 @@ namespace 码垛机
         public MainSettingForm msf = null;
         public static AlarmHistoryForm ahf = null;
         public static WorkingDetailForm wdf = null;
-        
+        public static HandSettingForm hsf = null;
         //标志位，用于只在工作界面才发送坐标请求指令
         public static bool xinlei = true;
         public static bool fight = true;
@@ -99,12 +100,12 @@ namespace 码垛机
             }
             if (ahf != null)
             {
-                ahf.Close();
+                ahf.Visible = false;
             }
             if (wdf != null)
             {
-                wdf.Close();
                 xinlei = false;
+                wdf.Close();
             }
             //判断该子窗口是否已经打开过
             if (hf == null || hf.IsDisposed)
@@ -139,12 +140,12 @@ namespace 码垛机
             }
             if (ahf != null)
             {
-                ahf.Close();
+                ahf.Visible = false;
             }
             if (wdf != null)
-            {               
-                wdf.Close();
+            {
                 xinlei = false;
+                wdf.Close();                
             }
 
             if (msf == null || msf.IsDisposed)
@@ -189,8 +190,8 @@ namespace 码垛机
             }
             if (wdf != null)
             {
-                wdf.Close();
                 xinlei = false;
+                wdf.Close();                
             }
 
             //if (ahf == null || ahf.IsDisposed)
@@ -225,7 +226,7 @@ namespace 码垛机
             }
             if (ahf != null)
             {
-                ahf.Close();
+                ahf.Visible = false;
             }
             if (msf != null)
             {
@@ -324,6 +325,7 @@ namespace 码垛机
         }
 
 
+
         public static void searchAlarmInfo()
         {
             Thread thread = new Thread(new ThreadStart(requestAlrInfo));
@@ -343,25 +345,25 @@ namespace 码垛机
                 BF.sendbuf[3] = 0x01;
                 BF.sendbuf[4] = 0xF5;
                 SendMenuCommand(BF.sendbuf, 5);
-                xinlei = true;
+                //xinlei = true;
                 //StartThread();
             }
         }
 
-
+        /**************************************************************************************************/
         /// <summary>
-        /// 接收数据并解析
+        /// 接收各种数据并解析
         /// </summary>
         //private int SendStatus = 0;
 
         static void  comm_DataReceived(object sender,SerialDataReceivedEventArgs e)
         {
-            byte[] binary_data_1 = new byte[100];      
-            List<byte> buffer = new List<byte>(512);
-
-            int n = sp.BytesToRead;
+            byte[] binary_data_1 = null;      
+            List<byte> buffer = new List<byte>(4096);
+            System.Threading.Thread.Sleep(100);
+            int n = sp.BytesToRead;           
             byte[] buf = new byte[n];//声明一个临时数组存储当前来的串口数据
-            sp.Read(buf, 0, buf.Length);//读取缓冲数据
+            sp.Read(buf, 0, n);//读取缓冲数据
             /****************************************协议解析**********************************************/
             bool data_1_cached = false;
             buffer.AddRange(buf);//缓存数据
@@ -371,6 +373,7 @@ namespace 码垛机
                 {
                     int len = buffer[1];//数据长度
                     if (buffer.Count < len + 3) break;//长度不够直接退出
+                    binary_data_1 = new byte[len + 3];
                     buffer.CopyTo(0,binary_data_1,0,len + 3);//复制一条完整数据到具体的数据缓存
                     data_1_cached = true;
                     buffer.RemoveRange(0,len + 3);//正确分析一条数据，从缓存中移除数据
@@ -383,7 +386,6 @@ namespace 码垛机
             //分析数据(暂时测试用)
             if (data_1_cached)
             {
-                string data1;
                 int data2;
                 int x_value;
                 int z_value;
@@ -447,6 +449,9 @@ namespace 码垛机
                     z_value = Int32.Parse(zstr, System.Globalization.NumberStyles.HexNumber);
                     o_value = Convert.ToInt32(binary_data_1[15].ToString("X2"), 16);
                     wdf.SetCoordinate(x_value,z_value,y_value,o_value);
+                   // hsf = new HandSettingForm();
+                   // hsf.Visible = false;
+                  //  hsf.getXYZOCoordinate(x_value,y_value,z_value,o_value);
                     return;
                 }
                 //解析IO状态数据
@@ -459,7 +464,18 @@ namespace 码垛机
                     return;
                 }
 
-                //接收扫码枪数据
+                //回零状态接收
+                if ((binary_data_1[1] == 0x02) && (binary_data_1[2] == 0x10))
+                {
+                    if(binary_data_1[3] == 0x01)
+                    {
+                        HandSettingForm.huilingflag = false;
+                        MessageBox.Show("已经回零","提示");
+                    }
+                    return;
+                }
+
+                //接收扫码枪数据(若未检测到扫码信息则发送告警指令提醒人工扫码)
 
             }
         }

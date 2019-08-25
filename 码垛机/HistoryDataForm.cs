@@ -15,6 +15,7 @@ namespace 码垛机
         public HistoryDataForm()
         {
             InitializeComponent();
+            HomeForm.xinlei = false;
         }
 
         private void HistoryDataForm_Load(object sender, EventArgs e)
