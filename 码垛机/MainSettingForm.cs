@@ -32,7 +32,7 @@ namespace 码垛机
         /// </summary>
         public static UserSettingForm usf = null;
         public static RuanxianweiForm rxf = null;
-        public static HandSettingForm hsf = null;
+        //public static HandSettingForm hsf = null;
         public static IOSettingForm iof = null;
         public AboutUsForm auf = null;
 
@@ -73,10 +73,11 @@ namespace 码垛机
                 return;
             }
 
-            hsf = new HandSettingForm();
+            //hsf = new HandSettingForm();
+            //HomeForm.hsf.Show();
             this.Parent.FindForm().Hide();
             this.Hide();
-            if (hsf.ShowDialog() == DialogResult.OK)
+            if (HomeForm.hsf.ShowDialog() == DialogResult.OK)
             {
                 this.Parent.FindForm().Show();
                 this.Show();
