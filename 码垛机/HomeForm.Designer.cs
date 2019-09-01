@@ -47,11 +47,9 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1218, 499);
             this.panel1.TabIndex = 0;
-            
             // 
             // work_btn
             // 
-            this.work_btn.AutoEllipsis = true;
             this.work_btn.BackColor = System.Drawing.Color.RoyalBlue;
             this.work_btn.FlatAppearance.BorderColor = System.Drawing.Color.RoyalBlue;
             this.work_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -131,7 +129,6 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1218, 70);
             this.panel2.TabIndex = 5;
-            
             // 
             // panel3
             // 

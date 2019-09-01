@@ -23,7 +23,51 @@ namespace 码垛机
         {
         }
 
-                 
+        /// <summary>
+        /// 绘制码盘已经占用的区域
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public static void DrawOcupyArea(int x, int y,int lenth,int width)
+        {
+            int a = x;
+            int b = y;
+            int c = lenth;
+            int d = width;
+            Graphics gp = panel6.CreateGraphics();
+            System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
+            //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
+            gp.FillRectangle(Brushes.Red, rect); //填充
+            gp.Flush();
+
+        }
+        public static void DrawOcupyArea2(int x, int y, int lenth, int width)
+        {
+            int a = x;
+            int b = y;
+            int c = lenth;
+            int d = width;
+            Graphics gp = panel7.CreateGraphics();
+            System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
+            //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
+            gp.FillRectangle(Brushes.Red, rect); //填充
+            gp.Flush();
+
+        }
+        public static void DrawOcupyArea3(int x, int y, int lenth, int width)
+        {
+            int a = x;
+            int b = y;
+            int c = lenth;
+            int d = width;
+            Graphics gp = panel8.CreateGraphics();
+            System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
+            //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
+            gp.FillRectangle(Brushes.Red, rect); //填充
+            gp.Flush();
+
+        }
+
 
         public void SetCoordinate(int x,int z,int y,int o)
         {
@@ -34,20 +78,6 @@ namespace 码垛机
             this.label20.Text = o.ToString();
         }
 
-        private void clr_btn1_Click(object sender, EventArgs e)
-        {
-            progressBar1.Value = progressBar2.Value = progressBar3.Value = progressBar4.Value = 0;
-        }
-
-        private void clr_btn3_Click(object sender, EventArgs e)
-        {
-            progressBar5.Value = progressBar6.Value = progressBar7.Value = progressBar8.Value = 0;
-        }
-
-        private void clr_btn2_Click(object sender, EventArgs e)
-        {
-            progressBar9.Value = progressBar10.Value = progressBar11.Value = progressBar12.Value = 0;
-        }
 
         private void clr_btn4_Click(object sender, EventArgs e)
         {

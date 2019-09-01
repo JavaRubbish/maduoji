@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -44,7 +45,15 @@ namespace 码垛机
 
         private void button1_Click_1(object sender, EventArgs e)
         {
+            List<string> list1 = new List<string>();
+            list1[0] = "1";
+            list1[1] = "2";
 
+            int[] a = new int[] {1,2,3,4,5 };
+            ArrayList arrayList = new ArrayList();
+            arrayList.Add(a);
+            arrayList.RemoveAt(5);
+            
         }
     }
 }
