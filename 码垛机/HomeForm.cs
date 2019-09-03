@@ -31,6 +31,7 @@ namespace 码垛机
 
             StartThread();
             searchAlarmInfo();
+            confirmCompleted();
             initialIOSetting();
         }
 
@@ -84,6 +85,13 @@ namespace 码垛机
         //标志位，用于只在工作界面才发送坐标请求指令
         public static bool xinlei = true;
         public static bool fight = true;
+        public static bool completed = true;
+        //码垛计数，每完成一次，计数加一
+        public static int totalNum = 0;
+        //留余系数
+        public static int edge = 50;
+        //纸箱间的缝隙
+        public static int gap = 12;
         /// <summary>
         /// 历史数据
         /// </summary>
@@ -344,6 +352,33 @@ namespace 码垛机
             thread.Start();
         }
 
+
+        public static int length1 = 1200;
+        public static int width1 = 1000;
+        public static int length12 = 1200;
+        public static int width12 = 1000;
+        public static int length13 = 1200;
+        public static int width13 = 1000;
+        public static int length14 = 1200;
+        public static int width14 = 1000;
+
+        public static int length2 = 1200;
+        public static int width2 = 1000;
+        public static int length22 = 1200;
+        public static int width22 = 1000;
+        public static int length23 = 1200;
+        public static int width23 = 1000;
+        public static int length24 = 1200;
+        public static int width24 = 1000;
+
+        public static int length3 = 1200;
+        public static int width3 = 1000;
+        public static int length32 = 1200;
+        public static int width32 = 1000;
+        public static int length33 = 1200;
+        public static int width33 = 1000;
+        public static int length34 = 1200;
+        public static int width34 = 1000;
         private void CalculateCoornidateAndSend()
         {
             //扫码拿到的纸箱长宽高信息
@@ -385,9 +420,7 @@ namespace 码垛机
 
             ArrayList arrayList = new ArrayList(); 
             //1号码盘找坐标(第一层)
-            if (h == 280){
-                int length = 1200;
-                int width = 1000;
+            if (h == 280){             
                 if (count == 0)
                 {
                     Coordinate k1 = new Coordinate();
@@ -400,7 +433,7 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
                     //工作界面绘图
-                    WorkingDetailForm.DrawOcupyArea(0,0,w,l);
+                    wdf.DrawOcupyArea(0,0,w,l);
 
                     //第一个箱子直接放在原点(0,0,0)
                     //发坐标（包含挡板状态）
@@ -437,19 +470,30 @@ namespace 码垛机
 
                     vertical.x = 0;
                     vertical.y = l;
-                    horizontal.x = w;
+                    horizontal.x = w + gap;
                     horizontal.y = 0;
 
                     rectangle1.length = 1000 - l;
-                    length -= w;
+                    length1 -= (w + gap);
                     return;
                 }
                 //第一列第二个及以上
-                if (rectangle1.length >= l)
+                if (rectangle1.length + edge >= l)
                 {
                     Coordinate k2 = new Coordinate();
-                    k2.x = vertical.x;
-                    k2.y = vertical.y;
+                    if ((rectangle1.length - l + edge) < 360)
+                    {
+                        k2.x = vertical.x;
+                        k2.y = 1000 - l;
+                        wdf.DrawOcupyArea(vertical.x, 1000 - l, w, l);
+                    }
+                    else
+                    {
+                        k2.x = vertical.x;
+                        k2.y = vertical.y;
+                        wdf.DrawOcupyArea(vertical.x, vertical.y, w, l);
+                    }
+                    
                     arrayList.Add(k2);
                     if (arrayList.Count == 2)
                     {
@@ -457,7 +501,40 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea(vertical.x, vertical.y, w, l);
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle1.length - l + edge) < 360 )
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count++;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(vertical.x);
                     byte[] byteY = toBytes.intToBytes(vertical.y);
@@ -494,8 +571,8 @@ namespace 码垛机
                     rectangle1.length -= l;
                     return;
                 }
-                //第一行第二个(第二列第一个)
-                if (length >= w)
+                //第一行第二个
+                if (length1 + edge >= w)
                 {
                     Coordinate k3 = new Coordinate();
                     k3.x = horizontal.x;
@@ -507,7 +584,7 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea(horizontal.x, horizontal.y, w, l);
+                    wdf.DrawOcupyArea(horizontal.x, horizontal.y, w, l);             
 
                     byte[] byteX = toBytes.intToBytes(horizontal.x);
                     byte[] byteY = toBytes.intToBytes(horizontal.y);
@@ -541,26 +618,71 @@ namespace 码垛机
 
                     vertical.x = horizontal.x;
                     vertical.y = l;
-                    horizontal.x += w;
+                    horizontal.x += (w + gap);
                     horizontal.y += 0;
                     rectangle2.length = 1000 - l;
-                    length -= w;
+                    length1 -= (w + gap);
                     return;
                 }
                 //第二列第二个及以上
-                if (rectangle2.length >= l)
+                if (rectangle2.length + edge >= l)
                 {
                     Coordinate k4 = new Coordinate();
-                    k4.x = vertical.x;
-                    k4.y = vertical.y;
+                    if ((rectangle2.length - l + edge) < 360)
+                    {
+                        k4.x = vertical.x;
+                        k4.y = 1000 - l;
+                        wdf.DrawOcupyArea(vertical.x, 1000 - l, w, l);
+                    }
+                    else
+                    {
+                        k4.x = vertical.x;
+                        k4.y = vertical.y;
+                        wdf.DrawOcupyArea(vertical.x, vertical.y, w, l);
+                    }
+                    
                     arrayList.Add(k4);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+                    
 
-                    WorkingDetailForm.DrawOcupyArea(vertical.x, vertical.y, w, l);
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle2.length - l + edge) < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count++;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(vertical.x);
                     byte[] byteY = toBytes.intToBytes(vertical.y);
@@ -598,7 +720,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第三个
-                if (length >= w)
+                if (length1 + edge >= w)
                 {
                     Coordinate k5 = new Coordinate();
                     k5.x = horizontal.x;
@@ -610,7 +732,7 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea(horizontal.x, horizontal.y, w, l);
+                    wdf.DrawOcupyArea(horizontal.x, horizontal.y, w, l);
 
                     byte[] byteX = toBytes.intToBytes(horizontal.x);
                     byte[] byteY = toBytes.intToBytes(horizontal.y);
@@ -644,26 +766,71 @@ namespace 码垛机
 
                     vertical.x = horizontal.x;
                     vertical.y = l;
-                    horizontal.x += w;
+                    horizontal.x += (w + gap);
                     horizontal.y += 0;
                     rectangle3.length = 1000 - l;
-                    length -= w;
+                    length1 -= (w + gap);
                     return;
                 }
                 //第三列第二个及以上
-                if (rectangle3.length >= l)
+                if (rectangle3.length + edge >= l)
                 {
                     Coordinate k6 = new Coordinate();
-                    k6.x = vertical.x;
-                    k6.y = vertical.y;
+                    if ((rectangle3.length - l + edge) < 360)
+                    {
+                        k6.x = vertical.x;
+                        k6.y = 1000 - l;
+                        wdf.DrawOcupyArea(vertical.x, 1000 - l, w, l);
+                    }
+                    else
+                    {
+                        k6.x = vertical.x;
+                        k6.y = vertical.y;
+                        wdf.DrawOcupyArea(vertical.x, vertical.y, w, l);
+                    }
+                   
                     arrayList.Add(k6);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+                   
 
-                    WorkingDetailForm.DrawOcupyArea(vertical.x, vertical.y, w, l);
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle3.length - l + edge) < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count++;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(vertical.x);
                     byte[] byteY = toBytes.intToBytes(vertical.y);
@@ -701,7 +868,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第四个
-                if (length >= w)
+                if (length1 + edge >= w)
                 {
                     Coordinate k7 = new Coordinate();
                     k7.x = horizontal.x;
@@ -713,7 +880,7 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea(horizontal.x, horizontal.y, w, l);
+                    wdf.DrawOcupyArea(horizontal.x, horizontal.y, w, l);
 
                     byte[] byteX = toBytes.intToBytes(horizontal.x);
                     byte[] byteY = toBytes.intToBytes(horizontal.y);
@@ -747,18 +914,29 @@ namespace 码垛机
 
                     vertical.x = horizontal.x;
                     vertical.y = l;
-                    horizontal.x += w;
+                    horizontal.x += (w + gap);
                     horizontal.y += 0;
-                    rectangle4.length = 1000 - l;
-                    length -= w;
+                    rectangle4.length = width1 - l;
+                    length1 -= (w + gap);
                     return;
                 }
                 //第四列第二个及以上
-                if (rectangle4.length >= l)
+                if (rectangle4.length + edge >= l)
                 {
                     Coordinate k8 = new Coordinate();
-                    k8.x = vertical.x;
-                    k8.y = vertical.y;
+                    if ((rectangle4.length - l + edge) < 360)
+                    {
+                        k8.x = vertical.x;
+                        k8.y = 1000 - l;
+                        wdf.DrawOcupyArea(vertical.x, 1000 - l, w, l);
+                    }
+                    else
+                    {
+                        k8.x = vertical.x;
+                        k8.y = vertical.y;
+                        wdf.DrawOcupyArea(vertical.x, vertical.y, w, l);
+                    }
+                    
                     arrayList.Add(k8);
                     if (arrayList.Count == 2)
                     {
@@ -766,7 +944,40 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea(vertical.x, vertical.y, w, l);
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle4.length - l + edge) < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count++;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(vertical.x);
                     byte[] byteY = toBytes.intToBytes(vertical.y);
@@ -804,11 +1015,22 @@ namespace 码垛机
                     return;
                 }
                 //第一行第五个
-                if (length >= w)
+                if (length1 + edge >= w)
                 {
                     Coordinate k9 = new Coordinate();
-                    k9.x = horizontal.x;
-                    k9.y = horizontal.y;
+                    if (length1 - w + edge < 225)
+                    {
+                        k9.x = 1200 - w;
+                        k9.y = horizontal.y;
+                        wdf.DrawOcupyArea(1200 - w, horizontal.y, w, l);
+                    }
+                    else
+                    {
+                        k9.x = horizontal.x;
+                        k9.y = horizontal.y;
+                        wdf.DrawOcupyArea(horizontal.x, horizontal.y, w, l);
+                    }
+                    
                     arrayList.Add(k9);
                     if (arrayList.Count == 2)
                     {
@@ -816,7 +1038,40 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea(horizontal.x, horizontal.y, w, l);
+                    if (length1 - w + edge < 225)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1200 - w);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count++;
+                        rectangle5.length = width1 - l;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(horizontal.x);
                     byte[] byteY = toBytes.intToBytes(horizontal.y);
@@ -850,18 +1105,29 @@ namespace 码垛机
 
                     vertical.x = horizontal.x;
                     vertical.y = l;
-                    horizontal.x += w;
+                    horizontal.x += (w+gap);
                     horizontal.y += 0;
-                    rectangle5.length = 1000 - l;
-                    length -= w;
+                    rectangle5.length = width1 - l;
+                    length1 -= (w + gap);
                     return;
                 }
                 //第五列第二个及以上
                 if (rectangle5.length >= l)
                 {
                     Coordinate k10 = new Coordinate();
-                    k10.x = vertical.x;
-                    k10.y = vertical.y;
+                    if ((rectangle5.length - l + edge) < 360)
+                    {
+                        k10.x = vertical.x;
+                        k10.y = 1000 - l;
+                        wdf.DrawOcupyArea(vertical.x, 1000 - l, w, l);
+                    }
+                    else
+                    {
+                        k10.x = vertical.x;
+                        k10.y = vertical.y;
+                        wdf.DrawOcupyArea(vertical.x, vertical.y, w, l);
+                    }
+                    
                     arrayList.Add(k10);
                     if (arrayList.Count == 2)
                     {
@@ -869,7 +1135,40 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea(vertical.x, vertical.y, w, l);
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle5.length - l + edge) < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count++;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(vertical.x);
                     byte[] byteY = toBytes.intToBytes(vertical.y);
@@ -907,29 +1206,19 @@ namespace 码垛机
                     return;
                 }
 
-                //如果走到这，说明第一层不能码了，该码放第二层了
-                //需要记录第一层码放的长宽信息，因为第二层是码放在第一层上的
-                int length2 = 1200 - length;
-                //拿到最短的宽度（不能超出码放边界）
-                int[] arr2 = new int[] {(1000-rectangle1.length),(1000-rectangle2.length),(1000-rectangle3.length),(1000-rectangle4.length),(1000-rectangle5.length)};
-                int width2 = MinOne.findMin(arr2);
-                int ref1 = width2; 
-
-                //有长有宽，便是一个新的码盘
+                //如果走到这，说明第一层不能码了，该码放第二层了                
                 int count12 = 0;//12代表第一个盘第二层的计数情况
 
                 Rectangle rectangle14 = new Rectangle();
                 Rectangle rectangle15 = new Rectangle();
                 Rectangle rectangle16 = new Rectangle();
                 Rectangle rectangle17 = new Rectangle();
-                //Rectangle rectangle21 = new Rectangle();
-                //Rectangle rectangle22 = new Rectangle();
 
                 Coordinate vertical4 = new Coordinate();
                 Coordinate horizontal4 = new Coordinate(); 
 
                 //第二层第一个
-                if ((count12 == 0) && (length2 >= l) && (width2 >= w)) {
+                if ((count12 == 0) && (length12 + edge >= l) && (width12 + edge >= w)) {
 
                     Coordinate k11 = new Coordinate();
                     k11.x = 0;
@@ -974,25 +1263,68 @@ namespace 码垛机
                     count12++;
 
                     vertical4.x = 0;
-                    vertical4.y = w;
+                    vertical4.y = (w + gap);
                     horizontal4.x = l;
                     horizontal4.y = 0;
 
-                    rectangle14.length = length2 - l;
-                    width2 -= w;
+                    rectangle14.length = length12 - l;
+                    width12 -= (w + gap);
                     return;
                 }
-                //第一列第二个及以上
-                if (rectangle14.length >= l)
+                //第一行第二个及以上
+                if (rectangle14.length + edge >= l)
                 {
                     Coordinate k12 = new Coordinate();
-                    k12.x = horizontal4.x;
-                    k12.y = horizontal4.y;
+                    if (rectangle4.length - l + edge < 360)
+                    {
+                        k12.x = 1200 - l;
+                        k12.y = horizontal4.y;
+                    }
+                    else
+                    {
+                        k12.x = horizontal4.x;
+                        k12.y = horizontal4.y;
+                    }
+                   
                     arrayList.Add(k12);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle4.length - l + edge < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal4.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count12++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(horizontal4.x);
@@ -1030,7 +1362,8 @@ namespace 码垛机
                     rectangle14.length -= l;
                     return;
                 }
-                if (width2 >= w)
+                //第二行第一个
+                if (width12 + edge >= w)
                 {
                     Coordinate k13 = new Coordinate();
                     k13.x = vertical4.x;
@@ -1040,7 +1373,7 @@ namespace 码垛机
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
-                    }
+                    }                   
 
                     byte[] byteX = toBytes.intToBytes(vertical4.x);
                     byte[] byteY = toBytes.intToBytes(vertical4.y);
@@ -1070,27 +1403,70 @@ namespace 码垛机
                     BF.sendbuf[17] = b[0];
                     BF.sendbuf[18] = 0xF5;
                     SendMenuCommand(BF.sendbuf, 19);
-                    count++;
+                    count12++;
 
                     horizontal4.x = vertical4.x + l;
                     horizontal4.y = vertical4.y;
                     vertical4.x += 0;
-                    vertical4.y += w;                 
+                    vertical4.y += (w + gap);                 
                     rectangle15.length = length2 - l;
-                    width2 -= w;
+                    width2 -= (w + gap);
                     return;
                 }
-                //第二列第二个及以上
+                //第二行第二个及以上
                 if (rectangle15.length >= l)
                 {
                     Coordinate k14 = new Coordinate();
-                    k14.x = horizontal4.x;
-                    k14.y = horizontal4.y;
+                    if (rectangle15.length - l + edge < 360)
+                    {
+                        k14.x = 1200 - l;
+                        k14.y = horizontal4.y;
+                    }
+                    else
+                    {
+                        k14.x = horizontal4.x;
+                        k14.y = horizontal4.y;
+                    }
+                   
                     arrayList.Add(k14);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle15.length - l + edge < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal4.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count12++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(horizontal4.x);
@@ -1121,7 +1497,7 @@ namespace 码垛机
                     BF.sendbuf[17] = b[0];
                     BF.sendbuf[18] = 0xF5;
                     SendMenuCommand(BF.sendbuf, 19);
-                    count++;
+                    count12++;
 
                     horizontal4.x += l;
                     horizontal4.y += 0;
@@ -1129,7 +1505,7 @@ namespace 码垛机
                     return;
                 }
                 //第一列第三个
-                if (width2 >= w)
+                if (width12 + edge >= w)
                 {
                     Coordinate k15 = new Coordinate();
                     k15.x = vertical4.x;
@@ -1169,27 +1545,70 @@ namespace 码垛机
                     BF.sendbuf[17] = b[0];
                     BF.sendbuf[18] = 0xF5;
                     SendMenuCommand(BF.sendbuf, 19);
-                    count++;
+                    count12++;
 
                     horizontal4.x = vertical4.x + l;
                     horizontal4.y = vertical4.y;
                     vertical4.x += 0;
-                    vertical4.y += w;                    
-                    rectangle16.length = length2 - l;
-                    width2 -= w;
+                    vertical4.y += (w + gap);                    
+                    rectangle16.length = length12 - l;
+                    width12 -= (w + gap);
                     return;
                 }
-                //第三列第二个及以上
+                //第三行第二个及以上
                 if (rectangle16.length > l)
                 {
                     Coordinate k16 = new Coordinate();
-                    k16.x = horizontal4.x;
-                    k16.y = horizontal4.y;
+                    if (rectangle16.length - l + edge < 360)
+                    {
+                        k16.x = 1200 - l;
+                        k16.y = horizontal4.y;
+                    }
+                    else
+                    {
+                        k16.x = horizontal4.x;
+                        k16.y = horizontal4.y;
+                    }
+                    
                     arrayList.Add(k16);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle16.length - l + edge < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal4.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count12++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(horizontal4.x);
@@ -1220,7 +1639,7 @@ namespace 码垛机
                     BF.sendbuf[17] = b[0];
                     BF.sendbuf[18] = 0xF5;
                     SendMenuCommand(BF.sendbuf, 19);
-                    count++;
+                    count12++;
 
                     horizontal4.x += l;
                     horizontal4.y += 0;
@@ -1228,16 +1647,60 @@ namespace 码垛机
                     return;
                 }
                 //第一列第四个
-                if (width2 >= w)
+                if (width12 + edge >= w)
                 {
                     Coordinate k17 = new Coordinate();
-                    k17.x = vertical4.x;
-                    k17.y = vertical4.y;
+                    if (width12 - w + edge < 225)
+                    {
+                        k17.x = vertical4.x;
+                        k17.y = 1000 - w;
+                    }
+                    else
+                    {
+                        k17.x = vertical4.x;
+                        k17.y = vertical4.y;
+                    }
+                    
                     arrayList.Add(k17);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if(width12 - w + edge < 225)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical4.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - w);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count12++;
+                        rectangle17.length = length12 - l;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(vertical4.x);
@@ -1273,22 +1736,65 @@ namespace 码垛机
                     horizontal4.x = vertical4.x + l;
                     horizontal4.y = vertical4.y;
                     vertical4.x += 0;
-                    vertical4.y += w;                
-                    rectangle17.length = length2 - l;
-                    width2 -= w;
+                    vertical4.y += (w + gap);                
+                    rectangle17.length = length12 - l;
+                    width12 -= (w + gap);
                     return;
                 }
                 //第四行第二个及以上
-                if (rectangle16.length > l)
+                if (rectangle16.length + edge > l)
                 {
-                    Coordinate k17 = new Coordinate();
-                    k17.x = horizontal4.x;
-                    k17.y = horizontal4.y;
-                    arrayList.Add(k17);
+                    Coordinate k18 = new Coordinate();
+                    if (rectangle17.length - l + edge < 360)
+                    {
+                        k18.x = 1200 - l;
+                        k18.y = horizontal4.y;
+                    }
+                    else
+                    {
+                        k18.x = horizontal4.x;
+                        k18.y = horizontal4.y;
+                    }
+                    
+                    arrayList.Add(k18);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle17.length - l + edge < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal4.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count12++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(horizontal4.x);
@@ -1326,29 +1832,28 @@ namespace 码垛机
                     rectangle17.length -= l;
                     return;
                 }
+              
 
                 //如果走到这，说明第2层不能码了，该码放第3层了
-                //需要记录第2层码放的长宽信息，因为第3层是码放在第2层上的
-                int width3 = ref1 - width2;
-                //拿到最短的长度（不能超出码放边界）
-                int[] arr3 = new int[] {(length2 - rectangle14.length),(length2 - rectangle15.length),(length2 - rectangle16.length),(length2 - rectangle17.length)};
-                int length3 = MinOne.findMin(arr3);
-                int ref2 = length3;
+              
                 Rectangle rectangle18 = new Rectangle();
                 Rectangle rectangle19 = new Rectangle();
                 Rectangle rectangle20 = new Rectangle();
+                Rectangle rectangle50 = new Rectangle();
+                Rectangle rectangle51 = new Rectangle();
+
                 Coordinate vertical5 = new Coordinate();
                 Coordinate horizontal5 = new Coordinate();
                 //有长有宽，便是一个新的码盘
                 int count13 = 0;//13代表第一个盘第3层的计数情况
 
-                if ((count13 == 0) && (width3 >= l) && (length3 >= w))
+                if ((count13 == 0) && (width13 + edge >= l) && (length13 + edge >= w))
                 {
 
-                    Coordinate k18 = new Coordinate();
-                    k18.x = 0;
-                    k18.y = 0;
-                    arrayList.Add(k18);
+                    Coordinate k19 = new Coordinate();
+                    k19.x = 0;
+                    k19.y = 0;
+                    arrayList.Add(k19);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -1389,24 +1894,67 @@ namespace 码垛机
 
                     vertical5.x = 0;
                     vertical5.y = l;
-                    horizontal5.x = w;
+                    horizontal5.x = (w + gap);
                     horizontal5.y = 0;
 
-                    rectangle18.length = width3 - l;
-                    length3 -= w;
+                    rectangle18.length = width13 - l;
+                    length13 -= (w + gap);
                     return;
                 }
                 //第一列第二个及以上
-                if (rectangle18.length >= l)
+                if (rectangle18.length + edge >= l)
                 {
-                    Coordinate k19 = new Coordinate();
-                    k19.x = vertical5.x;
-                    k19.y = vertical5.y;
-                    arrayList.Add(k19);
+                    Coordinate k20 = new Coordinate();
+                    if ((rectangle18.length - l + edge) < 360)
+                    {
+                        k20.x = vertical5.x;
+                        k20.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k20.x = vertical5.x;
+                        k20.y = vertical5.y;
+                    }
+                    
+                    arrayList.Add(k20);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if ((rectangle18.length - l + edge) < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical5.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count13++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(vertical5.x);
@@ -1445,12 +1993,12 @@ namespace 码垛机
                     return;
                 }
                 //第一行第二个(第二列第一个)
-                if (length3 >= w)
+                if (length13 + edge >= w)
                 {
-                    Coordinate k20 = new Coordinate();
-                    k20.x = horizontal5.x;
-                    k20.y = horizontal5.y;
-                    arrayList.Add(k20);
+                    Coordinate k21 = new Coordinate();
+                    k21.x = horizontal5.x;
+                    k21.y = horizontal5.y;
+                    arrayList.Add(k21);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -1485,27 +2033,70 @@ namespace 码垛机
                     BF.sendbuf[17] = b[0];
                     BF.sendbuf[18] = 0xF5;
                     SendMenuCommand(BF.sendbuf, 19);
-                    count++;
+                    count13++;
 
                     vertical5.x = horizontal.x;
                     vertical5.y = l;
-                    horizontal5.x += w;
+                    horizontal5.x += (w + gap);
                     horizontal5.y += 0;
-                    rectangle19.length = width3 - l;
-                    length3 -= w;
+                    rectangle19.length = width13 - l;
+                    length13 -= (w + gap);
                     return;
                 }
                 //第二列第二个及以上
                 if (rectangle19.length >= l)
                 {
-                    Coordinate k21 = new Coordinate();
-                    k21.x = vertical5.x;
-                    k21.y = vertical5.y;
-                    arrayList.Add(k21);
+                    Coordinate k22 = new Coordinate();
+                    if ((rectangle19.length - l + edge) < 360)
+                    {
+                        k22.x = vertical5.x;
+                        k22.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k22.x = vertical5.x;
+                        k22.y = vertical5.y;
+                    }
+                    
+                    arrayList.Add(k22);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if ((rectangle19.length - l + edge) < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical5.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count13++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(vertical5.x);
@@ -1544,12 +2135,12 @@ namespace 码垛机
                     return;
                 }
                 //第一行第三个
-                if (length3 >= w)
+                if (length3 + edge >= w)
                 {
-                    Coordinate k22 = new Coordinate();
-                    k22.x = horizontal5.x;
-                    k22.y = horizontal5.y;
-                    arrayList.Add(k22);
+                    Coordinate k23 = new Coordinate();
+                    k23.x = horizontal5.x;
+                    k23.y = horizontal5.y;
+                    arrayList.Add(k23);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -1588,23 +2179,66 @@ namespace 码垛机
 
                     vertical5.x = horizontal5.x;
                     vertical5.y = l;
-                    horizontal5.x += w;
+                    horizontal5.x += (w + gap);
                     horizontal5.y += 0;
-                    rectangle19.length = width3 - l;
-                    length3 -= w;
+                    rectangle20.length = width13 - l;
+                    length13 -= (w + gap);
                     return;
                 }
                 //第三列第二个及以上
-                if (rectangle19.length > l)
+                if (rectangle20.length + edge > l)
                 {
-                    Coordinate k23 = new Coordinate();
-                    k23.x = vertical5.x;
-                    k23.y = vertical5.y;
-                    arrayList.Add(k23);
+                    Coordinate k24 = new Coordinate();
+                    if ((rectangle20.length - l + edge) < 360)
+                    {
+                        k24.x = vertical5.x;
+                        k24.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k24.x = vertical5.x;
+                        k24.y = vertical5.y;
+                    }
+                    
+                    arrayList.Add(k24);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if ((rectangle20.length - l + edge) < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical5.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count13++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(vertical5.x);
@@ -1639,30 +2273,368 @@ namespace 码垛机
 
                     vertical5.x += 0;
                     vertical5.y += l;
-                    rectangle19.length -= l;
+                    rectangle20.length -= l;
+                    return;
+                }
+                //第一行第四个
+                if (length13 >= w)
+                {
+                    Coordinate k25 = new Coordinate();
+                    k25.x = horizontal.x;
+                    k25.y = horizontal.y;
+                    arrayList.Add(k25);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    wdf.DrawOcupyArea(horizontal.x, horizontal.y, w, l);
+
+                    byte[] byteX = toBytes.intToBytes(horizontal.x);
+                    byte[] byteY = toBytes.intToBytes(horizontal.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "0", "1", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count13++;
+
+                    vertical5.x = horizontal.x;
+                    vertical5.y = l;
+                    horizontal5.x += (w + gap);
+                    horizontal5.y += 0;
+                    rectangle50.length = width13 - l;
+                    length13 -= (w + gap);
+                    return;
+                }
+                //第四列第二个及以上
+                if (rectangle50.length + edge >= l)
+                {
+                    Coordinate k26 = new Coordinate();
+                    if ((rectangle50.length - l + edge) < 360)
+                    {
+
+                        k26.x = vertical.x;
+                        k26.y = 1000 - l;
+                    }
+                    else
+                    {
+
+                        k26.x = vertical.x;
+                        k26.y = vertical.y;
+                    }
+
+                    arrayList.Add(k26);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    wdf.DrawOcupyArea(vertical.x, vertical.y, w, l);
+
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle50.length - l + edge) < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count13++;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(vertical.x);
+                    byte[] byteY = toBytes.intToBytes(vertical.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "0", "1", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count13++;
+
+                    vertical5.x += 0;
+                    vertical5.y += l;
+                    rectangle50.length -= l;
+                    return;
+                }
+                //第一行第五个
+                if (length13 + edge >= w)
+                {
+                    Coordinate k27 = new Coordinate();
+                    if (length13 - w + edge < 225)
+                    {
+                        k27.x = 1200 - w;
+                        k27.y = horizontal.y;
+                    }
+                    else
+                    {
+                        k27.x = horizontal.x;
+                        k27.y = horizontal.y;
+                    }
+                  
+                    arrayList.Add(k27);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    wdf.DrawOcupyArea(horizontal.x, horizontal.y, w, l);
+
+                    if (length13 - w + edge < 225)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1200 - w);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal5.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count13++;
+                        rectangle51.length = width13 - l;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(horizontal.x);
+                    byte[] byteY = toBytes.intToBytes(horizontal.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "0", "1", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count13++;
+
+                    vertical5.x = horizontal5.x;
+                    vertical5.y = l;
+                    horizontal5.x += (w + gap);
+                    horizontal5.y += 0;
+                    rectangle51.length = width13 - l;
+                    length13 -= (w + gap);
+                    return;
+                }
+                //第五列第二个及以上
+                if (rectangle51.length >= l)
+                {
+                    Coordinate k28 = new Coordinate();
+                    if ((rectangle51.length - l + edge) < 360)
+                    {
+                        k28.x = vertical.x;
+                        k28.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k28.x = vertical.x;
+                        k28.y = vertical.y;
+                    }
+                    
+                    arrayList.Add(k28);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    wdf.DrawOcupyArea(vertical.x, vertical.y, w, l);
+
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle51.length - l + edge) < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical5.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count13++;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(vertical.x);
+                    byte[] byteY = toBytes.intToBytes(vertical.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "0", "1", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count13++;
+
+                    vertical5.x += 0;
+                    vertical5.y += l;
+                    rectangle51.length -= l;
                     return;
                 }
 
                 //如果走到这，说明第3层不能码了，该码放第4层了
-                //需要记录第3层码放的长宽信息，因为第4层是码放在第3层上的
-                int length4 = ref2 - length3;
-                //拿到最短的宽度（不能超出码放边界）
-                int[] arr4 = new int[] {(width3 - rectangle18.length),(width3 - rectangle19.length),(width3 - rectangle20.length)};
-                int width4 = MinOne.findMin(arr4);
+              
                 Rectangle rectangle21 = new Rectangle();
                 Rectangle rectangle22 = new Rectangle();
+                Rectangle rectangle52 = new Rectangle();
+                Rectangle rectangle53 = new Rectangle();
                 Coordinate vertical6 = new Coordinate();
                 Coordinate horizontal6 = new Coordinate();
                 //有长有宽，便是一个新的码盘
                 int count14 = 0;//14代表第一个盘第4层的计数情况
 
                 //第4层第一个
-                if ((count14 == 0) && (length4 >= l) && (width4 >= w))
+                if ((count14 == 0) && (length14 + edge >= l) && (width14 + edge >= w))
                 {
-                    Coordinate k24 = new Coordinate();
-                    k24.x = 0;
-                    k24.y = 0;
-                    arrayList.Add(k24);
+                    Coordinate k29 = new Coordinate();
+                    k29.x = 0;
+                    k29.y = 0;
+                    arrayList.Add(k29);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -1702,25 +2674,68 @@ namespace 码垛机
                     count14++;
 
                     vertical6.x = 0;
-                    vertical6.y = w;
+                    vertical6.y = (w + gap);
                     horizontal6.x = l;
                     horizontal6.y = 0;
 
-                    rectangle21.length = length4 - l;
-                    width4 -= w;
+                    rectangle21.length = length14 - l;
+                    width14 -= (w + gap);
                     return;
                 }
                 //第一列第二个及以上
                 if (rectangle21.length >= l)
                 {
-                    Coordinate k25 = new Coordinate();
-                    k25.x = horizontal6.x;
-                    k25.y = horizontal6.y;
-                    arrayList.Add(k25);
+                    Coordinate k30 = new Coordinate();
+                    if (rectangle21.length - l + edge < 360)
+                    {
+                        k30.x = 1200 - l;
+                        k30.y = horizontal6.y;
+                    }
+                    else
+                    {
+                        k30.x = horizontal6.x;
+                        k30.y = horizontal6.y;
+                    }
+                    
+                    arrayList.Add(k30);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle21.length - l + edge < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal6.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count14++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(horizontal6.x);
@@ -1758,12 +2773,13 @@ namespace 码垛机
                     rectangle21.length -= l;
                     return;
                 }
-                if (width4 >= w)
+                //第一列第二个
+                if (width14 + edge>= w)
                 {
-                    Coordinate k26 = new Coordinate();
-                    k26.x = vertical6.x;
-                    k26.y = vertical6.y;
-                    arrayList.Add(k26);
+                    Coordinate k31 = new Coordinate();
+                    k31.x = vertical6.x;
+                    k31.y = vertical6.y;
+                    arrayList.Add(k31);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -1803,22 +2819,65 @@ namespace 码垛机
                     horizontal6.x = vertical6.x + l;
                     horizontal6.y = vertical6.y;
                     vertical6.x += 0;
-                    vertical6.y += w;                  
-                    rectangle22.length = length4 - l;
-                    width4 -= w;
+                    vertical6.y += (w + gap);                  
+                    rectangle22.length = length14 - l;
+                    width14 -= (w + gap);
                     return;
                 }
-                //第二列第二个及以上
-                if (rectangle22.length >= l)
+                //第二行第二个及以上
+                if (rectangle22.length + edge >= l)
                 {
-                    Coordinate k27 = new Coordinate();
-                    k27.x = horizontal6.x;
-                    k27.y = horizontal6.y;
-                    arrayList.Add(k27);
+                    Coordinate k32 = new Coordinate();
+                    if (rectangle22.length - l + edge < 360)
+                    {
+                        k32.x = 1200 - l;
+                        k32.y = horizontal6.y;
+                    }
+                    else
+                    {
+                        k32.x = horizontal6.x;
+                        k32.y = horizontal6.y;
+                    }
+                   
+                    arrayList.Add(k32);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle22.length - l + edge < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal6.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count14++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(horizontal6.x);
@@ -1856,30 +2915,354 @@ namespace 码垛机
                     rectangle22.length -= l;
                     return;
                 }
-                MessageBox.Show("码盘1码垛完成,请移走!", "警告");
-
-
-            }
-            /*************************************************************************************/
-            //2号码盘找坐标
-            if (h == 300 && w == 240)
-            {
-                int length = 1200;
-                int width = 1000;
-                if (count2 == 0)
+                //第一列第三个
+                if (width14 + edge >= w)
                 {
-
-                    Coordinate k28 = new Coordinate();
-                    k28.x = 1400;
-                    k28.y = 0;
-                    arrayList.Add(k28);
+                    Coordinate k33 = new Coordinate();
+                    k33.x = vertical6.x;
+                    k33.y = vertical6.y;
+                    arrayList.Add(k33);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea2(vertical.x, vertical.y, w, l);
+                    byte[] byteX = toBytes.intToBytes(vertical6.x);
+                    byte[] byteY = toBytes.intToBytes(vertical6.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "0", "1", "1" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count14++;
+
+                    horizontal6.x = vertical6.x + l;
+                    horizontal6.y = vertical6.y;
+                    vertical6.x += 0;
+                    vertical6.y += (w + gap);
+                    rectangle52.length = length14 - l;
+                    width14 -= (w + gap);
+                    return;
+                }
+                //第三行第二个及以上
+                if (rectangle52.length > l)
+                {
+                    Coordinate k34 = new Coordinate();
+                    if (rectangle52.length - l + edge < 360)
+                    {
+                        k34.x = 1200 - l;
+                        k34.y = horizontal4.y;
+                    }
+                    else
+                    {
+                        k34.x = horizontal4.x;
+                        k34.y = horizontal4.y;
+                    }
+               
+                    arrayList.Add(k34);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle52.length - l + edge < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal6.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count14++;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(horizontal6.x);
+                    byte[] byteY = toBytes.intToBytes(horizontal6.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "0", "1", "1" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count14++;
+
+                    horizontal6.x += l;
+                    horizontal6.y += 0;
+                    rectangle52.length -= l;
+                    return;
+                }
+                //第一列第四个
+                if (width14 + edge >= w)
+                {
+                    Coordinate k35 = new Coordinate();
+                    if (width14 - w + edge < 225)
+                    {
+                        k35.x = vertical6.x;
+                        k35.y = 1000 - w;
+                    }
+                    else
+                    {
+                        k35.x = vertical6.x;
+                        k35.y = vertical6.y;
+                    }
+                    
+                    arrayList.Add(k35);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    if (width14 - w + edge < 225)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical6.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - w);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count14++;
+                        rectangle53.length = length14 - l;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(vertical6.x);
+                    byte[] byteY = toBytes.intToBytes(vertical6.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "0", "1", "1" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count14++;
+
+                    horizontal6.x = vertical6.x + l;
+                    horizontal6.y = vertical6.y;
+                    vertical6.x += 0;
+                    vertical6.y += (w + gap);
+                    rectangle53.length = length14 - l;
+                    width14 -= (w + gap);
+                    return;
+                }
+                //第四行第二个及以上
+                if (rectangle53.length > l)
+                {
+                    Coordinate k36 = new Coordinate();
+                    if (rectangle53.length - l + edge < 360)
+                    {
+                        k36.x = 1200 - l;
+                        k36.y = horizontal4.y;
+                    }
+                    else
+                    {
+                        k36.x = horizontal4.x;
+                        k36.y = horizontal4.y;
+                    }
+                  
+                    arrayList.Add(k36);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle53.length - l + edge < 360)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal6.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count14++;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(horizontal6.x);
+                    byte[] byteY = toBytes.intToBytes(horizontal6.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "0", "1", "1" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count14++;
+
+                    horizontal6.x += l;
+                    horizontal6.y += 0;
+                    rectangle53.length -= l;
+                    return;
+                }
+                MessageBox.Show("码盘1码垛完成,请移走!", "警告");
+
+            }
+            /*************************************************************************************/
+            //2号码盘找坐标
+            if (h == 300 && w == 240)
+            {             
+                if (count2 == 0)
+                {
+                    Coordinate k37 = new Coordinate();
+                    k37.x = 1400;
+                    k37.y = 0;
+                    arrayList.Add(k37);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    wdf.DrawOcupyArea2(0, 0, w, l);
 
                     //第一个箱子直接放在原点(1400,0,0)
                     //发坐标（包含挡板状态）
@@ -1921,23 +3304,67 @@ namespace 码垛机
                     horizontal2.y = 0;
 
                     rectangle6.length = 1000 - l;
-                    length -= w;
+                    length2 -= (w + gap);
                     return;
                 }
                 //第一列第二个及以上
-                if (rectangle6.length >= l)
+                if (rectangle6.length + edge >= l)
                 {
-                    Coordinate k29 = new Coordinate();
-                    k29.x = vertical2.x;
-                    k29.y = vertical2.y;
-                    arrayList.Add(k29);
+                    Coordinate k38 = new Coordinate();
+                    if ((rectangle6.length - l + edge) < 390)
+                    {
+                        k38.x = vertical2.x;
+                        k38.y = 1000 - l;
+                        wdf.DrawOcupyArea2(vertical2.x - 1400, 1000 - l, w, l);
+                    }
+                    else
+                    {
+                        k38.x = vertical2.x;
+                        k38.y = vertical2.y;
+                        wdf.DrawOcupyArea2(vertical2.x - 1400, vertical2.y, w, l);
+                    }
+                 
+                    arrayList.Add(k38);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea2(vertical2.x - 1400, vertical2.y, w, l);
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle6.length - l + edge) < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical2.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count2++;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(vertical2.x);
                     byte[] byteY = toBytes.intToBytes(vertical2.y);
@@ -1975,19 +3402,19 @@ namespace 码垛机
                     return;
                 }
                 //第一行第二个(第二列第一个)
-                if (length >= w)
+                if (length2 + edge >= w)
                 {
-                    Coordinate k30 = new Coordinate();
-                    k30.x = horizontal2.x;
-                    k30.y = horizontal2.y;
-                    arrayList.Add(k30);
+                    Coordinate k39 = new Coordinate();
+                    k39.x = horizontal2.x;
+                    k39.y = horizontal2.y;
+                    arrayList.Add(k39);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea2(horizontal2.x - 1400, horizontal2.y, w, l);
+                    wdf.DrawOcupyArea2(horizontal2.x - 1400, horizontal2.y, w, l);
 
                     byte[] byteX = toBytes.intToBytes(horizontal2.x);
                     byte[] byteY = toBytes.intToBytes(horizontal2.y);
@@ -2021,26 +3448,70 @@ namespace 码垛机
 
                     vertical2.x = horizontal2.x;
                     vertical2.y = l;
-                    horizontal2.x += w;
+                    horizontal2.x += (w + gap);
                     horizontal2.y += 0;
-                    rectangle7.length = 1000 - l;
-                    length -= w;
+                    rectangle7.length = width2 - l;
+                    length2 -= (w + gap);
                     return;
                 }
                 //第二列第二个及以上
-                if (rectangle7.length >= l)
+                if (rectangle7.length + edge >= l)
                 {
-                    Coordinate k31 = new Coordinate();
-                    k31.x = vertical2.x;
-                    k31.y = vertical2.y;
-                    arrayList.Add(k31);
+                    Coordinate k40 = new Coordinate();
+                    if ((rectangle7.length - l + edge) < 390)
+                    {
+                        k40.x = vertical2.x;
+                        k40.y = 1000 - l;
+                        wdf.DrawOcupyArea2(vertical2.x - 1400, 1000 - l, w, l);
+                    }
+                    else
+                    {
+                        k40.x = vertical2.x;
+                        k40.y = vertical2.y;
+                        wdf.DrawOcupyArea2(vertical2.x - 1400, vertical2.y, w, l);
+                    }
+                   
+                    arrayList.Add(k40);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea2(vertical2.x - 1400, vertical2.y, w, l);
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle7.length - l + edge) < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical2.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count2++;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(vertical2.x);
                     byte[] byteY = toBytes.intToBytes(vertical2.y);
@@ -2078,19 +3549,19 @@ namespace 码垛机
                     return;
                 }
                 //第一行第三个
-                if (length >= w)
+                if (length2 + edge >= w)
                 {
-                    Coordinate k32 = new Coordinate();
-                    k32.x = horizontal2.x;
-                    k32.y = horizontal2.y;
-                    arrayList.Add(k32);
+                    Coordinate k41 = new Coordinate();
+                    k41.x = horizontal2.x;
+                    k41.y = horizontal2.y;
+                    arrayList.Add(k41);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea2(horizontal2.x - 1400, horizontal2.y, w, l);
+                    wdf.DrawOcupyArea2(horizontal2.x - 1400, horizontal2.y, w, l);
 
                     byte[] byteX = toBytes.intToBytes(horizontal2.x);
                     byte[] byteY = toBytes.intToBytes(horizontal2.y);
@@ -2124,26 +3595,70 @@ namespace 码垛机
 
                     vertical2.x =  horizontal2.x;
                     vertical2.y = l;
-                    horizontal2.x += w;
+                    horizontal2.x += (w + gap);
                     horizontal2.y += 0;
-                    rectangle8.length = 1000 - l;
-                    length -= w;
+                    rectangle8.length = width2 - l;
+                    length2 -= (w + gap);
                     return;
                 }
                 //第三列第二个及以上
-                if (rectangle8.length > l)
+                if (rectangle8.length + edge >= l)
                 {
-                    Coordinate k33 = new Coordinate();
-                    k33.x = vertical2.x;
-                    k33.y = vertical2.y;
-                    arrayList.Add(k33);
+                    Coordinate k42 = new Coordinate();
+                    if ((rectangle8.length - l + edge) < 390)
+                    {
+                        k42.x = vertical2.x;
+                        k42.y = 1000 - l;
+                        wdf.DrawOcupyArea2(vertical2.x - 1400, 1000 - l, w, l);
+                    }
+                    else
+                    {
+                        k42.x = vertical2.x;
+                        k42.y = vertical2.y;
+                        wdf.DrawOcupyArea2(vertical2.x - 1400, vertical2.y, w, l);
+                    }
+                  
+                    arrayList.Add(k42);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea2(vertical2.x - 1400, vertical2.y, w, l);
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle8.length - l + edge) < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical2.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count2++;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(vertical2.x);
                     byte[] byteY = toBytes.intToBytes(vertical2.y);
@@ -2181,19 +3696,19 @@ namespace 码垛机
                     return;
                 }
                 //第一行第四个
-                if (length > w)
+                if (length2 + edge >= w)
                 {
-                    Coordinate k34 = new Coordinate();
-                    k34.x = horizontal2.x;
-                    k34.y = horizontal2.y;
-                    arrayList.Add(k34);
+                    Coordinate k43 = new Coordinate();
+                    k43.x = horizontal2.x;
+                    k43.y = horizontal2.y;
+                    arrayList.Add(k43);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea2(horizontal2.x - 1400, horizontal2.y, w, l);
+                    wdf.DrawOcupyArea2(horizontal2.x - 1400, horizontal2.y, w, l);
 
                     byte[] byteX = toBytes.intToBytes(horizontal2.x);
                     byte[] byteY = toBytes.intToBytes(horizontal2.y);
@@ -2227,26 +3742,70 @@ namespace 码垛机
 
                     vertical2.x = horizontal2.x;
                     vertical2.y = l;
-                    horizontal2.x += w;
+                    horizontal2.x += (w + gap);
                     horizontal2.y += 0;
-                    rectangle9.length = 1000 - l;
-                    length -= w;
+                    rectangle9.length = width2 - l;
+                    length2 -= (w + gap);
                     return;
                 }
                 //第四列第二个及以上
-                if (rectangle9.length > l)
+                if (rectangle9.length + edge > l)
                 {
-                    Coordinate k35 = new Coordinate();
-                    k35.x = vertical2.x;
-                    k35.y = vertical2.y;
-                    arrayList.Add(k35);
+                    Coordinate k44 = new Coordinate();
+                    if ((rectangle9.length - l + edge) < 390)
+                    {
+                        k44.x = vertical2.x;
+                        k44.y = 1000 - l;
+                        wdf.DrawOcupyArea2(vertical2.x - 1400, 1000 - l, w, l);
+                    }
+                    else
+                    {
+                        k44.x = vertical2.x;
+                        k44.y = vertical2.y;
+                        wdf.DrawOcupyArea2(vertical2.x - 1400, vertical2.y, w, l);
+                    }
+                  
+                    arrayList.Add(k44);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea2(vertical2.x - 1400, vertical2.y, w, l);
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle9.length - l + edge) < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical2.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count2++;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(vertical2.x);
                     byte[] byteY = toBytes.intToBytes(vertical2.y);
@@ -2284,19 +3843,63 @@ namespace 码垛机
                     return;
                 }
                 //第一行第五个
-                if (length > w)
+                if (length2 + edge >= w)
                 {
-                    Coordinate k36 = new Coordinate();
-                    k36.x = horizontal2.x;
-                    k36.y = horizontal2.y;
-                    arrayList.Add(k36);
+                    Coordinate k45 = new Coordinate();
+                    if (length2 - w + edge < 240)
+                    {
+                        k45.x = 2600 - w;
+                        k45.y = horizontal2.y;
+                        wdf.DrawOcupyArea2(1200 - w, horizontal2.y, w, l);
+                    }
+                    else
+                    {
+                        k45.x = horizontal2.x;
+                        k45.y = horizontal2.y;
+                        wdf.DrawOcupyArea2(horizontal2.x - 1400, horizontal2.y, w, l);
+                    }
+                  
+                    arrayList.Add(k45);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea2(horizontal2.x - 1400, horizontal2.y, w, l);
+                    if (length2 - w + edge < 240)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - w);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal2.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count2++;
+                        rectangle10.length = width2 - l;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(horizontal2.x);
                     byte[] byteY = toBytes.intToBytes(horizontal2.y);
@@ -2330,26 +3933,70 @@ namespace 码垛机
 
                     vertical2.x = horizontal2.x;
                     vertical2.y = l;
-                    horizontal2.x += w;
+                    horizontal2.x += (w + gap);
                     horizontal2.y += 0;
-                    rectangle10.length = 1000 - l;
-                    length -= w;
+                    rectangle10.length = width2 - l;
+                    length2 -= (w + gap);
                     return;
                 }
                 //第五列第二个及以上
-                if (rectangle10.length > l)
+                if (rectangle10.length + edge >= l)
                 {
-                    Coordinate k37 = new Coordinate();
-                    k37.x = vertical2.x;
-                    k37.y = vertical2.y;
-                    arrayList.Add(k37);
+                    Coordinate k46 = new Coordinate();
+                    if ((rectangle10.length - l + edge) < 390)
+                    {
+                        k46.x = vertical2.x;
+                        k46.y = 1000 - l;
+                        wdf.DrawOcupyArea2(vertical2.x - 1400, 1000 - l, w, l);
+                    }
+                    else
+                    {
+                        k46.x = vertical2.x;
+                        k46.y = vertical2.y;
+                        wdf.DrawOcupyArea2(vertical2.x - 1400, vertical2.y, w, l);
+                    }
+                   
+                    arrayList.Add(k46);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea2(vertical2.x - 1400, vertical2.y, w, l);
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle10.length - l + edge) < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical2.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count2++;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(vertical2.x);
                     byte[] byteY = toBytes.intToBytes(vertical2.y);
@@ -2390,11 +4037,6 @@ namespace 码垛机
 
                 //如果走到这，说明第一层不能码了，该码放第二层了
                 //需要记录第一层码放的长宽信息，因为第二层是码放在第一层上的
-                int length2 = 1200 - length;
-                //拿到最短的宽度（不能超出码放边界）
-                int[] arr2 = new int[] { (1000 - rectangle6.length), (1000 - rectangle7.length), (1000 - rectangle8.length), (1000 - rectangle9.length), (1000 - rectangle10.length) };
-                int width2 = MinOne.findMin(arr2);
-                int ref1 = width2;
 
                 //有长有宽，便是一个新的码盘
                 int count22 = 0;//22代表第2个盘第二层的计数情况
@@ -2408,12 +4050,12 @@ namespace 码垛机
                 Coordinate horizontal7 = new Coordinate();
 
                 //第二层第一个
-                if ((count22 == 0) && (length2 >= l) && (width2 >= w))
+                if ((count22 == 0) && (length22 + edge >= l) && (width22 + edge >= w))
                 {
-                    Coordinate k38 = new Coordinate();
-                    k38.x = 1400;
-                    k38.y = 0;
-                    arrayList.Add(k38);
+                    Coordinate k47 = new Coordinate();
+                    k47.x = 1400;
+                    k47.y = 0;
+                    arrayList.Add(k47);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -2453,25 +4095,68 @@ namespace 码垛机
                     count22++;
 
                     vertical7.x = 1400;
-                    vertical7.y = w;
+                    vertical7.y = (w + gap);
                     horizontal7.x = 1400 + l;
                     horizontal7.y = 0;
 
-                    rectangle23.length = length2 - l;
-                    width2 -= w;
+                    rectangle23.length = length22 - l;
+                    width22 -= (w + gap);
                     return;
                 }
                 //第一列第二个及以上
-                if (rectangle23.length >= l)
+                if (rectangle23.length + edge >= l)
                 {
-                    Coordinate k39 = new Coordinate();
-                    k39.x = horizontal7.x;
-                    k39.y = horizontal7.y;
-                    arrayList.Add(k39);
+                    Coordinate k48 = new Coordinate();
+                    if (rectangle23.length - l + edge < 390)
+                    {
+                        k48.x = 2600 - l;
+                        k48.y = horizontal7.y;
+                    }
+                    else
+                    {
+                        k48.x = horizontal7.x;
+                        k48.y = horizontal7.y;
+                    }
+                    
+                    arrayList.Add(k48);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle23.length - l + edge < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal7.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count22++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(horizontal7.x);
@@ -2509,12 +4194,12 @@ namespace 码垛机
                     rectangle23.length -= l;
                     return;
                 }
-                if (width2 >= w)
+                if (width22 + edge >= w)
                 {
-                    Coordinate k40 = new Coordinate();
-                    k40.x = vertical7.x;
-                    k40.y = vertical7.y;
-                    arrayList.Add(k40);
+                    Coordinate k49 = new Coordinate();
+                    k49.x = vertical7.x;
+                    k49.y = vertical7.y;
+                    arrayList.Add(k49);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -2554,22 +4239,65 @@ namespace 码垛机
                     horizontal7.x = vertical7.x + l;
                     horizontal7.y = vertical7.y;
                     vertical7.x += 0;
-                    vertical7.y += w;
-                    rectangle24.length = length2 - l;
-                    width2 -= w;
+                    vertical7.y += (w + gap);
+                    rectangle24.length = length22 - l;
+                    width22 -= (w + gap);
                     return;
                 }
                 //第二列第二个及以上
-                if (rectangle24.length >= l)
+                if (rectangle24.length + edge >= l)
                 {
-                    Coordinate k41 = new Coordinate();
-                    k41.x = horizontal7.x;
-                    k41.y = horizontal7.y;
-                    arrayList.Add(k41);
+                    Coordinate k50 = new Coordinate();
+                    if (rectangle24.length - l + edge < 390)
+                    {
+                        k50.x = 2600 - l;
+                        k50.y = horizontal7.y;
+                    }
+                    else
+                    {
+                        k50.x = horizontal7.x;
+                        k50.y = horizontal7.y;
+                    }
+                   
+                    arrayList.Add(k50);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle24.length - l + edge < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal7.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count22++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(horizontal7.x);
@@ -2608,12 +4336,12 @@ namespace 码垛机
                     return;
                 }
                 //第一列第三个
-                if (width2 >= w)
+                if (width22 + edge >= w)
                 {
-                    Coordinate k42 = new Coordinate();
-                    k42.x = vertical7.x;
-                    k42.y = vertical7.y;
-                    arrayList.Add(k42);
+                    Coordinate k51 = new Coordinate();
+                    k51.x = vertical7.x;
+                    k51.y = vertical7.y;
+                    arrayList.Add(k51);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -2653,22 +4381,65 @@ namespace 码垛机
                     horizontal7.x = vertical7.x + l;
                     horizontal7.y = vertical7.y;
                     vertical7.x += 0;
-                    vertical7.y += w;
-                    rectangle25.length = length2 - l;
-                    width2 -= w;
+                    vertical7.y += (w + gap);
+                    rectangle25.length = length22 - l;
+                    width22 -= (w + gap);
                     return;
                 }
                 //第三列第二个及以上
-                if (rectangle25.length >= l)
+                if (rectangle25.length + edge >= l)
                 {
-                    Coordinate k43 = new Coordinate();
-                    k43.x = horizontal7.x;
-                    k43.y = horizontal7.y;
-                    arrayList.Add(k43);
+                    Coordinate k52 = new Coordinate();
+                    if (rectangle25.length - l + edge < 390)
+                    {
+                        k52.x = 2600 - l;
+                        k52.y = horizontal7.y;
+                    }
+                    else
+                    {
+                        k52.x = horizontal7.x;
+                        k52.y = horizontal7.y;
+                    }
+                  
+                    arrayList.Add(k52);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle25.length - l + edge < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal7.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count22++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(horizontal7.x);
@@ -2699,7 +4470,7 @@ namespace 码垛机
                     BF.sendbuf[17] = b[0];
                     BF.sendbuf[18] = 0xF5;
                     SendMenuCommand(BF.sendbuf, 19);
-                    count++;
+                    count22++;
 
                     horizontal7.x += l;
                     horizontal7.y += 0;
@@ -2707,16 +4478,60 @@ namespace 码垛机
                     return;
                 }
                 //第一列第四个
-                if (width2 >= w)
+                if (width22 + edge >= w)
                 {
-                    Coordinate k44 = new Coordinate();
-                    k44.x = vertical7.x;
-                    k44.y = vertical7.y;
-                    arrayList.Add(k44);
+                    Coordinate k53 = new Coordinate();
+                    if (width22 - w + edge < 240)
+                    {
+                        k53.x = vertical7.x;
+                        k53.y = 1000 - w;
+                    }
+                    else
+                    {
+                        k53.x = vertical7.x;
+                        k53.y = vertical7.y;
+                    }
+                    
+                    arrayList.Add(k53);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if (width22 - w + edge < 240)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical7.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - w);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count22++;
+                        rectangle26.length = length22 - l;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(vertical7.x);
@@ -2752,22 +4567,65 @@ namespace 码垛机
                     horizontal7.x = vertical7.x + l;
                     horizontal7.y = vertical7.y;
                     vertical7.x += 0;
-                    vertical7.y += w;
-                    rectangle26.length = length2 - l;
-                    width2 -= w;
+                    vertical7.y += (w + gap);
+                    rectangle26.length = length22 - l;
+                    width22 -= (w + gap);
                     return;
                 }
                 //第四行第二个及以上
-                if (rectangle26.length >= l)
+                if (rectangle26.length + edge >= l)
                 {
-                    Coordinate k45 = new Coordinate();
-                    k45.x = horizontal7.x;
-                    k45.y = horizontal7.y;
-                    arrayList.Add(k45);
+                    Coordinate k54 = new Coordinate();
+                    if (rectangle26.length - l + edge < 390)
+                    {
+                        k54.x = 2600 - l;
+                        k54.y = horizontal7.y;
+                    }
+                    else
+                    {
+                        k54.x = horizontal7.x;
+                        k54.y = horizontal7.y;
+                    }
+                    
+                    arrayList.Add(k54);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle26.length - l + edge < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal7.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count22++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(horizontal7.x);
@@ -2807,26 +4665,22 @@ namespace 码垛机
                 }
 
                 //如果走到这，说明第2层不能码了，该码放第3层了
-                //需要记录第2层码放的长宽信息，因为第3层是码放在第2层上的
-                int width3 = ref1 - width2;
-                //拿到最短的长度（不能超出码放边界）
-                int[] arr3 = new int[] { (length2 - rectangle23.length), (length2 - rectangle24.length), (length2 - rectangle25.length), (length2 - rectangle26.length) };
-                int length3 = MinOne.findMin(arr3);
-                int ref2 = length3;
+
                 Rectangle rectangle27 = new Rectangle();
                 Rectangle rectangle28 = new Rectangle();
                 Rectangle rectangle29 = new Rectangle();
+                Rectangle rectangle54 = new Rectangle();
+                Rectangle rectangle55 = new Rectangle();
                 Coordinate vertical8 = new Coordinate();
                 Coordinate horizontal8 = new Coordinate();
-                //有长有宽，便是一个新的码盘
-                int count23 = 0;//13代表第一个盘第3层的计数情况
+                int count23 = 0;//13代表第2个盘第3层的计数情况
 
-                if ((count23 == 0) && (width3 >= l) && (length3 >= w))
+                if ((count23 == 0) && (width23 + edge >= l) && (length23 + edge >= w))
                 {
-                    Coordinate k46 = new Coordinate();
-                    k46.x = 1400;
-                    k46.y = 0;
-                    arrayList.Add(k46);
+                    Coordinate k55 = new Coordinate();
+                    k55.x = 1400;
+                    k55.y = 0;
+                    arrayList.Add(k55);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -2867,24 +4721,68 @@ namespace 码垛机
 
                     vertical8.x = 1400;
                     vertical8.y = l;
-                    horizontal8.x = 1400 + w;
+                    horizontal8.x = 1400 + w + gap;
                     horizontal8.y = 0;
 
-                    rectangle27.length = width3 - l;
-                    length3 -= w;
+                    rectangle27.length = width23 - l;
+                    length23 -= (w + gap);
                     return;
                 }
                 //第一列第二个及以上
-                if (rectangle27.length >= l)
+                if (rectangle27.length + edge >= l)
                 {
-                    Coordinate k47 = new Coordinate();
-                    k47.x = vertical8.x;
-                    k47.y = vertical8.y;
-                    arrayList.Add(k47);
+                    Coordinate k56 = new Coordinate();
+                    if ((rectangle27.length - l + edge) < 390)
+                    {
+                        k56.x = vertical8.x;
+                        k56.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k56.x = vertical8.x;
+                        k56.y = vertical8.y;
+                    }
+                   
+                    arrayList.Add(k56);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle27.length - l + edge) < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical8.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count23++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(vertical8.x);
@@ -2923,12 +4821,12 @@ namespace 码垛机
                     return;
                 }
                 //第一行第二个(第二列第一个)
-                if (length3 >= w)
+                if (length23 + edge >= w)
                 {
-                    Coordinate k48 = new Coordinate();
-                    k48.x = horizontal8.x;
-                    k48.y = horizontal8.y;
-                    arrayList.Add(k48);
+                    Coordinate k57 = new Coordinate();
+                    k57.x = horizontal8.x;
+                    k57.y = horizontal8.y;
+                    arrayList.Add(k57);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -2967,24 +4865,69 @@ namespace 码垛机
 
                     vertical8.x = horizontal.x;
                     vertical8.y = l;
-                    horizontal8.x += w;
+                    horizontal8.x += (w + gap);
                     horizontal8.y += 0;
-                    rectangle28.length = width3 - l;
-                    length3 -= w;
+                    rectangle28.length = width23 - l;
+                    length23 -= (w + gap);
                     return;
                 }
                 //第二列第二个及以上
-                if (rectangle28.length >= l)
+                if (rectangle28.length + edge >= l)
                 {
-                    Coordinate k48 = new Coordinate();
-                    k48.x = vertical8.x;
-                    k48.y = vertical8.y;
-                    arrayList.Add(k48);
+                    Coordinate k58 = new Coordinate();
+                    if ((rectangle28.length - l + edge) < 390)
+                    {
+                        k58.x = vertical8.x;
+                        k58.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k58.x = vertical8.x;
+                        k58.y = vertical8.y;
+                    }
+                  
+                    arrayList.Add(k58);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle28.length - l + edge) < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical8.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count23++;
+                        return;
+                    }
+
 
                     byte[] byteX = toBytes.intToBytes(vertical8.x);
                     byte[] byteY = toBytes.intToBytes(vertical8.y);
@@ -3022,12 +4965,12 @@ namespace 码垛机
                     return;
                 }
                 //第一行第三个
-                if (length3 >= w)
+                if (length3 + edge >= w)
                 {
-                    Coordinate k49 = new Coordinate();
-                    k49.x = horizontal8.x;
-                    k49.y = horizontal8.y;
-                    arrayList.Add(k49);
+                    Coordinate k59 = new Coordinate();
+                    k59.x = horizontal8.x;
+                    k59.y = horizontal8.y;
+                    arrayList.Add(k59);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -3066,24 +5009,69 @@ namespace 码垛机
 
                     vertical8.x = horizontal8.x;
                     vertical8.y = l;
-                    horizontal8.x += w;
+                    horizontal8.x += (w + gap);
                     horizontal8.y += 0;
-                    rectangle29.length = width3 - l;
-                    length3 -= w;
+                    rectangle29.length = width23 - l;
+                    length23 -= (w + gap);
                     return;
                 }
                 //第三列第二个及以上
-                if (rectangle29.length > l)
+                if (rectangle29.length + edge > l)
                 {
-                    Coordinate k50 = new Coordinate();
-                    k50.x = vertical8.x;
-                    k50.y = vertical8.y;
-                    arrayList.Add(k50);
+                    Coordinate k60 = new Coordinate();
+                    if ((rectangle29.length - l + edge) < 390)
+                    {
+                        k60.x = vertical8.x;
+                        k60.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k60.x = vertical8.x;
+                        k60.y = vertical8.y;
+                    }
+                    
+                    arrayList.Add(k60);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle29.length - l + edge) < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical8.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count23++;
+                        return;
+                    }
+
 
                     byte[] byteX = toBytes.intToBytes(vertical8.x);
                     byte[] byteY = toBytes.intToBytes(vertical8.y);
@@ -3120,27 +5108,357 @@ namespace 码垛机
                     rectangle29.length -= l;
                     return;
                 }
+                //第一行第四个
+                if (length23 + edge >= w)
+                {
+                    Coordinate k61 = new Coordinate();
+                    k61.x = horizontal8.x;
+                    k61.y = horizontal8.y;
+                    arrayList.Add(k61);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(horizontal8.x);
+                    byte[] byteY = toBytes.intToBytes(horizontal8.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "1", "0", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count23++;
+
+                    vertical8.x = horizontal8.x;
+                    vertical8.y = l;
+                    horizontal8.x += (w + gap);
+                    horizontal8.y += 0;
+                    rectangle54.length = width23 - l;
+                    length23 -= (w + gap);
+                    return;
+                }
+                //第四列第二个及以上
+                if (rectangle54.length + edge >= l)
+                {
+                    Coordinate k62 = new Coordinate();
+                    if ((rectangle54.length - l + edge) < 390)
+                    {
+                        k62.x = vertical8.x;
+                        k62.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k62.x = vertical8.x;
+                        k62.y = vertical8.y;
+                    }
+                    
+                    arrayList.Add(k62);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle54.length - l + edge) < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical8.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count23++;
+                        return;
+                    }
+
+
+                    byte[] byteX = toBytes.intToBytes(vertical8.x);
+                    byte[] byteY = toBytes.intToBytes(vertical8.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "1", "0", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count23++;
+
+                    vertical8.x += 0;
+                    vertical8.y += l;
+                    rectangle54.length -= l;
+                    return;
+                }
+                //第一行第五个
+                if (length23 + edge >= w)
+                {
+                    Coordinate k63 = new Coordinate();
+                    if (length23 - w + edge < 240)
+                    {
+                        k63.x = 2600 - w;
+                        k63.y = horizontal8.y;
+                    }
+                    else
+                    {
+                        k63.x = horizontal8.x;
+                        k63.y = horizontal8.y;
+                    }
+                    
+                    arrayList.Add(k63);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    if (length23 - w + edge < 240)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - w);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal8.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count23++;
+                        rectangle55.length = width23 - l;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(horizontal8.x);
+                    byte[] byteY = toBytes.intToBytes(horizontal8.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "1", "0", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count23++;
+
+                    vertical8.x = horizontal8.x;
+                    vertical8.y = l;
+                    horizontal8.x += (w + gap);
+                    horizontal8.y += 0;
+                    rectangle55.length = width23 - l;
+                    length23 -= (w + gap);
+                    return;
+                }
+                //第五列第二个及以上
+                if (rectangle55.length + edge >= l)
+                {
+                    Coordinate k64 = new Coordinate();
+                    if ((rectangle55.length - l + edge) < 390)
+                    {
+                        k64.x = vertical8.x;
+                        k64.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k64.x = vertical8.x;
+                        k64.y = vertical8.y;
+                    }
+                
+                    arrayList.Add(k64);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
+                    if ((rectangle55.length - l + edge) < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical8.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count23++;
+                        return;
+                    }
+
+
+                    byte[] byteX = toBytes.intToBytes(vertical8.x);
+                    byte[] byteY = toBytes.intToBytes(vertical8.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "1", "0", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count23++;
+
+                    vertical8.x += 0;
+                    vertical8.y += l;
+                    rectangle55.length -= l;
+                    return;
+                }
 
                 //如果走到这，说明第3层不能码了，该码放第4层了
-                //需要记录第3层码放的长宽信息，因为第4层是码放在第3层上的
-                int length4 = ref2 - length3;
-                //拿到最短的宽度（不能超出码放边界）
-                int[] arr4 = new int[] { (width3 - rectangle27.length), (width3 - rectangle28.length), (width3 - rectangle29.length) };
-                int width4 = MinOne.findMin(arr4);
+
                 Rectangle rectangle30 = new Rectangle();
                 Rectangle rectangle31 = new Rectangle();
+                Rectangle rectangle56 = new Rectangle();
+                Rectangle rectangle57 = new Rectangle();
                 Coordinate vertical9 = new Coordinate();
                 Coordinate horizontal9 = new Coordinate();
                 //有长有宽，便是一个新的码盘
-                int count24 = 0;//14代表第一个盘第4层的计数情况
+                int count24 = 0;//24代表第2个盘第4层的计数情况
 
                 //第4层第一个
-                if ((count24 == 0) && (length4 >= l) && (width4 >= w))
+                if ((count24 == 0) && (length24 + edge >= l) && (width24 + edge >= w))
                 {
-                    Coordinate k51 = new Coordinate();
-                    k51.x = 1400;
-                    k51.y = 0;
-                    arrayList.Add(k51);
+                    Coordinate k65 = new Coordinate();
+                    k65.x = 1400;
+                    k65.y = 0;
+                    arrayList.Add(k65);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -3180,25 +5498,68 @@ namespace 码垛机
                     count24++;
 
                     vertical9.x = 1400;
-                    vertical9.y = w;
+                    vertical9.y = w + gap;
                     horizontal9.x = 1400 + l;
                     horizontal9.y = 0;
 
-                    rectangle30.length = length4 - l;
-                    width4 -= w;
+                    rectangle30.length = length24 - l;
+                    width24 -= (w + gap);
                     return;
                 }
                 //第一列第二个及以上
-                if (rectangle30.length >= l)
+                if (rectangle30.length + edge >= l)
                 {
-                    Coordinate k52 = new Coordinate();
-                    k52.x = horizontal9.x;
-                    k52.y = horizontal9.y;
-                    arrayList.Add(k52);
+                    Coordinate k66 = new Coordinate();
+                    if (rectangle30.length - l + edge < 390)
+                    {
+                        k66.x = 2600 - l;
+                        k66.y = horizontal9.y;
+                    }
+                    else
+                    {
+                        k66.x = horizontal9.x;
+                        k66.y = horizontal9.y;
+                    }
+                
+                    arrayList.Add(k66);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle30.length - l + edge < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal9.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count24++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(horizontal9.x);
@@ -3236,12 +5597,12 @@ namespace 码垛机
                     rectangle30.length -= l;
                     return;
                 }
-                if (width4 >= w)
+                if (width24 + edge >= w)
                 {
-                    Coordinate k53 = new Coordinate();
-                    k53.x = vertical9.x;
-                    k53.y = vertical9.y;
-                    arrayList.Add(k53);
+                    Coordinate k67 = new Coordinate();
+                    k67.x = vertical9.x;
+                    k67.y = vertical9.y;
+                    arrayList.Add(k67);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -3281,22 +5642,65 @@ namespace 码垛机
                     horizontal9.x = vertical9.x + l;
                     horizontal9.y = vertical9.y;
                     vertical9.x += 0;
-                    vertical9.y += w;
-                    rectangle31.length = length4 - l;
-                    width4 -= w;
+                    vertical9.y += (w + gap);
+                    rectangle31.length = length24 - l;
+                    width24 -= (w + gap);
                     return;
                 }
                 //第二列第二个及以上
-                if (rectangle31.length >= l)
+                if (rectangle31.length + edge >= l)
                 {
-                    Coordinate k54 = new Coordinate();
-                    k54.x = horizontal9.x;
-                    k54.y = horizontal9.y;
-                    arrayList.Add(k54);
+                    Coordinate k68 = new Coordinate();
+                    if (rectangle31.length - l + edge < 390)
+                    {
+                        k68.x = 2600 - l;
+                        k68.y = horizontal9.y;
+                    }
+                    else
+                    {
+                        k68.x = horizontal9.x;
+                        k68.y = horizontal9.y;
+                    }
+                    
+                    arrayList.Add(k68);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle31.length - l + edge < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal9.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count22++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(horizontal9.x);
@@ -3334,31 +5738,346 @@ namespace 码垛机
                     rectangle31.length -= l;
                     return;
                 }
-
-                MessageBox.Show("码盘2码垛完成,请移走!", "警告");
-            }
-
-
-
-            /**********************************************************************************************/
-            //第三个码盘♂
-            if (h == 300 && w == 320)
-            {
-                int length = 1200;
-                int width = 1000;
-                if (count3 == 0)
+                //第一列第三个
+                if (width24 + edge >= w)
                 {
-                    Coordinate k55 = new Coordinate();
-                    k55.x = 2800;
-                    k55.y = 0;
-                    arrayList.Add(k55);
+                    Coordinate k69 = new Coordinate();
+                    k69.x = vertical9.x;
+                    k69.y = vertical9.y;
+                    arrayList.Add(k69);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea3(0, 0, l, w);
+                    byte[] byteX = toBytes.intToBytes(vertical9.x);
+                    byte[] byteY = toBytes.intToBytes(vertical9.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "1", "0", "1" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count24++;
+
+                    horizontal9.x = vertical9.x + l;
+                    horizontal9.y = vertical9.y;
+                    vertical9.x += 0;
+                    vertical9.y += (w + gap);
+                    rectangle56.length = length24 - l;
+                    width24 -= (w + gap);
+                    return;
+                }
+                //第三行第二个及以上
+                if (rectangle56.length + edge >= l)
+                {
+                    Coordinate k70 = new Coordinate();
+                    if (rectangle56.length - l + edge < 390)
+                    {
+                        k70.x = 2600 - l;
+                        k70.y = horizontal9.y;
+                    }
+                    else
+                    {
+                        k70.x = horizontal9.x;
+                        k70.y = horizontal9.y;
+                    }
+                   
+                    arrayList.Add(k70);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle56.length - l + edge < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal9.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count24++;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(horizontal9.x);
+                    byte[] byteY = toBytes.intToBytes(horizontal9.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "1", "0", "1" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count24++;
+
+                    horizontal9.x += l;
+                    horizontal9.y += 0;
+                    rectangle56.length -= l;
+                    return;
+                }
+                //第一列第四个
+                if (width24 + edge >= w)
+                {
+                    Coordinate k71 = new Coordinate();
+                    k71.x = vertical9.x;
+                    k71.y = vertical9.y;
+                    arrayList.Add(k71);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    if (width24 - w + edge < 240)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical9.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - w);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count24++;
+                        rectangle57.length = length24 - l;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(vertical9.x);
+                    byte[] byteY = toBytes.intToBytes(vertical9.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "1", "0", "1" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count24++;
+
+                    horizontal9.x = vertical9.x + l;
+                    horizontal9.y = vertical9.y;
+                    vertical9.x += 0;
+                    vertical9.y += (w + gap);
+                    rectangle57.length = length24 - l;
+                    width24 -= (w + gap);
+                    return;
+                }
+                //第四行第二个及以上
+                if (rectangle57.length + edge >= l)
+                {
+                    Coordinate k72 = new Coordinate();
+                    if (rectangle57.length - l + edge < 390)
+                    {
+                        k72.x = 1200 - l;
+                        k72.y = horizontal9.y;
+                    }
+                    else
+                    {
+                        k72.x = horizontal9.x;
+                        k72.y = horizontal9.y;
+                    }
+                    
+                    arrayList.Add(k72);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle57.length - l + edge < 390)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal9.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count24++;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(horizontal9.x);
+                    byte[] byteY = toBytes.intToBytes(horizontal9.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "0", "1", "0", "1" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count24++;
+
+                    horizontal9.x += l;
+                    horizontal9.y += 0;
+                    rectangle57.length -= l;
+                    return;
+                }
+
+                MessageBox.Show("码盘2码垛完成,请移走!", "警告");
+            }
+
+            /**********************************************************************************************/
+            //第三个码盘♂
+            if (h == 300 && w == 320)
+            {
+                if (count3 == 0)
+                {
+                    Coordinate k73 = new Coordinate();
+                    k73.x = 2800;
+                    k73.y = 0;
+                    arrayList.Add(k73);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    wdf.DrawOcupyArea3(0, 0, l, w);
 
                     //第一个箱子直接放在原点(2800,0,0)
                     //发坐标（包含挡板状态）
@@ -3393,28 +6112,71 @@ namespace 码垛机
                     count3++;
 
                     vertical3.x = 2800;
-                    vertical3.y = w;
+                    vertical3.y = (w + gap);
                     horizontal3.x = 2800 + l;
                     horizontal3.y = 0;
 
                     rectangle11.length = 1200 - l;
-                    width -= w;
+                    width3 -= (w + gap);
                     return;
                 }
                 //第一行第二个及以上
-                if (rectangle11.length >= l)
+                if (rectangle11.length + edge >= l)
                 {
-                    Coordinate k56 = new Coordinate();
-                    k56.x = horizontal3.x;
-                    k56.y = horizontal3.y;
-                    arrayList.Add(k56);
+                    Coordinate k74 = new Coordinate();
+                    if (rectangle11.length - l + edge < 550)
+                    {
+                        k74.x = 4000 - l;
+                        k74.y = horizontal3.y;
+                        wdf.DrawOcupyArea3(1200 - l, horizontal3.y, l, w);
+                    }
+                    else
+                    {
+                        k74.x = horizontal3.x;
+                        k74.y = horizontal3.y;
+                        wdf.DrawOcupyArea3(horizontal3.x - 2800, horizontal3.y, l, w);
+                    }
+                   
+                    arrayList.Add(k74);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea3(horizontal3.x - 2800, horizontal3.y, l, w);
+                    if(rectangle11.length - l + edge < 550)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal3.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count3++;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(horizontal3.x);
                     byte[] byteY = toBytes.intToBytes(horizontal3.y);
@@ -3451,20 +6213,20 @@ namespace 码垛机
                     rectangle11.length -= l;
                     return;
                 }
-                //第一列第二个(第二行第一个)
-                if (width >= w)
+                //第一列第二个
+                if (width3 + edge >= w)
                 {
-                    Coordinate k57 = new Coordinate();
-                    k57.x = vertical3.x;
-                    k57.y = vertical3.y;
-                    arrayList.Add(k57);
+                    Coordinate k75 = new Coordinate();
+                    k75.x = vertical3.x;
+                    k75.y = vertical3.y;
+                    arrayList.Add(k75);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea3(vertical3.x - 2800, vertical3.y, l, w);
+                    wdf.DrawOcupyArea3(vertical3.x - 2800, vertical3.y, l, w);
 
                     byte[] byteX = toBytes.intToBytes(vertical3.x);
                     byte[] byteY = toBytes.intToBytes(vertical3.y);
@@ -3499,25 +6261,68 @@ namespace 码垛机
                     horizontal3.x = vertical3.x + l;
                     horizontal.y = vertical3.y;
                     vertical3.x += 0;
-                    vertical3.y += w;                   
+                    vertical3.y += (w + gap);                   
                     rectangle12.length = 1000 - l;
-                    width -= w;
+                    width3 -= (w + gap);
                     return;
                 }
                 //第二列第二个及以上
-                if (rectangle12.length >= l)
+                if (rectangle12.length + edge >= l)
                 {
-                    Coordinate k58 = new Coordinate();
-                    k58.x = horizontal3.x;
-                    k58.y = horizontal3.y;
-                    arrayList.Add(k58);
+                    Coordinate k76 = new Coordinate();
+                    if (rectangle12.length - l + edge < 550)
+                    {
+                        k76.x = 4000 - l;
+                        k76.y = horizontal3.y;
+                        wdf.DrawOcupyArea3(1200 - l, horizontal3.y, l, w);
+                    }
+                    else
+                    {
+                        k76.x = horizontal3.x;
+                        k76.y = horizontal3.y;
+                        wdf.DrawOcupyArea3(horizontal3.x - 2800, horizontal3.y, l, w);
+                    }
+                
+                    arrayList.Add(k76);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
-                    }
+                    }                   
 
-                    WorkingDetailForm.DrawOcupyArea3(horizontal3.x - 2800, horizontal3.y, l, w);
+                    if (rectangle12.length - l + edge < 550)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(2800 + 1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal3.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count3++;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(horizontal3.x);
                     byte[] byteY = toBytes.intToBytes(horizontal3.y);
@@ -3555,19 +6360,19 @@ namespace 码垛机
                     return;
                 }
                 //第一列第三个
-                if (width >= w)
+                if (width3  + edge>= w)
                 {
-                    Coordinate k59 = new Coordinate();
-                    k59.x = vertical3.x;
-                    k59.y = vertical3.y;
-                    arrayList.Add(k59);
+                    Coordinate k77 = new Coordinate();
+                    k77.x = vertical3.x;
+                    k77.y = vertical3.y;
+                    arrayList.Add(k77);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea3(vertical3.x - 2800, vertical3.y, l, w);
+                    wdf.DrawOcupyArea3(vertical3.x - 2800, vertical3.y, l, w);
 
                     byte[] byteX = toBytes.intToBytes(vertical3.x);
                     byte[] byteY = toBytes.intToBytes(vertical3.y);
@@ -3602,25 +6407,69 @@ namespace 码垛机
                     horizontal3.x = vertical3.x + l;
                     horizontal3.y = vertical3.y;
                     vertical3.x += 0;
-                    vertical3.y += w;                   
+                    vertical3.y += (w + gap);                   
                     rectangle13.length = 1000 - l;
-                    width -= w;
+                    width3 -= (w + gap);
                     return;
                 }
                 //第三行第二个及以上
                 if (rectangle13.length >= l)
                 {
-                    Coordinate k60 = new Coordinate();
-                    k60.x = horizontal3.x;
-                    k60.y = horizontal3.y;
-                    arrayList.Add(k60);
+                    Coordinate k78 = new Coordinate();
+                    if (rectangle13.length - l + edge < 550)
+                    {
+                        k78.x = 4000 - l;
+                        k78.y = horizontal3.y;
+                        wdf.DrawOcupyArea3(1200 - l, horizontal3.y, l, w);
+                    }
+                    else
+                    {
+                        k78.x = horizontal3.x;
+                        k78.y = horizontal3.y;
+                        wdf.DrawOcupyArea3(horizontal3.x - 2800, horizontal3.y, l, w);
+                    }
+                    k78.x = horizontal3.x;
+                    k78.y = horizontal3.y;
+                    arrayList.Add(k78);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
-                    WorkingDetailForm.DrawOcupyArea3(horizontal3.x - 2800, horizontal3.y, l, w);
+                    if (rectangle13.length - l + edge < 550)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(2800 + 1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal3.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count3++;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(horizontal3.x);
                     byte[] byteY = toBytes.intToBytes(horizontal3.y);
@@ -3658,27 +6507,22 @@ namespace 码垛机
                     return;
                 }
 
-                //如果走到这，说明第1层不能码了，该码放第2层了
-                //需要记录第1层码放的长宽信息，因为第2层是码放在第1层上的
-                int width2 = 1000 - width;
-                //拿到最短的长度（不能超出码放边界）
-                int[] arr2 = new int[] { (1200 - rectangle11.length), (1200 - rectangle12.length), (1200 - rectangle13.length) };
-                int length2 = MinOne.findMin(arr2);
-                int ref1 = length2;
+                //如果走到这，说明第1层不能码了，该码放第2层了              
                 Rectangle rectangle32 = new Rectangle();
                 Rectangle rectangle33 = new Rectangle();
                 Rectangle rectangle34 = new Rectangle();
+                Rectangle rectangle58 = new Rectangle();
                 Coordinate vertical10 = new Coordinate();
                 Coordinate horizontal10 = new Coordinate();
                 //有长有宽，便是一个新的码盘
-                int count32 = 0;//13代表第一个盘第3层的计数情况
+                int count32 = 0;//32代表第3个盘第2层的计数情况
 
-                if ((count32 == 0) && (width2 >= l) && (length2 >= w))
+                if ((count32 == 0) && (width32 + edge >= l) && (length32 + edge>= w))
                 {
-                    Coordinate k61 = new Coordinate();
-                    k61.x = 2800;
-                    k61.y = 0;
-                    arrayList.Add(k61);
+                    Coordinate k79 = new Coordinate();
+                    k79.x = 2800;
+                    k79.y = 0;
+                    arrayList.Add(k79);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -3719,24 +6563,67 @@ namespace 码垛机
 
                     vertical10.x = 2800;
                     vertical10.y = l;
-                    horizontal10.x = 2800 + w;
+                    horizontal10.x = 2800 + w + gap;
                     horizontal10.y = 0;
 
-                    rectangle32.length = width2 - l;
-                    length2 -= w;
+                    rectangle32.length = width32 - l;
+                    length32 -= (w + gap);
                     return;
                 }
                 //第一列第二个及以上
-                if (rectangle32.length >= l)
+                if (rectangle32.length + edge >= l)
                 {
-                    Coordinate k62 = new Coordinate();
-                    k62.x = vertical10.x;
-                    k62.y = vertical10.y;
-                    arrayList.Add(k62);
+                    Coordinate k80 = new Coordinate();
+                    if ((rectangle32.length - l + edge) < 550)
+                    {
+                        k80.x = vertical10.x;
+                        k80.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k80.x = vertical10.x;
+                        k80.y = vertical10.y;
+                    }
+                   
+                    arrayList.Add(k80);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if ((rectangle32.length - l + edge) < 550)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical10.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count32++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(vertical10.x);
@@ -3775,111 +6662,12 @@ namespace 码垛机
                     return;
                 }
                 //第一行第二个(第二列第一个)
-                if (length2 >= w)
+                if (length32 + edge >= w)
                 {
-                    Coordinate k63 = new Coordinate();
-                    k63.x = horizontal10.x;
-                    k63.y = horizontal10.y;
-                    arrayList.Add(k63);
-                    if (arrayList.Count == 2)
-                    {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
-                        arrayList.RemoveAt(0);
-                    }
-
-                    byte[] byteX = toBytes.intToBytes(horizontal10.x);
-                    byte[] byteY = toBytes.intToBytes(horizontal10.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
-                    string[] status = new string[] { "1", "0", "0", "0" };
-                    string status2 = string.Join("", status);
-                    int a = Convert.ToInt32(status2, 2);
-                    byte[] b = toBytes.intToBytes(a);
-
-                    BF.sendbuf[0] = 0xFA;
-                    BF.sendbuf[1] = 0x10;
-                    BF.sendbuf[2] = byteX[3];
-                    BF.sendbuf[3] = byteX[2];
-                    BF.sendbuf[4] = byteX[1];
-                    BF.sendbuf[5] = byteX[0];
-                    BF.sendbuf[6] = byteY[3];
-                    BF.sendbuf[7] = byteY[2];
-                    BF.sendbuf[8] = byteY[1];
-                    BF.sendbuf[9] = byteY[0];
-                    BF.sendbuf[10] = byteZ[3];
-                    BF.sendbuf[11] = byteZ[2];
-                    BF.sendbuf[12] = byteZ[1];
-                    BF.sendbuf[13] = byteZ[0];
-                    BF.sendbuf[14] = b[3];
-                    BF.sendbuf[15] = b[2];
-                    BF.sendbuf[16] = b[1];
-                    BF.sendbuf[17] = b[0];
-                    BF.sendbuf[18] = 0xF5;
-                    SendMenuCommand(BF.sendbuf, 19);
-                    count32++;
-
-                    vertical10.x = horizontal.x;
-                    vertical10.y = l;
-                    horizontal10.x += w;
-                    horizontal10.y += 0;
-                    rectangle33.length = width2 - l;
-                    length2 -= w;
-                    return;
-                }
-                //第二列第二个及以上
-                if (rectangle33.length >= l)
-                {
-                    Coordinate k64 = new Coordinate();
-                    k64.x = vertical10.x;
-                    k64.y = vertical10.y;
-                    arrayList.Add(k64);
-                    if (arrayList.Count == 2)
-                    {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
-                        arrayList.RemoveAt(0);
-                    }
-
-                    byte[] byteX = toBytes.intToBytes(vertical10.x);
-                    byte[] byteY = toBytes.intToBytes(vertical10.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
-                    string[] status = new string[] { "1", "0", "0", "0" };
-                    string status2 = string.Join("", status);
-                    int a = Convert.ToInt32(status2, 2);
-                    byte[] b = toBytes.intToBytes(a);
-
-                    BF.sendbuf[0] = 0xFA;
-                    BF.sendbuf[1] = 0x10;
-                    BF.sendbuf[2] = byteX[3];
-                    BF.sendbuf[3] = byteX[2];
-                    BF.sendbuf[4] = byteX[1];
-                    BF.sendbuf[5] = byteX[0];
-                    BF.sendbuf[6] = byteY[3];
-                    BF.sendbuf[7] = byteY[2];
-                    BF.sendbuf[8] = byteY[1];
-                    BF.sendbuf[9] = byteY[0];
-                    BF.sendbuf[10] = byteZ[3];
-                    BF.sendbuf[11] = byteZ[2];
-                    BF.sendbuf[12] = byteZ[1];
-                    BF.sendbuf[13] = byteZ[0];
-                    BF.sendbuf[14] = b[3];
-                    BF.sendbuf[15] = b[2];
-                    BF.sendbuf[16] = b[1];
-                    BF.sendbuf[17] = b[0];
-                    BF.sendbuf[18] = 0xF5;
-                    SendMenuCommand(BF.sendbuf, 19);
-                    count32++;
-
-                    vertical10.x += 0;
-                    vertical10.y += l;
-                    rectangle33.length -= l;
-                    return;
-                }
-                //第一行第三个
-                if (length2 >= w)
-                {
-                    Coordinate k65 = new Coordinate();
-                    k65.x = horizontal10.x;
-                    k65.y = horizontal10.y;
-                    arrayList.Add(k65);
+                    Coordinate k81 = new Coordinate();
+                    k81.x = horizontal10.x;
+                    k81.y = horizontal10.y;
+                    arrayList.Add(k81);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -3918,23 +6706,208 @@ namespace 码垛机
 
                     vertical10.x = horizontal10.x;
                     vertical10.y = l;
-                    horizontal10.x += w;
+                    horizontal10.x += (w + gap);
                     horizontal10.y += 0;
-                    rectangle34.length = width2 - l;
-                    length2 -= w;
+                    rectangle33.length = width32 - l;
+                    length32 -= (w + gap);
+                    return;
+                }
+                //第二列第二个及以上
+                if (rectangle33.length >= l)
+                {
+                    Coordinate k82 = new Coordinate();
+                    if ((rectangle33.length - l + edge) < 550)
+                    {
+                        k82.x = vertical10.x;
+                        k82.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k82.x = vertical10.x;
+                        k82.y = vertical10.y;
+                    }
+                    
+                    arrayList.Add(k82);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    if ((rectangle33.length - l + edge) < 550)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical10.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count32++;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(vertical10.x);
+                    byte[] byteY = toBytes.intToBytes(vertical10.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "1", "0", "0", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count32++;
+
+                    vertical10.x += 0;
+                    vertical10.y += l;
+                    rectangle33.length -= l;
+                    return;
+                }
+                //第一行第三个
+                if (length32 >= w)
+                {
+                    Coordinate k83 = new Coordinate();
+                    k83.x = horizontal10.x;
+                    k83.y = horizontal10.y;
+                    arrayList.Add(k83);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(horizontal10.x);
+                    byte[] byteY = toBytes.intToBytes(horizontal10.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "1", "0", "0", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count32++;
+
+                    vertical10.x = horizontal10.x;
+                    vertical10.y = l;
+                    horizontal10.x += (w + gap);
+                    horizontal10.y += 0;
+                    rectangle34.length = width32 - l;
+                    length32 -= (w + gap);
                     return;
                 }
                 //第三列第二个及以上
                 if (rectangle33.length >= l)
                 {
-                    Coordinate k66 = new Coordinate();
-                    k66.x = vertical10.x;
-                    k66.y = vertical10.y;
-                    arrayList.Add(k66);
+                    Coordinate k84 = new Coordinate();
+                    if ((rectangle34.length - l + edge) < 550)
+                    {
+                        k84.x = vertical10.x;
+                        k84.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k84.x = vertical10.x;
+                        k84.y = vertical10.y;
+                    }
+                   
+                    arrayList.Add(k84);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if ((rectangle34.length - l + edge) < 550)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical10.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count32++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(vertical10.x);
@@ -3972,29 +6945,209 @@ namespace 码垛机
                     rectangle34.length -= l;
                     return;
                 }
+                //第一行第四个
+                if (length32 + edge >= w)
+                {
+                    Coordinate k85 = new Coordinate();
+                    if ((length32 - w + edge) < 320)
+                    {
+                        k85.x = 4000 - w;
+                        k85.y = horizontal10.y;
+                    }
+                    else
+                    {
+                        k85.x = horizontal10.x;
+                        k85.y = horizontal10.y;
+                    }
+                    
+                    arrayList.Add(k85);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
 
+                    if ((length32 - w + edge) < 320)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(2800 + 1200 - w);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal10.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count32++;
+                        rectangle58.length = width32 - l;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(horizontal10.x);
+                    byte[] byteY = toBytes.intToBytes(horizontal10.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "1", "0", "0", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count32++;
+
+                    vertical10.x = horizontal10.x;
+                    vertical10.y = l;
+                    horizontal10.x += (w + gap);
+                    horizontal10.y += 0;
+                    rectangle58.length = width32 - l;
+                    length32 -= (w + gap);
+                    return;
+                }
+                //第四列第二个及以上
+                if (rectangle58.length >= l)
+                {
+                    Coordinate k86 = new Coordinate();
+                    if ((rectangle58.length - l + edge) < 550)
+                    {
+                        k86.x = vertical10.x;
+                        k86.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k86.x = vertical10.x;
+                        k86.y = vertical10.y;
+                    }
+                 
+                    arrayList.Add(k86);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    if ((rectangle58.length - l + edge) < 550)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical10.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count32++;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(vertical10.x);
+                    byte[] byteY = toBytes.intToBytes(vertical10.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "1", "0", "0", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count32++;
+
+                    vertical10.x += 0;
+                    vertical10.y += l;
+                    rectangle58.length -= l;
+                    return;
+                }
 
                 //如果走到这，说明第2层不能码了，该码放第3层了
-                //需要记录第2层码放的长宽信息，因为第3层是码放在第2层上的
-                int length3 = ref1 - length2;
-                //拿到最短的宽度（不能超出码放边界）
-                int[] arr3 = new int[] { (width2 - rectangle32.length), (width2 - rectangle33.length), (width2 - rectangle34.length) };
-                int width3 = MinOne.findMin(arr3);
-                int ref2 = width3;
                 Rectangle rectangle35 = new Rectangle();
                 Rectangle rectangle36 = new Rectangle();
+                Rectangle rectangle59 = new Rectangle();
                 Coordinate vertical11 = new Coordinate();
                 Coordinate horizontal11 = new Coordinate();
                 //有长有宽，便是一个新的码盘
                 int count33 = 0;//33代表第3个盘第3层的计数情况
 
                 //第3层第一个
-                if ((count33 == 0) && (length3 >= l) && (width3 >= w))
+                if ((count33 == 0) && (length33 + edge >= l) && (width33 + edge >= w))
                 {
-                    Coordinate k67 = new Coordinate();
-                    k67.x = 2800;
-                    k67.y = 0;
-                    arrayList.Add(k67);
+                    Coordinate k87 = new Coordinate();
+                    k87.x = 2800;
+                    k87.y = 0;
+                    arrayList.Add(k87);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -4034,25 +7187,68 @@ namespace 码垛机
                     count33++;
 
                     vertical11.x = 2800;
-                    vertical11.y = w;
+                    vertical11.y = w + gap;
                     horizontal11.x = 2800 + l;
                     horizontal11.y = 0;
 
-                    rectangle35.length = length3 - l;
-                    width3 -= w;
+                    rectangle35.length = length33 - l;
+                    width33 -= (w + gap);
                     return;
                 }
                 //第一列第二个及以上
-                if (rectangle35.length >= l)
+                if (rectangle35.length + edge >= l)
                 {
-                    Coordinate k68 = new Coordinate();
-                    k68.x = horizontal11.x;
-                    k68.y = horizontal11.y;
-                    arrayList.Add(k68);
+                    Coordinate k88 = new Coordinate();
+                    if (rectangle35.length - l + edge < 550)
+                    {
+                        k88.x = 4000 - l;
+                        k88.y = horizontal11.y;
+                    }
+                    else
+                    {
+                        k88.x = horizontal11.x;
+                        k88.y = horizontal11.y;
+                    }
+                   
+                    arrayList.Add(k88);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle35.length - l + edge < 550)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(2800 + 1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal11.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count33++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(horizontal11.x);
@@ -4090,12 +7286,13 @@ namespace 码垛机
                     rectangle35.length -= l;
                     return;
                 }
-                if (width3 >= w)
+                //第一列第二个
+                if (width33 + edge >= w)
                 {
-                    Coordinate k69 = new Coordinate();
-                    k69.x = vertical11.x;
-                    k69.y = vertical11.y;
-                    arrayList.Add(k69);
+                    Coordinate k89 = new Coordinate();
+                    k89.x = vertical11.x;
+                    k89.y = vertical11.y;
+                    arrayList.Add(k89);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -4135,22 +7332,65 @@ namespace 码垛机
                     horizontal11.x = vertical11.x + l;
                     horizontal11.y = vertical11.y;
                     vertical11.x += 0;
-                    vertical11.y += w;
-                    rectangle36.length = length3 - l;
-                    width3 -= w;
+                    vertical11.y += (w + gap);
+                    rectangle36.length = length33 - l;
+                    width33 -= (w + gap);
                     return;
                 }
-                //第二列第二个及以上
-                if (rectangle36.length >= l)
+                //第二行第二个及以上
+                if (rectangle36.length + edge >= l)
                 {
-                    Coordinate k70 = new Coordinate();
-                    k70.x = horizontal11.x;
-                    k70.y = horizontal11.y;
-                    arrayList.Add(k70);
+                    Coordinate k90 = new Coordinate();
+                    if (rectangle36.length - l + edge < 550)
+                    {
+                        k90.x = 4000 - l;
+                        k90.y = horizontal11.y;
+                    }
+                    else
+                    {
+                        k90.x = horizontal11.x;
+                        k90.y = horizontal11.y;
+                    }
+                    
+                    arrayList.Add(k90);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle36.length - l + edge < 550)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(2800 + 1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal11.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count33++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(horizontal11.x);
@@ -4188,31 +7428,213 @@ namespace 码垛机
                     rectangle36.length -= l;
                     return;
                 }
+                //第一列第三个
+                if (width33 + edge >= w)
+                {
+                    Coordinate k91 = new Coordinate();
+                    if (width33 - w + edge < 320)
+                    {
+                        k91.x = vertical11.x;
+                        k91.y = 1000 - w;
+                    }
+                    else
+                    {
+                        k91.x = vertical11.x;
+                        k91.y = vertical11.y;
+                    }
+           
+                    arrayList.Add(k91);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    if (width33 - w + edge < 320)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical11.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - w);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count33++;
+                        rectangle59.length = length33 - l;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(vertical11.x);
+                    byte[] byteY = toBytes.intToBytes(vertical11.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "1", "0", "0", "1" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count33++;
+
+                    horizontal11.x = vertical11.x + l;
+                    horizontal11.y = vertical11.y;
+                    vertical11.x += 0;
+                    vertical11.y += (w + gap);
+                    rectangle59.length = length33 - l;
+                    width33 -= (w + gap);
+                    return;
+                }
+                //第三行第二个及以上
+                if (rectangle59.length + edge >= l)
+                {
+                    Coordinate k92 = new Coordinate();
+                    if (rectangle59.length - l + edge < 550)
+                    {
+                        k92.x = 4000 - l;
+                        k92.y = horizontal11.y;
+                    }
+                    else
+                    {
+                        k92.x = horizontal11.x;
+                        k92.y = horizontal11.y;
+                    }
+                  
+                    arrayList.Add(k92);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    if (rectangle59.length - l + edge < 550)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(2800 + 1200 - l);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal11.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count33++;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(horizontal11.x);
+                    byte[] byteY = toBytes.intToBytes(horizontal11.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "1", "0", "0", "1" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count33++;
+
+                    horizontal11.x += l;
+                    horizontal11.y += 0;
+                    rectangle59.length -= l;
+                    return;
+                }
 
                 //如果走到这，说明第3层不能码了，该码放第4层了
-                //需要记录第3层码放的长宽信息，因为第4层是码放在第3层上的
-                int width4 = ref2 - width3;
-                //拿到最短的长度（不能超出码放边界）
-                int[] arr4 = new int[] {(length3 - rectangle35.length), (length3 - rectangle36.length) };
-                int length4 = MinOne.findMin(arr4);
-                
 
-                //有长有宽，便是一个新的码盘
                 int count34 = 0;//34代表第3个盘第4层的计数情况
 
                 Rectangle rectangle37 = new Rectangle();
                 Rectangle rectangle38 = new Rectangle();
+                Rectangle rectangle60 = new Rectangle();
+                Rectangle rectangle61 = new Rectangle();
+
 
                 Coordinate vertical12 = new Coordinate();
                 Coordinate horizontal12 = new Coordinate();
 
-                //第二层第一个
-                if ((count34 == 0) && (length4 >= l) && (width4 >= w))
+                //第4层第一个
+                if ((count34 == 0) && (length34  + edge>= l) && (width34 + edge >= w))
                 {
-                    Coordinate k71 = new Coordinate();
-                    k71.x = 2800;
-                    k71.y = 0;
-                    arrayList.Add(k71);
+                    Coordinate k93 = new Coordinate();
+                    k93.x = 2800;
+                    k93.y = 0;
+                    arrayList.Add(k93);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -4252,25 +7674,68 @@ namespace 码垛机
                     count34++;
 
                     vertical12.x = 2800;
-                    vertical12.y = w;
-                    horizontal12.x = 2800 + l;
+                    vertical12.y = l;
+                    horizontal12.x = 2800 + w + gap;
                     horizontal12.y = 0;
 
-                    rectangle37.length = length4 - l;
-                    width4 -= w;
+                    rectangle37.length = width34 - l;
+                    length34 -= (w + gap);
                     return;
                 }
                 //第一列第二个及以上
-                if (rectangle37.length >= l)
+                if (rectangle37.length + edge >= l)
                 {
-                    Coordinate k72 = new Coordinate();
-                    k72.x = horizontal12.x;
-                    k72.y = horizontal12.y;
-                    arrayList.Add(k72);
+                    Coordinate k94 = new Coordinate();
+                    if ((rectangle37.length - l + edge) < 550)
+                    {
+                        k94.x = vertical12.x;
+                        k94.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k94.x = vertical12.x;
+                        k94.y = vertical12.y;
+                    }
+                    
+                    arrayList.Add(k94);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }
+
+                    if ((rectangle37.length - l + edge) < 550)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical12.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count34++;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(horizontal12.x);
@@ -4303,17 +7768,18 @@ namespace 码垛机
                     SendMenuCommand(BF.sendbuf, 19);
                     count34++;
 
-                    horizontal12.x += l;
-                    horizontal12.y += 0;
+                    vertical12.x += 0;
+                    vertical12.y += l;
                     rectangle37.length -= l;
                     return;
                 }
-                if (width4 >= w)
+                //第一行第二个
+                if (length34 + edge >= w)
                 {
-                    Coordinate k73 = new Coordinate();
-                    k73.x = vertical12.x;
-                    k73.y = vertical12.y;
-                    arrayList.Add(k73);
+                    Coordinate k95 = new Coordinate();
+                    k95.x = vertical12.x;
+                    k95.y = vertical12.y;
+                    arrayList.Add(k95);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -4350,21 +7816,113 @@ namespace 码垛机
                     SendMenuCommand(BF.sendbuf, 19);
                     count34++;
 
-                    horizontal12.x = vertical12.x + l;
-                    horizontal12.y = vertical12.y;
-                    vertical12.x += 0;
-                    vertical12.y += w;
-                    rectangle38.length = length4 - l;
-                    width4 -= w;
+                    vertical12.x = horizontal12.x;
+                    vertical12.y = l;
+                    horizontal12.x += (w + gap);
+                    horizontal12.y += 0;
+                    rectangle38.length = width34 - l;
+                    length34 -= (w + gap);
                     return;
+
                 }
                 //第二列第二个及以上
-                if (rectangle38.length >= l)
+                if (rectangle38.length + edge >= l)
                 {
-                    Coordinate k74 = new Coordinate();
-                    k74.x = horizontal12.x;
-                    k74.y = horizontal12.y;
-                    arrayList.Add(k74);
+                    Coordinate k96 = new Coordinate();
+                    if ((rectangle38.length - l + edge) < 550)
+                    {
+                        k96.x = vertical12.x;
+                        k96.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k96.x = vertical12.x;
+                        k96.y = vertical12.y;
+                    }
+                 
+                    arrayList.Add(k96);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    if ((rectangle38.length - l + edge) < 550)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical12.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count34++;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(vertical12.x);
+                    byte[] byteY = toBytes.intToBytes(vertical12.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "1", "0", "0", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count34++;
+
+                    vertical12.x += 0;
+                    vertical12.y += l;
+                    rectangle38.length -= l;
+                    return;
+                }
+                //第一行第三个
+                if (width34 + edge >= w)
+                {
+                    Coordinate k97 = new Coordinate();
+                    k97.x = horizontal12.x;
+                    k97.y = horizontal12.y;
+                    arrayList.Add(k97);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
@@ -4401,11 +7959,297 @@ namespace 码垛机
                     SendMenuCommand(BF.sendbuf, 19);
                     count34++;
 
-                    horizontal12.x += l;
+
+                    vertical12.x = horizontal12.x;
+                    vertical12.y = l;
+                    horizontal12.x += (w + gap);
                     horizontal12.y += 0;
-                    rectangle38.length -= l;
+                    rectangle60.length = width34 - l;
+                    length34 -= (w + gap);
+                    return;
+                 
+                }
+                //第三列第二个及以上
+                if (rectangle60.length >= l)
+                {
+                    Coordinate k98 = new Coordinate();
+                    if ((rectangle60.length - l + edge) < 550)
+                    {
+                        k98.x = vertical12.x;
+                        k98.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k98.x = vertical12.x;
+                        k98.y = vertical12.y;
+                    }
+                   
+                    arrayList.Add(k98);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    if ((rectangle60.length - l + edge) < 550)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical12.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count34++;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(vertical12.x);
+                    byte[] byteY = toBytes.intToBytes(vertical12.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "1", "0", "0", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count34++;
+
+                    vertical12.x += 0;
+                    vertical12.y += l;
+                    rectangle60.length -= l;
                     return;
                 }
+                //第一行第四个
+                if (length34 + edge >= w)
+                {
+                    Coordinate k99 = new Coordinate();
+                    if ((length34 - w + edge) < 320)
+                    {
+                        k99.x = 4000 - w;
+                        k99.y = horizontal12.y;
+                    }
+                    else
+                    {
+                        k99.x = horizontal12.x;
+                        k99.y = horizontal12.y;
+                    }
+                   
+                    arrayList.Add(k99);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+
+                    if ((length34 - w + edge) < 320)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(2800 + 1200 - w);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal12.y);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count34++;
+                        rectangle61.length = width34 - l;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(vertical12.x);
+                    byte[] byteY = toBytes.intToBytes(vertical12.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "1", "0", "0", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count34++;
+
+
+                    vertical12.x = horizontal12.x;
+                    vertical12.y = l;
+                    horizontal12.x += (w + gap);
+                    horizontal12.y += 0;
+                    rectangle61.length = width34 - l;
+                    length34 -= (w + gap);
+                    return;
+
+                }
+                //第四列第二个及以上
+                if (rectangle61.length + edge >= l)
+                {
+                    Coordinate k100 = new Coordinate();
+                    if ((rectangle61.length - l + edge) < 550)
+                    {
+                        k100.x = vertical12.x;
+                        k100.y = 1000 - l;
+                    }
+                    else
+                    {
+                        k100.x = vertical12.x;
+                        k100.y = vertical12.y;
+                    }
+                 
+                    arrayList.Add(k100);
+                    if (arrayList.Count == 2)
+                    {
+                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                        arrayList.RemoveAt(0);
+                    }
+
+                    if ((rectangle61.length - l + edge) < 550)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical12.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count34++;
+                        return;
+                    }
+
+                    byte[] byteX = toBytes.intToBytes(vertical12.x);
+                    byte[] byteY = toBytes.intToBytes(vertical12.y);
+                    byte[] byteZ = toBytes.intToBytes(0);
+                    string[] status = new string[] { "1", "0", "0", "0" };
+                    string status2 = string.Join("", status);
+                    int a = Convert.ToInt32(status2, 2);
+                    byte[] b = toBytes.intToBytes(a);
+
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x10;
+                    BF.sendbuf[2] = byteX[3];
+                    BF.sendbuf[3] = byteX[2];
+                    BF.sendbuf[4] = byteX[1];
+                    BF.sendbuf[5] = byteX[0];
+                    BF.sendbuf[6] = byteY[3];
+                    BF.sendbuf[7] = byteY[2];
+                    BF.sendbuf[8] = byteY[1];
+                    BF.sendbuf[9] = byteY[0];
+                    BF.sendbuf[10] = byteZ[3];
+                    BF.sendbuf[11] = byteZ[2];
+                    BF.sendbuf[12] = byteZ[1];
+                    BF.sendbuf[13] = byteZ[0];
+                    BF.sendbuf[14] = b[3];
+                    BF.sendbuf[15] = b[2];
+                    BF.sendbuf[16] = b[1];
+                    BF.sendbuf[17] = b[0];
+                    BF.sendbuf[18] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 19);
+                    count34++;
+
+                    vertical12.x += 0;
+                    vertical12.y += l;
+                    rectangle61.length -= l;
+                    return;
+                }
+
                 MessageBox.Show("码盘3码垛完成,请移走!", "警告");
             }
         }       
@@ -4442,7 +8286,9 @@ namespace 码垛机
         }
 
 
-
+        /// <summary>
+        /// 开启一个线程，时刻查询有无报警信息
+        /// </summary>
         public static void searchAlarmInfo()
         {
             Thread thread = new Thread(new ThreadStart(requestAlrInfo));
@@ -4466,6 +8312,34 @@ namespace 码垛机
                 //StartThread();
             }
         }
+
+        /// <summary>
+        /// 开启一个线程，查询是否码垛完成
+        /// </summary>
+        public static void confirmCompleted()
+        {
+            Thread thread = new Thread(new ThreadStart(requestStatus));
+            thread.IsBackground = true;
+            thread.Start();
+        }
+        public static void requestStatus()
+        {
+            while (completed)
+            {
+                // xinlei = false;
+                //发送指令查看码垛是否完成
+                Thread.Sleep(1131);
+                BF.sendbuf[0] = 0xFA;
+                BF.sendbuf[1] = 0x02;
+                BF.sendbuf[2] = 0x0E;
+                BF.sendbuf[3] = 0x05;
+                BF.sendbuf[4] = 0xF5;
+                SendMenuCommand(BF.sendbuf, 5);
+                //xinlei = true;
+                //StartThread();
+            }
+        }
+
 
         /**************************************************************************************************/
         /// <summary>
@@ -4588,6 +8462,14 @@ namespace 码垛机
                         HandSettingForm.huilingflag = false;
                         MessageBox.Show("已经回零","提示");
                     }
+                    return;
+                }
+
+                //码垛完成则收到数据
+                if ((binary_data_1[1] == 0x02) && (binary_data_1[2] == 0x0F))
+                {
+
+                    wdf.GetTotalNum(++totalNum);
                     return;
                 }
 

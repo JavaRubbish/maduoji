@@ -28,12 +28,12 @@ namespace 码垛机
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public static void DrawOcupyArea(int x, int y,int lenth,int width)
+        public void DrawOcupyArea(int x, int y,int lenth,int width)
         {
-            int a = x;
-            int b = y;
-            int c = lenth;
-            int d = width;
+            int a =(int) 0.15 * x;
+            int b =(int) 0.15 * y;
+            int c =(int) 0.15 * lenth;
+            int d =(int) 0.15 * width;
             Graphics gp = panel6.CreateGraphics();
             System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
             //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
@@ -41,12 +41,12 @@ namespace 码垛机
             gp.Flush();
 
         }
-        public static void DrawOcupyArea2(int x, int y, int lenth, int width)
+        public void DrawOcupyArea2(int x, int y, int lenth, int width)
         {
-            int a = x;
-            int b = y;
-            int c = lenth;
-            int d = width;
+            int a = (int)0.15 * x;
+            int b = (int)0.15 * y;
+            int c = (int)0.15 * lenth;
+            int d = (int)0.15 * width;
             Graphics gp = panel7.CreateGraphics();
             System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
             //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
@@ -54,12 +54,12 @@ namespace 码垛机
             gp.Flush();
 
         }
-        public static void DrawOcupyArea3(int x, int y, int lenth, int width)
+        public void DrawOcupyArea3(int x, int y, int lenth, int width)
         {
-            int a = x;
-            int b = y;
-            int c = lenth;
-            int d = width;
+            int a = (int)0.15 * x;
+            int b = (int)0.15 * y;
+            int c = (int)0.15 * lenth;
+            int d = (int)0.15 * width;
             Graphics gp = panel8.CreateGraphics();
             System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
             //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
@@ -68,6 +68,11 @@ namespace 码垛机
 
         }
 
+        public void GetTotalNum(int a)
+        {
+            CheckForIllegalCrossThreadCalls = false;
+            this.label22.Text = a.ToString();
+        }
 
         public void SetCoordinate(int x,int z,int y,int o)
         {
@@ -83,6 +88,7 @@ namespace 码垛机
         {
             HomeForm.xinlei = false;
             HomeForm.fight = false;
+            HomeForm.completed = false;
             label22.Text = 0.ToString();
             BF.sendbuf[0] = 0xFA;
             BF.sendbuf[1] = 0x02;
@@ -92,6 +98,7 @@ namespace 码垛机
             SendMenuCommand(BF.sendbuf, 5);
             HomeForm.xinlei = true;
             HomeForm.fight = true;
+            HomeForm.completed = true;
         }
 
 
@@ -104,6 +111,7 @@ namespace 码垛机
         {
             HomeForm.xinlei = false;
             HomeForm.fight = false;
+            HomeForm.completed = false;
             BF.sendbuf[0] = 0xFA;
             BF.sendbuf[1] = 0x02;
             BF.sendbuf[2] = 0x0D;
@@ -112,12 +120,14 @@ namespace 码垛机
             SendMenuCommand(BF.sendbuf, 5);
             HomeForm.xinlei = true;
             HomeForm.fight = true;
+            HomeForm.completed = true;
         }
             
         private void pause_btn_Click(object sender, EventArgs e)
         {
             HomeForm.xinlei = false;
             HomeForm.fight = false;
+            HomeForm.completed = false;
             BF.sendbuf[0] = 0xFA;
             BF.sendbuf[1] = 0x02;
             BF.sendbuf[2] = 0x0D;
@@ -126,12 +136,14 @@ namespace 码垛机
             SendMenuCommand(BF.sendbuf, 5);
             HomeForm.xinlei = true;
             HomeForm.fight = true;
+            HomeForm.completed = true;
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
             HomeForm.xinlei = false;
             HomeForm.fight = false;
+            HomeForm.completed = false;
             BF.sendbuf[0] = 0xFA;
             BF.sendbuf[1] = 0x02;
             BF.sendbuf[2] = 0x0D;
@@ -140,6 +152,7 @@ namespace 码垛机
             SendMenuCommand(BF.sendbuf, 5);
             HomeForm.xinlei = true;
             HomeForm.fight = true;
+            HomeForm.completed = true;
         }
 
         private void label18_Click(object sender, EventArgs e)
