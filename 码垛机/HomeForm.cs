@@ -323,7 +323,7 @@ namespace 码垛机
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        private void CalcCityDistance(Coordinate a,Coordinate b)
+        public static void CalcCityDistance(Coordinate a,Coordinate b)
         {
             int result =a.y + b.y + Math.Abs(a.x - b.x);
             int sec = result / 500;
@@ -345,7 +345,7 @@ namespace 码垛机
         /// <summary>
         /// 开启码垛线程，发码垛坐标给下位机
         /// </summary>
-        private void SendMaduoInfo()
+        public static void SendMaduoInfo()
         {
             Thread thread = new Thread(new ThreadStart(CalculateCoornidateAndSend));
             thread.IsBackground = true;
@@ -379,46 +379,130 @@ namespace 码垛机
         public static int width33 = 1000;
         public static int length34 = 1200;
         public static int width34 = 1000;
-        private void CalculateCoornidateAndSend()
+
+        //全局长宽高
+        public static int l = 0;
+        public static int w = 0;
+        public static int h = 0;
+
+        //全局计数
+        public static int count = 0;
+        public static int count2 = 0;
+        public static int count3 = 0;
+        //12代表第一个盘第二层的计数情况
+        public static int count12 = 0;
+        public static int count13 = 0;
+        public static int count14 = 0;
+        public static int count22 = 0;
+        public static int count23 = 0;
+        public static int count24 = 0;
+        public static int count32 = 0;
+        public static int count33 = 0;
+        public static int count34 = 0;
+        public static ArrayList arrayList = new ArrayList();
+
+        //定义矩形区域
+        //1号盘
+        public static Rectangle rectangle1 = new Rectangle();
+        public static Rectangle rectangle2 = new Rectangle();
+        public static Rectangle rectangle3 = new Rectangle();
+        public static Rectangle rectangle4 = new Rectangle();
+        public static Rectangle rectangle5 = new Rectangle();       
+        public static Rectangle rectangle14 = new Rectangle();
+        public static Rectangle rectangle15 = new Rectangle();
+        public static Rectangle rectangle16 = new Rectangle();
+        public static Rectangle rectangle17 = new Rectangle();
+        public static Rectangle rectangle18 = new Rectangle();
+        public static Rectangle rectangle19 = new Rectangle();
+        public static Rectangle rectangle20 = new Rectangle();
+        public static Rectangle rectangle50 = new Rectangle();
+        public static Rectangle rectangle51 = new Rectangle();
+        public static Rectangle rectangle21 = new Rectangle();
+        public static Rectangle rectangle22 = new Rectangle();
+        public static Rectangle rectangle52 = new Rectangle();
+        public static Rectangle rectangle53 = new Rectangle();       
+
+        //2号盘
+        public static Rectangle rectangle6 = new Rectangle();
+        public static Rectangle rectangle7 = new Rectangle();
+        public static Rectangle rectangle8 = new Rectangle();
+        public static Rectangle rectangle9 = new Rectangle();
+        public static Rectangle rectangle10 = new Rectangle();
+        public static Rectangle rectangle23 = new Rectangle();
+        public static Rectangle rectangle24 = new Rectangle();
+        public static Rectangle rectangle25 = new Rectangle();
+        public static Rectangle rectangle26 = new Rectangle();
+        public static Rectangle rectangle27 = new Rectangle();
+        public static Rectangle rectangle28 = new Rectangle();
+        public static Rectangle rectangle29 = new Rectangle();
+        public static Rectangle rectangle54 = new Rectangle();
+        public static Rectangle rectangle55 = new Rectangle();
+        public static Rectangle rectangle30 = new Rectangle();
+        public static Rectangle rectangle31 = new Rectangle();
+        public static Rectangle rectangle56 = new Rectangle();
+        public static Rectangle rectangle57 = new Rectangle();          
+
+        //3号盘
+        public static Rectangle rectangle11 = new Rectangle();
+        public static Rectangle rectangle12 = new Rectangle();
+        public static Rectangle rectangle13 = new Rectangle();
+        public static Rectangle rectangle32 = new Rectangle();
+        public static Rectangle rectangle33 = new Rectangle();
+        public static Rectangle rectangle34 = new Rectangle();
+        public static Rectangle rectangle58 = new Rectangle();
+        public static Rectangle rectangle35 = new Rectangle();
+        public static Rectangle rectangle36 = new Rectangle();
+        public static Rectangle rectangle59 = new Rectangle();
+        public static Rectangle rectangle37 = new Rectangle();
+        public static Rectangle rectangle38 = new Rectangle();
+        public static Rectangle rectangle60 = new Rectangle();
+        public static Rectangle rectangle61 = new Rectangle();
+
+        //每一层两个用于记录横纵位置坐标的二维数组  
+        public static Coordinate vertical = new Coordinate();
+        public static Coordinate horizontal = new Coordinate();
+
+        public static Coordinate vertical2 = new Coordinate();
+        public static Coordinate horizontal2 = new Coordinate();
+
+        public static Coordinate vertical3 = new Coordinate();
+        public static Coordinate horizontal3 = new Coordinate();
+
+        public static Coordinate vertical4 = new Coordinate();
+        public static Coordinate horizontal4 = new Coordinate();
+
+        public static Coordinate vertical5 = new Coordinate();
+        public static Coordinate horizontal5 = new Coordinate();
+
+        public static Coordinate vertical6 = new Coordinate();
+        public static Coordinate horizontal6 = new Coordinate();
+
+        public static Coordinate vertical7 = new Coordinate();
+        public static Coordinate horizontal7 = new Coordinate();
+
+        public static Coordinate vertical8 = new Coordinate();
+        public static Coordinate horizontal8 = new Coordinate();
+
+        public static Coordinate vertical9 = new Coordinate();
+        public static Coordinate horizontal9 = new Coordinate();
+
+        public static Coordinate vertical10 = new Coordinate();
+        public static Coordinate horizontal10 = new Coordinate();
+
+        public static Coordinate vertical11 = new Coordinate();
+        public static Coordinate horizontal11 = new Coordinate();
+
+        public static Coordinate vertical12 = new Coordinate();
+        public static Coordinate horizontal12 = new Coordinate();
+
+        //全局判断(为的是让每一行或每一列的第一个箱子的位置只摆放一次)
+        public static bool isJudged = false;
+
+        public static void CalculateCoornidateAndSend()
         {
+
             //扫码拿到的纸箱长宽高信息
-            int l = 360;
-            int w = 225;
-            int h = 280;
-
-            //计数
-            int count = 0;
-            int count2 = 0;
-            int count3 = 0;
-            //定义矩形区域
-            //1号盘
-            Rectangle rectangle1 = new Rectangle();
-            Rectangle rectangle2 = new Rectangle();
-            Rectangle rectangle3 = new Rectangle();
-            Rectangle rectangle4 = new Rectangle();
-            Rectangle rectangle5 = new Rectangle();
-            //2号盘
-            Rectangle rectangle6 = new Rectangle();
-            Rectangle rectangle7 = new Rectangle();
-            Rectangle rectangle8 = new Rectangle();
-            Rectangle rectangle9 = new Rectangle();
-            Rectangle rectangle10 = new Rectangle();
-            //3号盘
-            Rectangle rectangle11 = new Rectangle();
-            Rectangle rectangle12 = new Rectangle();
-            Rectangle rectangle13 = new Rectangle();
-            //两个用于记录横纵位置坐标的二维数组
-            Coordinate vertical = new Coordinate();
-            Coordinate horizontal = new Coordinate();
-
-            Coordinate vertical2 = new Coordinate();
-            Coordinate horizontal2 = new Coordinate();
-
-            Coordinate vertical3 = new Coordinate();
-            Coordinate horizontal3 = new Coordinate();
-
-
-            ArrayList arrayList = new ArrayList(); 
+            
             //1号码盘找坐标(第一层)
             if (h == 280){             
                 if (count == 0)
@@ -533,6 +617,7 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count++;
+                        rectangle1.length -= l;
                         return;
                     }
 
@@ -572,7 +657,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第二个
-                if (length1 + edge >= w)
+                if ((length1 + edge >= w) && (!isJudged))
                 {
                     Coordinate k3 = new Coordinate();
                     k3.x = horizontal.x;
@@ -622,6 +707,7 @@ namespace 码垛机
                     horizontal.y += 0;
                     rectangle2.length = 1000 - l;
                     length1 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第二列第二个及以上
@@ -681,6 +767,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count++;
+                        rectangle2.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -720,7 +808,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第三个
-                if (length1 + edge >= w)
+                if ((length1 + edge >= w) && (!isJudged))
                 {
                     Coordinate k5 = new Coordinate();
                     k5.x = horizontal.x;
@@ -770,6 +858,7 @@ namespace 码垛机
                     horizontal.y += 0;
                     rectangle3.length = 1000 - l;
                     length1 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第三列第二个及以上
@@ -829,6 +918,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count++;
+                        rectangle3.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -868,7 +959,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第四个
-                if (length1 + edge >= w)
+                if ((length1 + edge >= w)&&(!isJudged))
                 {
                     Coordinate k7 = new Coordinate();
                     k7.x = horizontal.x;
@@ -918,6 +1009,7 @@ namespace 码垛机
                     horizontal.y += 0;
                     rectangle4.length = width1 - l;
                     length1 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第四列第二个及以上
@@ -976,6 +1068,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count++;
+                        rectangle4.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -1015,7 +1109,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第五个
-                if (length1 + edge >= w)
+                if ((length1 + edge >= w) && (!isJudged))
                 {
                     Coordinate k9 = new Coordinate();
                     if (length1 - w + edge < 225)
@@ -1070,6 +1164,7 @@ namespace 码垛机
                         SendMenuCommand(BF.sendbuf, 19);
                         count++;
                         rectangle5.length = width1 - l;
+                        isJudged = true;
                         return;
                     }
 
@@ -1109,6 +1204,7 @@ namespace 码垛机
                     horizontal.y += 0;
                     rectangle5.length = width1 - l;
                     length1 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第五列第二个及以上
@@ -1167,6 +1263,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count++;
+                        rectangle5.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -1207,15 +1305,6 @@ namespace 码垛机
                 }
 
                 //如果走到这，说明第一层不能码了，该码放第二层了                
-                int count12 = 0;//12代表第一个盘第二层的计数情况
-
-                Rectangle rectangle14 = new Rectangle();
-                Rectangle rectangle15 = new Rectangle();
-                Rectangle rectangle16 = new Rectangle();
-                Rectangle rectangle17 = new Rectangle();
-
-                Coordinate vertical4 = new Coordinate();
-                Coordinate horizontal4 = new Coordinate(); 
 
                 //第二层第一个
                 if ((count12 == 0) && (length12 + edge >= l) && (width12 + edge >= w)) {
@@ -1324,6 +1413,7 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count12++;
+                        rectangle14.length -= l;
                         return;
                     }
 
@@ -1363,7 +1453,7 @@ namespace 码垛机
                     return;
                 }
                 //第二行第一个
-                if (width12 + edge >= w)
+                if ((width12 + edge >= w) && (!isJudged))
                 {
                     Coordinate k13 = new Coordinate();
                     k13.x = vertical4.x;
@@ -1411,6 +1501,7 @@ namespace 码垛机
                     vertical4.y += (w + gap);                 
                     rectangle15.length = length2 - l;
                     width2 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第二行第二个及以上
@@ -1466,6 +1557,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count12++;
+                        rectangle15.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -1505,7 +1598,7 @@ namespace 码垛机
                     return;
                 }
                 //第一列第三个
-                if (width12 + edge >= w)
+                if ((width12 + edge >= w) && (!isJudged))
                 {
                     Coordinate k15 = new Coordinate();
                     k15.x = vertical4.x;
@@ -1553,6 +1646,7 @@ namespace 码垛机
                     vertical4.y += (w + gap);                    
                     rectangle16.length = length12 - l;
                     width12 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第三行第二个及以上
@@ -1608,6 +1702,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count12++;
+                        rectangle16.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -1647,7 +1743,7 @@ namespace 码垛机
                     return;
                 }
                 //第一列第四个
-                if (width12 + edge >= w)
+                if ((width12 + edge >= w) && (!isJudged))
                 {
                     Coordinate k17 = new Coordinate();
                     if (width12 - w + edge < 225)
@@ -1700,6 +1796,7 @@ namespace 码垛机
                         SendMenuCommand(BF.sendbuf, 19);
                         count12++;
                         rectangle17.length = length12 - l;
+                        isJudged = true;
                         return;
                     }
 
@@ -1739,6 +1836,7 @@ namespace 码垛机
                     vertical4.y += (w + gap);                
                     rectangle17.length = length12 - l;
                     width12 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第四行第二个及以上
@@ -1794,6 +1892,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count12++;
+                        rectangle17.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -1834,18 +1934,7 @@ namespace 码垛机
                 }
               
 
-                //如果走到这，说明第2层不能码了，该码放第3层了
-              
-                Rectangle rectangle18 = new Rectangle();
-                Rectangle rectangle19 = new Rectangle();
-                Rectangle rectangle20 = new Rectangle();
-                Rectangle rectangle50 = new Rectangle();
-                Rectangle rectangle51 = new Rectangle();
-
-                Coordinate vertical5 = new Coordinate();
-                Coordinate horizontal5 = new Coordinate();
-                //有长有宽，便是一个新的码盘
-                int count13 = 0;//13代表第一个盘第3层的计数情况
+                //如果走到这，说明第2层不能码了，该码放第3层了             
 
                 if ((count13 == 0) && (width13 + edge >= l) && (length13 + edge >= w))
                 {
@@ -1954,6 +2043,7 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count13++;
+                        rectangle18.length -= l;
                         return;
                     }
 
@@ -1993,7 +2083,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第二个(第二列第一个)
-                if (length13 + edge >= w)
+                if ((length13 + edge >= w) && (!isJudged))
                 {
                     Coordinate k21 = new Coordinate();
                     k21.x = horizontal5.x;
@@ -2041,6 +2131,7 @@ namespace 码垛机
                     horizontal5.y += 0;
                     rectangle19.length = width13 - l;
                     length13 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第二列第二个及以上
@@ -2096,6 +2187,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count13++;
+                        rectangle19.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -2135,7 +2228,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第三个
-                if (length3 + edge >= w)
+                if ((length3 + edge >= w) && (!isJudged))
                 {
                     Coordinate k23 = new Coordinate();
                     k23.x = horizontal5.x;
@@ -2183,6 +2276,7 @@ namespace 码垛机
                     horizontal5.y += 0;
                     rectangle20.length = width13 - l;
                     length13 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第三列第二个及以上
@@ -2238,6 +2332,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count13++;
+                        rectangle20.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -2277,7 +2373,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第四个
-                if (length13 >= w)
+                if ((length13 + edge >= w) && (!isJudged))
                 {
                     Coordinate k25 = new Coordinate();
                     k25.x = horizontal.x;
@@ -2327,6 +2423,7 @@ namespace 码垛机
                     horizontal5.y += 0;
                     rectangle50.length = width13 - l;
                     length13 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第四列第二个及以上
@@ -2387,6 +2484,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count13++;
+                        rectangle50.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -2426,7 +2525,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第五个
-                if (length13 + edge >= w)
+                if ((length13 + edge >= w) && (!isJudged))
                 {
                     Coordinate k27 = new Coordinate();
                     if (length13 - w + edge < 225)
@@ -2481,6 +2580,7 @@ namespace 码垛机
                         SendMenuCommand(BF.sendbuf, 19);
                         count13++;
                         rectangle51.length = width13 - l;
+                        isJudged = true;
                         return;
                     }
 
@@ -2520,6 +2620,7 @@ namespace 码垛机
                     horizontal5.y += 0;
                     rectangle51.length = width13 - l;
                     length13 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第五列第二个及以上
@@ -2578,6 +2679,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count13++;
+                        rectangle51.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -2618,15 +2721,6 @@ namespace 码垛机
                 }
 
                 //如果走到这，说明第3层不能码了，该码放第4层了
-              
-                Rectangle rectangle21 = new Rectangle();
-                Rectangle rectangle22 = new Rectangle();
-                Rectangle rectangle52 = new Rectangle();
-                Rectangle rectangle53 = new Rectangle();
-                Coordinate vertical6 = new Coordinate();
-                Coordinate horizontal6 = new Coordinate();
-                //有长有宽，便是一个新的码盘
-                int count14 = 0;//14代表第一个盘第4层的计数情况
 
                 //第4层第一个
                 if ((count14 == 0) && (length14 + edge >= l) && (width14 + edge >= w))
@@ -2735,6 +2829,7 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count14++;
+                        rectangle21.length -= l;
                         return;
                     }
 
@@ -2774,7 +2869,7 @@ namespace 码垛机
                     return;
                 }
                 //第一列第二个
-                if (width14 + edge>= w)
+                if ((width14 + edge>= w) && (!isJudged))
                 {
                     Coordinate k31 = new Coordinate();
                     k31.x = vertical6.x;
@@ -2822,6 +2917,7 @@ namespace 码垛机
                     vertical6.y += (w + gap);                  
                     rectangle22.length = length14 - l;
                     width14 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第二行第二个及以上
@@ -2877,6 +2973,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count14++;
+                        rectangle22.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -2916,7 +3014,7 @@ namespace 码垛机
                     return;
                 }
                 //第一列第三个
-                if (width14 + edge >= w)
+                if ((width14 + edge >= w) && (!isJudged))
                 {
                     Coordinate k33 = new Coordinate();
                     k33.x = vertical6.x;
@@ -2964,6 +3062,7 @@ namespace 码垛机
                     vertical6.y += (w + gap);
                     rectangle52.length = length14 - l;
                     width14 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第三行第二个及以上
@@ -3019,6 +3118,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count14++;
+                        rectangle52.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -3058,7 +3159,7 @@ namespace 码垛机
                     return;
                 }
                 //第一列第四个
-                if (width14 + edge >= w)
+                if ((width14 + edge >= w) && (!isJudged))
                 {
                     Coordinate k35 = new Coordinate();
                     if (width14 - w + edge < 225)
@@ -3111,6 +3212,7 @@ namespace 码垛机
                         SendMenuCommand(BF.sendbuf, 19);
                         count14++;
                         rectangle53.length = length14 - l;
+                        isJudged = true;
                         return;
                     }
 
@@ -3150,6 +3252,7 @@ namespace 码垛机
                     vertical6.y += (w + gap);
                     rectangle53.length = length14 - l;
                     width14 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第四行第二个及以上
@@ -3205,6 +3308,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count14++;
+                        rectangle53.length -= l;
+                        isJudged = true;
                         return;
                     }
 
@@ -3246,6 +3351,7 @@ namespace 码垛机
                 MessageBox.Show("码盘1码垛完成,请移走!", "警告");
 
             }
+
             /*************************************************************************************/
             //2号码盘找坐标
             if (h == 300 && w == 240)
@@ -3363,6 +3469,7 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count2++;
+                        rectangle6.length -= l;
                         return;
                     }
 
@@ -3402,7 +3509,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第二个(第二列第一个)
-                if (length2 + edge >= w)
+                if ((length2 + edge >= w) && (!isJudged))
                 {
                     Coordinate k39 = new Coordinate();
                     k39.x = horizontal2.x;
@@ -3452,6 +3559,7 @@ namespace 码垛机
                     horizontal2.y += 0;
                     rectangle7.length = width2 - l;
                     length2 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第二列第二个及以上
@@ -3510,6 +3618,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count2++;
+                        rectangle7.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -3549,7 +3659,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第三个
-                if (length2 + edge >= w)
+                if ((length2 + edge >= w) && (!isJudged))
                 {
                     Coordinate k41 = new Coordinate();
                     k41.x = horizontal2.x;
@@ -3599,6 +3709,7 @@ namespace 码垛机
                     horizontal2.y += 0;
                     rectangle8.length = width2 - l;
                     length2 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第三列第二个及以上
@@ -3657,6 +3768,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count2++;
+                        rectangle8.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -3696,7 +3809,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第四个
-                if (length2 + edge >= w)
+                if ((length2 + edge >= w) && (!isJudged))
                 {
                     Coordinate k43 = new Coordinate();
                     k43.x = horizontal2.x;
@@ -3746,6 +3859,7 @@ namespace 码垛机
                     horizontal2.y += 0;
                     rectangle9.length = width2 - l;
                     length2 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第四列第二个及以上
@@ -3804,6 +3918,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count2++;
+                        rectangle9.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -3843,7 +3959,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第五个
-                if (length2 + edge >= w)
+                if ((length2 + edge >= w) && (!isJudged))
                 {
                     Coordinate k45 = new Coordinate();
                     if (length2 - w + edge < 240)
@@ -3898,6 +4014,7 @@ namespace 码垛机
                         SendMenuCommand(BF.sendbuf, 19);
                         count2++;
                         rectangle10.length = width2 - l;
+                        isJudged = true;
                         return;
                     }
 
@@ -3937,6 +4054,7 @@ namespace 码垛机
                     horizontal2.y += 0;
                     rectangle10.length = width2 - l;
                     length2 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第五列第二个及以上
@@ -3995,6 +4113,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count2++;
+                        rectangle10.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -4036,18 +4156,6 @@ namespace 码垛机
 
 
                 //如果走到这，说明第一层不能码了，该码放第二层了
-                //需要记录第一层码放的长宽信息，因为第二层是码放在第一层上的
-
-                //有长有宽，便是一个新的码盘
-                int count22 = 0;//22代表第2个盘第二层的计数情况
-
-                Rectangle rectangle23 = new Rectangle();
-                Rectangle rectangle24 = new Rectangle();
-                Rectangle rectangle25 = new Rectangle();
-                Rectangle rectangle26 = new Rectangle();
-
-                Coordinate vertical7 = new Coordinate();
-                Coordinate horizontal7 = new Coordinate();
 
                 //第二层第一个
                 if ((count22 == 0) && (length22 + edge >= l) && (width22 + edge >= w))
@@ -4156,6 +4264,7 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count22++;
+                        rectangle23.length -= l;
                         return;
                     }
 
@@ -4194,7 +4303,7 @@ namespace 码垛机
                     rectangle23.length -= l;
                     return;
                 }
-                if (width22 + edge >= w)
+                if ((width22 + edge >= w) && (!isJudged))
                 {
                     Coordinate k49 = new Coordinate();
                     k49.x = vertical7.x;
@@ -4242,6 +4351,7 @@ namespace 码垛机
                     vertical7.y += (w + gap);
                     rectangle24.length = length22 - l;
                     width22 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第二列第二个及以上
@@ -4297,6 +4407,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count22++;
+                        rectangle24.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -4336,7 +4448,7 @@ namespace 码垛机
                     return;
                 }
                 //第一列第三个
-                if (width22 + edge >= w)
+                if ((width22 + edge >= w) && (!isJudged))
                 {
                     Coordinate k51 = new Coordinate();
                     k51.x = vertical7.x;
@@ -4384,6 +4496,7 @@ namespace 码垛机
                     vertical7.y += (w + gap);
                     rectangle25.length = length22 - l;
                     width22 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第三列第二个及以上
@@ -4439,6 +4552,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count22++;
+                        rectangle25.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -4478,7 +4593,7 @@ namespace 码垛机
                     return;
                 }
                 //第一列第四个
-                if (width22 + edge >= w)
+                if ((width22 + edge >= w) && (!isJudged))
                 {
                     Coordinate k53 = new Coordinate();
                     if (width22 - w + edge < 240)
@@ -4531,6 +4646,7 @@ namespace 码垛机
                         SendMenuCommand(BF.sendbuf, 19);
                         count22++;
                         rectangle26.length = length22 - l;
+                        isJudged = true;
                         return;
                     }
 
@@ -4570,6 +4686,7 @@ namespace 码垛机
                     vertical7.y += (w + gap);
                     rectangle26.length = length22 - l;
                     width22 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第四行第二个及以上
@@ -4625,6 +4742,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count22++;
+                        rectangle26.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -4665,15 +4784,6 @@ namespace 码垛机
                 }
 
                 //如果走到这，说明第2层不能码了，该码放第3层了
-
-                Rectangle rectangle27 = new Rectangle();
-                Rectangle rectangle28 = new Rectangle();
-                Rectangle rectangle29 = new Rectangle();
-                Rectangle rectangle54 = new Rectangle();
-                Rectangle rectangle55 = new Rectangle();
-                Coordinate vertical8 = new Coordinate();
-                Coordinate horizontal8 = new Coordinate();
-                int count23 = 0;//13代表第2个盘第3层的计数情况
 
                 if ((count23 == 0) && (width23 + edge >= l) && (length23 + edge >= w))
                 {
@@ -4782,6 +4892,7 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count23++;
+                        rectangle27.length -= l;
                         return;
                     }
 
@@ -4821,7 +4932,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第二个(第二列第一个)
-                if (length23 + edge >= w)
+                if ((length23 + edge >= w) && (!isJudged))
                 {
                     Coordinate k57 = new Coordinate();
                     k57.x = horizontal8.x;
@@ -4869,6 +4980,7 @@ namespace 码垛机
                     horizontal8.y += 0;
                     rectangle28.length = width23 - l;
                     length23 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第二列第二个及以上
@@ -4925,9 +5037,10 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count23++;
+                        rectangle28.length -= l;
+                        isJudged = false;
                         return;
                     }
-
 
                     byte[] byteX = toBytes.intToBytes(vertical8.x);
                     byte[] byteY = toBytes.intToBytes(vertical8.y);
@@ -4965,7 +5078,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第三个
-                if (length3 + edge >= w)
+                if ((length3 + edge >= w) && (!isJudged))
                 {
                     Coordinate k59 = new Coordinate();
                     k59.x = horizontal8.x;
@@ -5013,6 +5126,7 @@ namespace 码垛机
                     horizontal8.y += 0;
                     rectangle29.length = width23 - l;
                     length23 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第三列第二个及以上
@@ -5069,6 +5183,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count23++;
+                        rectangle29.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -5109,7 +5225,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第四个
-                if (length23 + edge >= w)
+                if ((length23 + edge >= w) && (!isJudged))
                 {
                     Coordinate k61 = new Coordinate();
                     k61.x = horizontal8.x;
@@ -5157,6 +5273,7 @@ namespace 码垛机
                     horizontal8.y += 0;
                     rectangle54.length = width23 - l;
                     length23 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第四列第二个及以上
@@ -5213,6 +5330,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count23++;
+                        rectangle54.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -5253,7 +5372,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第五个
-                if (length23 + edge >= w)
+                if ((length23 + edge >= w) && (!isJudged))
                 {
                     Coordinate k63 = new Coordinate();
                     if (length23 - w + edge < 240)
@@ -5306,6 +5425,7 @@ namespace 码垛机
                         SendMenuCommand(BF.sendbuf, 19);
                         count23++;
                         rectangle55.length = width23 - l;
+                        isJudged = true;
                         return;
                     }
 
@@ -5345,6 +5465,7 @@ namespace 码垛机
                     horizontal8.y += 0;
                     rectangle55.length = width23 - l;
                     length23 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第五列第二个及以上
@@ -5401,6 +5522,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count23++;
+                        rectangle55.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -5442,15 +5565,6 @@ namespace 码垛机
                 }
 
                 //如果走到这，说明第3层不能码了，该码放第4层了
-
-                Rectangle rectangle30 = new Rectangle();
-                Rectangle rectangle31 = new Rectangle();
-                Rectangle rectangle56 = new Rectangle();
-                Rectangle rectangle57 = new Rectangle();
-                Coordinate vertical9 = new Coordinate();
-                Coordinate horizontal9 = new Coordinate();
-                //有长有宽，便是一个新的码盘
-                int count24 = 0;//24代表第2个盘第4层的计数情况
 
                 //第4层第一个
                 if ((count24 == 0) && (length24 + edge >= l) && (width24 + edge >= w))
@@ -5559,6 +5673,7 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count24++;
+                        rectangle30.length -= l;
                         return;
                     }
 
@@ -5597,7 +5712,7 @@ namespace 码垛机
                     rectangle30.length -= l;
                     return;
                 }
-                if (width24 + edge >= w)
+                if ((width24 + edge >= w) && (!isJudged))
                 {
                     Coordinate k67 = new Coordinate();
                     k67.x = vertical9.x;
@@ -5645,6 +5760,7 @@ namespace 码垛机
                     vertical9.y += (w + gap);
                     rectangle31.length = length24 - l;
                     width24 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第二列第二个及以上
@@ -5699,7 +5815,9 @@ namespace 码垛机
                         BF.sendbuf[17] = b1[0];
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
-                        count22++;
+                        count24++;
+                        rectangle31.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -5739,7 +5857,7 @@ namespace 码垛机
                     return;
                 }
                 //第一列第三个
-                if (width24 + edge >= w)
+                if ((width24 + edge >= w) && (!isJudged))
                 {
                     Coordinate k69 = new Coordinate();
                     k69.x = vertical9.x;
@@ -5787,6 +5905,7 @@ namespace 码垛机
                     vertical9.y += (w + gap);
                     rectangle56.length = length24 - l;
                     width24 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第三行第二个及以上
@@ -5842,6 +5961,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count24++;
+                        rectangle56.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -5881,7 +6002,7 @@ namespace 码垛机
                     return;
                 }
                 //第一列第四个
-                if (width24 + edge >= w)
+                if ((width24 + edge >= w) && (!isJudged))
                 {
                     Coordinate k71 = new Coordinate();
                     k71.x = vertical9.x;
@@ -5925,6 +6046,7 @@ namespace 码垛机
                         SendMenuCommand(BF.sendbuf, 19);
                         count24++;
                         rectangle57.length = length24 - l;
+                        isJudged = true;
                         return;
                     }
 
@@ -5964,6 +6086,7 @@ namespace 码垛机
                     vertical9.y += (w + gap);
                     rectangle57.length = length24 - l;
                     width24 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第四行第二个及以上
@@ -6019,6 +6142,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count24++;
+                        rectangle57.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -6175,6 +6300,7 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count3++;
+                        rectangle11.length -= l;
                         return;
                     }
 
@@ -6214,7 +6340,7 @@ namespace 码垛机
                     return;
                 }
                 //第一列第二个
-                if (width3 + edge >= w)
+                if ((width3 + edge >= w) && (!isJudged))
                 {
                     Coordinate k75 = new Coordinate();
                     k75.x = vertical3.x;
@@ -6264,6 +6390,7 @@ namespace 码垛机
                     vertical3.y += (w + gap);                   
                     rectangle12.length = 1000 - l;
                     width3 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第二列第二个及以上
@@ -6321,6 +6448,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count3++;
+                        rectangle12.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -6360,19 +6489,65 @@ namespace 码垛机
                     return;
                 }
                 //第一列第三个
-                if (width3  + edge>= w)
+                if ((width3  + edge>= w) && (!isJudged))
                 {
                     Coordinate k77 = new Coordinate();
-                    k77.x = vertical3.x;
-                    k77.y = vertical3.y;
+                    if (width3 - w + edge < 320)
+                    {
+                        k77.x = vertical3.x;
+                        k77.y = 1000 - w;
+                        wdf.DrawOcupyArea3(vertical3.x - 2800, 1000 - w, l, w);
+                    }
+                    else
+                    {
+                        k77.x = vertical3.x;
+                        k77.y = vertical3.y;
+                        wdf.DrawOcupyArea3(vertical3.x - 2800, vertical3.y, l, w);
+                    }
+                    
                     arrayList.Add(k77);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+                   
 
-                    wdf.DrawOcupyArea3(vertical3.x - 2800, vertical3.y, l, w);
+                    if (width3 - w + edge < 320)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical3.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - w);
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count3++;
+                        rectangle13.length = length3 - l;
+                        isJudged = true;
+                        return;
+                    }
 
                     byte[] byteX = toBytes.intToBytes(vertical3.x);
                     byte[] byteY = toBytes.intToBytes(vertical3.y);
@@ -6410,6 +6585,7 @@ namespace 码垛机
                     vertical3.y += (w + gap);                   
                     rectangle13.length = 1000 - l;
                     width3 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第三行第二个及以上
@@ -6468,6 +6644,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count3++;
+                        rectangle13.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -6507,15 +6685,7 @@ namespace 码垛机
                     return;
                 }
 
-                //如果走到这，说明第1层不能码了，该码放第2层了              
-                Rectangle rectangle32 = new Rectangle();
-                Rectangle rectangle33 = new Rectangle();
-                Rectangle rectangle34 = new Rectangle();
-                Rectangle rectangle58 = new Rectangle();
-                Coordinate vertical10 = new Coordinate();
-                Coordinate horizontal10 = new Coordinate();
-                //有长有宽，便是一个新的码盘
-                int count32 = 0;//32代表第3个盘第2层的计数情况
+                //如果走到这，说明第1层不能码了，该码放第2层了                         
 
                 if ((count32 == 0) && (width32 + edge >= l) && (length32 + edge>= w))
                 {
@@ -6623,6 +6793,7 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count32++;
+                        rectangle32.length -= l;
                         return;
                     }
 
@@ -6662,7 +6833,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第二个(第二列第一个)
-                if (length32 + edge >= w)
+                if ((length32 + edge >= w) && (!isJudged))
                 {
                     Coordinate k81 = new Coordinate();
                     k81.x = horizontal10.x;
@@ -6710,6 +6881,7 @@ namespace 码垛机
                     horizontal10.y += 0;
                     rectangle33.length = width32 - l;
                     length32 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第二列第二个及以上
@@ -6765,6 +6937,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count32++;
+                        rectangle33.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -6804,7 +6978,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第三个
-                if (length32 >= w)
+                if ((length32 >= w) && (!isJudged))
                 {
                     Coordinate k83 = new Coordinate();
                     k83.x = horizontal10.x;
@@ -6852,6 +7026,7 @@ namespace 码垛机
                     horizontal10.y += 0;
                     rectangle34.length = width32 - l;
                     length32 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第三列第二个及以上
@@ -6907,6 +7082,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count32++;
+                        rectangle34.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -6946,7 +7123,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第四个
-                if (length32 + edge >= w)
+                if ((length32 + edge >= w) && (!isJudged))
                 {
                     Coordinate k85 = new Coordinate();
                     if ((length32 - w + edge) < 320)
@@ -6999,6 +7176,7 @@ namespace 码垛机
                         SendMenuCommand(BF.sendbuf, 19);
                         count32++;
                         rectangle58.length = width32 - l;
+                        isJudged = true;
                         return;
                     }
 
@@ -7038,6 +7216,7 @@ namespace 码垛机
                     horizontal10.y += 0;
                     rectangle58.length = width32 - l;
                     length32 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第四列第二个及以上
@@ -7093,6 +7272,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count32++;
+                        rectangle58.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -7132,14 +7313,7 @@ namespace 码垛机
                     return;
                 }
 
-                //如果走到这，说明第2层不能码了，该码放第3层了
-                Rectangle rectangle35 = new Rectangle();
-                Rectangle rectangle36 = new Rectangle();
-                Rectangle rectangle59 = new Rectangle();
-                Coordinate vertical11 = new Coordinate();
-                Coordinate horizontal11 = new Coordinate();
-                //有长有宽，便是一个新的码盘
-                int count33 = 0;//33代表第3个盘第3层的计数情况
+                //如果走到这，说明第2层不能码了，该码放第3层了         
 
                 //第3层第一个
                 if ((count33 == 0) && (length33 + edge >= l) && (width33 + edge >= w))
@@ -7248,6 +7422,7 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count33++;
+                        rectangle35.length -= l;
                         return;
                     }
 
@@ -7287,7 +7462,7 @@ namespace 码垛机
                     return;
                 }
                 //第一列第二个
-                if (width33 + edge >= w)
+                if ((width33 + edge >= w) && (!isJudged))
                 {
                     Coordinate k89 = new Coordinate();
                     k89.x = vertical11.x;
@@ -7335,6 +7510,7 @@ namespace 码垛机
                     vertical11.y += (w + gap);
                     rectangle36.length = length33 - l;
                     width33 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第二行第二个及以上
@@ -7390,6 +7566,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count33++;
+                        rectangle36.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -7429,7 +7607,7 @@ namespace 码垛机
                     return;
                 }
                 //第一列第三个
-                if (width33 + edge >= w)
+                if ((width33 + edge >= w) && (!isJudged))
                 {
                     Coordinate k91 = new Coordinate();
                     if (width33 - w + edge < 320)
@@ -7482,6 +7660,7 @@ namespace 码垛机
                         SendMenuCommand(BF.sendbuf, 19);
                         count33++;
                         rectangle59.length = length33 - l;
+                        isJudged = true;
                         return;
                     }
 
@@ -7521,6 +7700,7 @@ namespace 码垛机
                     vertical11.y += (w + gap);
                     rectangle59.length = length33 - l;
                     width33 -= (w + gap);
+                    isJudged = true;
                     return;
                 }
                 //第三行第二个及以上
@@ -7576,6 +7756,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count33++;
+                        rectangle59.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -7615,18 +7797,7 @@ namespace 码垛机
                     return;
                 }
 
-                //如果走到这，说明第3层不能码了，该码放第4层了
-
-                int count34 = 0;//34代表第3个盘第4层的计数情况
-
-                Rectangle rectangle37 = new Rectangle();
-                Rectangle rectangle38 = new Rectangle();
-                Rectangle rectangle60 = new Rectangle();
-                Rectangle rectangle61 = new Rectangle();
-
-
-                Coordinate vertical12 = new Coordinate();
-                Coordinate horizontal12 = new Coordinate();
+                //如果走到这，说明第3层不能码了，该码放第4层了            
 
                 //第4层第一个
                 if ((count34 == 0) && (length34  + edge>= l) && (width34 + edge >= w))
@@ -7735,6 +7906,7 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count34++;
+                        rectangle37.length -= l;
                         return;
                     }
 
@@ -7774,7 +7946,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第二个
-                if (length34 + edge >= w)
+                if ((length34 + edge >= w) && (!isJudged))
                 {
                     Coordinate k95 = new Coordinate();
                     k95.x = vertical12.x;
@@ -7822,6 +7994,7 @@ namespace 码垛机
                     horizontal12.y += 0;
                     rectangle38.length = width34 - l;
                     length34 -= (w + gap);
+                    isJudged = true;
                     return;
 
                 }
@@ -7878,6 +8051,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count34++;
+                        rectangle38.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -7917,7 +8092,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第三个
-                if (width34 + edge >= w)
+                if ((width34 + edge >= w) && (!isJudged))
                 {
                     Coordinate k97 = new Coordinate();
                     k97.x = horizontal12.x;
@@ -7966,6 +8141,7 @@ namespace 码垛机
                     horizontal12.y += 0;
                     rectangle60.length = width34 - l;
                     length34 -= (w + gap);
+                    isJudged = true;
                     return;
                  
                 }
@@ -8022,6 +8198,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count34++;
+                        rectangle60.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -8061,7 +8239,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第四个
-                if (length34 + edge >= w)
+                if ((length34 + edge >= w) && (!isJudged))
                 {
                     Coordinate k99 = new Coordinate();
                     if ((length34 - w + edge) < 320)
@@ -8115,6 +8293,7 @@ namespace 码垛机
                         SendMenuCommand(BF.sendbuf, 19);
                         count34++;
                         rectangle61.length = width34 - l;
+                        isJudged = true;
                         return;
                     }
 
@@ -8155,6 +8334,7 @@ namespace 码垛机
                     horizontal12.y += 0;
                     rectangle61.length = width34 - l;
                     length34 -= (w + gap);
+                    isJudged = true;
                     return;
 
                 }
@@ -8211,6 +8391,8 @@ namespace 码垛机
                         BF.sendbuf[18] = 0xF5;
                         SendMenuCommand(BF.sendbuf, 19);
                         count34++;
+                        rectangle61.length -= l;
+                        isJudged = false;
                         return;
                     }
 
@@ -8465,10 +8647,46 @@ namespace 码垛机
                     return;
                 }
 
+                //模拟收到的纸箱数据
+                if((binary_data_1[1] == 0x0D) && (binary_data_1[2] == 0XAA))
+                {
+                    var myByteArray1 = new byte[4];
+                    var myByteArray2 = new byte[4];
+                    var myByteArray3 = new byte[4];
+                    for (int i = 0; i < 4; i++)
+                    {
+                        myByteArray1[i] = binary_data_1[i + 3];
+                    }
+                    for (int i = 0; i < 4; i++)
+                    {
+                        myByteArray2[i] = binary_data_1[i + 7];
+                    }
+                    for (int i = 0; i < 4; i++)
+                    {
+                        myByteArray3[i] = binary_data_1[i + 11];
+                    }
+                    //字节数组转16进制字符串
+                    string xstr = byteToHex.byteToHexStr(myByteArray1, 4);
+                    string ystr = byteToHex.byteToHexStr(myByteArray2, 4);
+                    string zstr = byteToHex.byteToHexStr(myByteArray3, 4);
+
+                    //16进制字符串转10进制整数
+                    x_value = Int32.Parse(xstr, System.Globalization.NumberStyles.HexNumber);
+                    y_value = Int32.Parse(ystr, System.Globalization.NumberStyles.HexNumber);
+                    z_value = Int32.Parse(zstr, System.Globalization.NumberStyles.HexNumber);
+
+                    l = x_value;
+                    w = y_value;
+                    h = z_value;
+
+                    SendMaduoInfo();
+                }
+
+
+
                 //码垛完成则收到数据
                 if ((binary_data_1[1] == 0x02) && (binary_data_1[2] == 0x0F))
                 {
-
                     wdf.GetTotalNum(++totalNum);
                     return;
                 }
