@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -23,47 +24,62 @@ namespace 码垛机
         {
         }
 
+        public static ArrayList arrayList1 = new ArrayList();
+        public static ArrayList arrayList2 = new ArrayList();
+        public static ArrayList arrayList3 = new ArrayList();
         /// <summary>
         /// 绘制码盘已经占用的区域
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public void DrawOcupyArea(int x, int y,int lenth,int width)
+        public void DrawOcupyArea(int x, int y,int length,int width)
         {
-            int a =(int) 0.15 * x;
-            int b =(int) 0.15 * y;
-            int c =(int) 0.15 * lenth;
-            int d =(int) 0.15 * width;
+            int a =(int) (0.15 * x);
+            int b =(int) (0.15 * y);
+            int c = (int)(0.15 * length);
+            int d =(int) (0.15 * width);
+            arrayList1.Add(a);
+            arrayList1.Add(b);
+            arrayList1.Add(c);
+            arrayList1.Add(d);
             Graphics gp = panel6.CreateGraphics();
             System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
             //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
-            gp.FillRectangle(Brushes.Red, rect); //填充
+            gp.FillRectangle(Brushes.Blue, rect); //填充
             gp.Flush();
 
         }
-        public void DrawOcupyArea2(int x, int y, int lenth, int width)
+        public void DrawOcupyArea2(int x, int y, int length, int width)
         {
-            int a = (int)0.15 * x;
-            int b = (int)0.15 * y;
-            int c = (int)0.15 * lenth;
-            int d = (int)0.15 * width;
+            int a = (int)(0.15 * x);
+            int b = (int)(0.15 * y);
+            int c = (int)(0.15 * length);
+            int d = (int)(0.15 * width);
+            arrayList2.Add(a);
+            arrayList2.Add(b);
+            arrayList2.Add(c);
+            arrayList2.Add(d);
             Graphics gp = panel7.CreateGraphics();
             System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
             //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
-            gp.FillRectangle(Brushes.Red, rect); //填充
+            gp.FillRectangle(Brushes.Blue, rect); //填充
             gp.Flush();
 
         }
-        public void DrawOcupyArea3(int x, int y, int lenth, int width)
+        public void DrawOcupyArea3(int x, int y, int length, int width)
         {
-            int a = (int)0.15 * x;
-            int b = (int)0.15 * y;
-            int c = (int)0.15 * lenth;
-            int d = (int)0.15 * width;
+            int a = (int)(0.15 * x);
+            int b = (int)(0.15 * y);
+            int c = (int)(0.15 * length);
+            int d = (int)(0.15 * width);
+            arrayList3.Add(a);
+            arrayList3.Add(b);
+            arrayList3.Add(c);
+            arrayList3.Add(d);
             Graphics gp = panel8.CreateGraphics();
             System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
             //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
-            gp.FillRectangle(Brushes.Red, rect); //填充
+            gp.FillRectangle(Brushes.Blue, rect); //填充
             gp.Flush();
 
         }
@@ -158,6 +174,42 @@ namespace 码垛机
         private void label18_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void panel6_Paint(object sender, PaintEventArgs e)
+        {
+            for (int i = 0;i < (arrayList1.Count/4);i++)
+            {
+                Graphics gp = panel6.CreateGraphics();
+                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point((int)arrayList1[4*i], (int)arrayList1[4*i+1]), new Size((int)arrayList1[4*i+2], (int)arrayList1[4*i+3]));
+                //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
+                gp.FillRectangle(Brushes.Blue, rect); //填充
+                gp.Flush();
+            }
+        }
+
+        private void panel7_Paint(object sender, PaintEventArgs e)
+        {
+            for (int i = 0; i < (arrayList2.Count / 4); i++)
+            {
+                Graphics gp = panel7.CreateGraphics();
+                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point((int)arrayList2[4 * i], (int)arrayList2[4 * i + 1]), new Size((int)arrayList2[4 * i + 2], (int)arrayList2[4 * i + 3]));
+                //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
+                gp.FillRectangle(Brushes.Blue, rect); //填充
+                gp.Flush();
+            }
+        }
+
+        private void panel8_Paint(object sender, PaintEventArgs e)
+        {
+            for (int i = 0; i < (arrayList3.Count / 4); i++)
+            {
+                Graphics gp = panel8.CreateGraphics();
+                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point((int)arrayList3[4 * i], (int)arrayList3[4 * i + 1]), new Size((int)arrayList3[4 * i + 2], (int)arrayList3[4 * i + 3]));
+                //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
+                gp.FillRectangle(Brushes.Blue, rect); //填充
+                gp.Flush();
+            }
         }
     }
 }

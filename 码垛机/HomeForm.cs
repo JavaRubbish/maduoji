@@ -88,7 +88,7 @@ namespace 码垛机
         public static bool completed = true;
         //码垛计数，每完成一次，计数加一
         public static int totalNum = 0;
-        //留余系数
+        //留余系数（允许超出边界距离）
         public static int edge = 50;
         //纸箱间的缝隙
         public static int gap = 12;
@@ -116,7 +116,7 @@ namespace 码垛机
             if (wdf != null)
             {
                 xinlei = false;
-                wdf.Close();
+                wdf.Visible = false;
             }
             //判断该子窗口是否已经打开过
             if (hf == null || hf.IsDisposed)
@@ -156,7 +156,7 @@ namespace 码垛机
             if (wdf != null)
             {
                 xinlei = false;
-                wdf.Close();
+                wdf.Visible = false;
             }
 
             if (msf == null || msf.IsDisposed)
@@ -202,7 +202,7 @@ namespace 码垛机
             if (wdf != null)
             {
                 xinlei = false;
-                wdf.Close();
+                wdf.Visible = false;
             }
 
 
@@ -215,6 +215,11 @@ namespace 码垛机
         private void work_btn_Click(object sender, EventArgs e)
         {
             this.Text = "工作界面";
+
+            wdf.Visible = true;
+            //请求坐标
+            xinlei = true;
+            StartThread();
 
             work_btn.BackColor = Color.FromArgb(65, 105, 225);
             historydata_btn.BackColor = Color.FromArgb(220, 220, 220);
@@ -233,21 +238,21 @@ namespace 码垛机
                 msf.Close();
             }
 
-            if (wdf == null || wdf.IsDisposed)
-            {
+            //if (wdf == null || wdf.IsDisposed)
+            //{
 
-                wdf = new WorkingDetailForm();
-                wdf.TopLevel = false;
-                panel1.Controls.Add(wdf);
-                wdf.Show();
-                //请求坐标
-                xinlei = true;
-                StartThread();
-            }
-            else
-            {
+            //    wdf = new WorkingDetailForm();
+            //    wdf.TopLevel = false;
+            //    panel1.Controls.Add(wdf);
+            //    wdf.Show();
+            //    //请求坐标
+            //    xinlei = true;
+            //    StartThread();
+            //}
+            //else
+            //{
 
-            }
+            //}
         }
 
         /// <summary>
@@ -3406,7 +3411,7 @@ namespace 码垛机
 
                     vertical2.x = 1400;
                     vertical2.y = l;
-                    horizontal2.x = 1400 + w;
+                    horizontal2.x = 1400 + w + gap;
                     horizontal2.y = 0;
 
                     rectangle6.length = 1000 - l;
@@ -8679,10 +8684,14 @@ namespace 码垛机
                     w = y_value;
                     h = z_value;
 
+                    xinlei = false;
+                    fight = false;
+                    completed = false;
                     SendMaduoInfo();
+                    xinlei = true;
+                    fight = true;
+                    completed = true;
                 }
-
-
 
                 //码垛完成则收到数据
                 if ((binary_data_1[1] == 0x02) && (binary_data_1[2] == 0x0F))
