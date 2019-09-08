@@ -44,9 +44,10 @@
             this.label1.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.label1.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label1.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label1.Location = new System.Drawing.Point(990, 27);
+            this.label1.Location = new System.Drawing.Point(742, 22);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(150, 27);
+            this.label1.Size = new System.Drawing.Size(121, 22);
             this.label1.TabIndex = 0;
             this.label1.Text = "初始化加载中...";
             // 
@@ -56,11 +57,12 @@
             this.loadtimelabel.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.loadtimelabel.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.loadtimelabel.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.loadtimelabel.Location = new System.Drawing.Point(1141, 27);
+            this.loadtimelabel.Location = new System.Drawing.Point(856, 22);
+            this.loadtimelabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.loadtimelabel.Name = "loadtimelabel";
-            this.loadtimelabel.Size = new System.Drawing.Size(24, 27);
+            this.loadtimelabel.Size = new System.Drawing.Size(20, 22);
             this.loadtimelabel.TabIndex = 1;
-            this.loadtimelabel.Text = "5";
+            this.loadtimelabel.Text = "3";
             // 
             // timer1
             // 
@@ -73,9 +75,10 @@
             this.panel1.BackColor = System.Drawing.Color.Transparent;
             this.panel1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel1.BackgroundImage")));
             this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.panel1.Location = new System.Drawing.Point(286, 589);
+            this.panel1.Location = new System.Drawing.Point(214, 471);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(714, 63);
+            this.panel1.Size = new System.Drawing.Size(536, 50);
             this.panel1.TabIndex = 2;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
@@ -85,9 +88,10 @@
             this.label2.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.label2.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label2.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label2.Location = new System.Drawing.Point(1160, 27);
+            this.label2.Location = new System.Drawing.Point(870, 22);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(32, 27);
+            this.label2.Size = new System.Drawing.Size(26, 22);
             this.label2.TabIndex = 3;
             this.label2.Text = "秒";
             // 
@@ -97,26 +101,28 @@
             this.label3.Font = new System.Drawing.Font("微软雅黑", 25.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label3.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.label3.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.label3.Location = new System.Drawing.Point(254, 193);
+            this.label3.Location = new System.Drawing.Point(190, 154);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(763, 216);
+            this.label3.Size = new System.Drawing.Size(572, 173);
             this.label3.TabIndex = 4;
             this.label3.Text = "自动码垛机器人系统";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // SplashForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(1242, 671);
+            this.ClientSize = new System.Drawing.Size(932, 537);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.loadtimelabel);
             this.Controls.Add(this.label1);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "SplashForm";
             this.Text = "码垛机系统 V1.0";
             this.Load += new System.EventHandler(this.SplashForm_Load);

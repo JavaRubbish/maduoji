@@ -330,6 +330,8 @@ namespace 码垛机
         /// <returns></returns>
         public static void CalcCityDistance(Coordinate a,Coordinate b)
         {
+            Thread.CurrentThread.Priority = ThreadPriority.Highest
+                ;
             int result =a.y + b.y + Math.Abs(a.x - b.x);
             int sec = result / 500;
 
@@ -344,6 +346,7 @@ namespace 码垛机
             BF.sendbuf[7] = secbyte[0];
             BF.sendbuf[8] = 0xF5;
             SendMenuCommand(BF.sendbuf, 9);
+            
         }
 
 
@@ -354,6 +357,7 @@ namespace 码垛机
         {
             Thread thread = new Thread(new ThreadStart(CalculateCoornidateAndSend));
             thread.IsBackground = true;
+            thread.Priority = ThreadPriority.Highest;
             thread.Start();
         }
 
@@ -502,13 +506,15 @@ namespace 码垛机
 
         //全局判断(为的是让每一行或每一列的第一个箱子的位置只摆放一次)
         public static bool isJudged = false;
-
+        //判断是否走到了最后一行或一列(用于发出码盘摆满的报警)
+        public static bool isLastRowOrCol = false;
         public static void CalculateCoornidateAndSend()
         {
 
+            Thread.CurrentThread.Priority = ThreadPriority.Highest;
             //扫码拿到的纸箱长宽高信息
             
-            //1号码盘找坐标(第一层)
+            //1号码盘找坐标
             if (h == 280){             
                 if (count == 0)
                 {
@@ -1314,6 +1320,7 @@ namespace 码垛机
                 //第二层第一个
                 if ((count12 == 0) && (length12 + edge >= l) && (width12 + edge >= w)) {
 
+                    wdf.changeText1("第二层");
                     Coordinate k11 = new Coordinate();
                     k11.x = 0;
                     k11.y = 0;
@@ -1323,7 +1330,8 @@ namespace 码垛机
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
-
+                    WorkingDetailForm.arrayList1.RemoveRange(0,WorkingDetailForm.arrayList1.Count);
+                    wdf.DrawOcupyArea(0,0,l,w);
                     //第一个箱子直接放在原点(0,0,0) 
                     //发坐标（包含挡板状态）
                     byte[] byteX = toBytes.intToBytes(0);
@@ -1369,15 +1377,17 @@ namespace 码垛机
                 if (rectangle14.length + edge >= l)
                 {
                     Coordinate k12 = new Coordinate();
-                    if (rectangle4.length - l + edge < 360)
+                    if (rectangle14.length - l + edge < 360)
                     {
                         k12.x = 1200 - l;
                         k12.y = horizontal4.y;
+                        wdf.DrawOcupyArea(1200 - l, 0, l, w);
                     }
                     else
                     {
                         k12.x = horizontal4.x;
                         k12.y = horizontal4.y;
+                        wdf.DrawOcupyArea(horizontal4.x, horizontal4.y, l, w);
                     }
                    
                     arrayList.Add(k12);
@@ -1392,7 +1402,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal4.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "0", "1", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -1468,7 +1478,9 @@ namespace 码垛机
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
-                    }                   
+                    }
+
+                    wdf.DrawOcupyArea(vertical4.x,vertical4.y,l,w);
 
                     byte[] byteX = toBytes.intToBytes(vertical4.x);
                     byte[] byteY = toBytes.intToBytes(vertical4.y);
@@ -1504,24 +1516,26 @@ namespace 码垛机
                     horizontal4.y = vertical4.y;
                     vertical4.x += 0;
                     vertical4.y += (w + gap);                 
-                    rectangle15.length = length2 - l;
-                    width2 -= (w + gap);
+                    rectangle15.length = length12 - l;
+                    width12 -= (w + gap);
                     isJudged = true;
                     return;
                 }
                 //第二行第二个及以上
-                if (rectangle15.length >= l)
+                if (rectangle15.length + edge >= l)
                 {
                     Coordinate k14 = new Coordinate();
                     if (rectangle15.length - l + edge < 360)
                     {
                         k14.x = 1200 - l;
                         k14.y = horizontal4.y;
+                        wdf.DrawOcupyArea(1200 - l, horizontal4.y, l, w);
                     }
                     else
                     {
                         k14.x = horizontal4.x;
                         k14.y = horizontal4.y;
+                        wdf.DrawOcupyArea(horizontal4.x, horizontal4.y, l, w);
                     }
                    
                     arrayList.Add(k14);
@@ -1536,7 +1550,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal4.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "0", "1", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -1615,6 +1629,8 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
+                    wdf.DrawOcupyArea(vertical4.x,vertical4.y,l,w);
+
                     byte[] byteX = toBytes.intToBytes(vertical4.x);
                     byte[] byteY = toBytes.intToBytes(vertical4.y);
                     byte[] byteZ = toBytes.intToBytes(0);
@@ -1655,18 +1671,20 @@ namespace 码垛机
                     return;
                 }
                 //第三行第二个及以上
-                if (rectangle16.length > l)
+                if (rectangle16.length +edge > l)
                 {
                     Coordinate k16 = new Coordinate();
                     if (rectangle16.length - l + edge < 360)
                     {
                         k16.x = 1200 - l;
                         k16.y = horizontal4.y;
+                        wdf.DrawOcupyArea(1200 - l, horizontal4.y, l, w);
                     }
                     else
                     {
                         k16.x = horizontal4.x;
                         k16.y = horizontal4.y;
+                        wdf.DrawOcupyArea(horizontal4.x, horizontal4.y, l, w);
                     }
                     
                     arrayList.Add(k16);
@@ -1681,7 +1699,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal4.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "0", "1", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -1755,11 +1773,13 @@ namespace 码垛机
                     {
                         k17.x = vertical4.x;
                         k17.y = 1000 - w;
+                        wdf.DrawOcupyArea(vertical4.x, 1000 - w, l, w);
                     }
                     else
                     {
                         k17.x = vertical4.x;
                         k17.y = vertical4.y;
+                        wdf.DrawOcupyArea(vertical4.x, vertical4.y, l, w);
                     }
                     
                     arrayList.Add(k17);
@@ -1774,7 +1794,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical4.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - w);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "0", "1", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -1852,11 +1872,13 @@ namespace 码垛机
                     {
                         k18.x = 1200 - l;
                         k18.y = horizontal4.y;
+                        wdf.DrawOcupyArea(1200 - l, horizontal4.y, l, w);
                     }
                     else
                     {
                         k18.x = horizontal4.x;
                         k18.y = horizontal4.y;
+                        wdf.DrawOcupyArea(horizontal4.x, horizontal4.y, l, w);
                     }
                     
                     arrayList.Add(k18);
@@ -1871,7 +1893,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal4.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "0", "1", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -1944,6 +1966,7 @@ namespace 码垛机
                 if ((count13 == 0) && (width13 + edge >= l) && (length13 + edge >= w))
                 {
 
+                    wdf.changeText1("第三层");
                     Coordinate k19 = new Coordinate();
                     k19.x = 0;
                     k19.y = 0;
@@ -1954,6 +1977,8 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
+                    WorkingDetailForm.arrayList1.RemoveRange(0, WorkingDetailForm.arrayList1.Count);
+                    wdf.DrawOcupyArea(0,0,w,l);
                     //第一个箱子直接放在原点(0,0,0)
                     //发坐标（包含挡板状态）
                     byte[] byteX = toBytes.intToBytes(0);
@@ -2003,11 +2028,13 @@ namespace 码垛机
                     {
                         k20.x = vertical5.x;
                         k20.y = 1000 - l;
+                        wdf.DrawOcupyArea(vertical5.x,1000 - l,w,l);
                     }
                     else
                     {
                         k20.x = vertical5.x;
                         k20.y = vertical5.y;
+                        wdf.DrawOcupyArea(vertical5.x, vertical5.y, w, l);
                     }
                     
                     arrayList.Add(k20);
@@ -2100,6 +2127,8 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
+                    wdf.DrawOcupyArea(horizontal5.x, horizontal5.y, w, l);
+
                     byte[] byteX = toBytes.intToBytes(horizontal5.x);
                     byte[] byteY = toBytes.intToBytes(horizontal5.y);
                     byte[] byteZ = toBytes.intToBytes(0);
@@ -2130,7 +2159,7 @@ namespace 码垛机
                     SendMenuCommand(BF.sendbuf, 19);
                     count13++;
 
-                    vertical5.x = horizontal.x;
+                    vertical5.x = horizontal5.x;
                     vertical5.y = l;
                     horizontal5.x += (w + gap);
                     horizontal5.y += 0;
@@ -2140,18 +2169,20 @@ namespace 码垛机
                     return;
                 }
                 //第二列第二个及以上
-                if (rectangle19.length >= l)
+                if (rectangle19.length + edge >= l)
                 {
                     Coordinate k22 = new Coordinate();
                     if ((rectangle19.length - l + edge) < 360)
                     {
                         k22.x = vertical5.x;
                         k22.y = 1000 - l;
+                        wdf.DrawOcupyArea(vertical5.x, 1000 - l, w, l);
                     }
                     else
                     {
                         k22.x = vertical5.x;
                         k22.y = vertical5.y;
+                        wdf.DrawOcupyArea(vertical5.x, vertical5.y, w, l);
                     }
                     
                     arrayList.Add(k22);
@@ -2233,7 +2264,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第三个
-                if ((length3 + edge >= w) && (!isJudged))
+                if ((length13 + edge >= w) && (!isJudged))
                 {
                     Coordinate k23 = new Coordinate();
                     k23.x = horizontal5.x;
@@ -2244,6 +2275,8 @@ namespace 码垛机
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+
+                    wdf.DrawOcupyArea(horizontal5.x, horizontal5.y, w, l);
 
                     byte[] byteX = toBytes.intToBytes(horizontal5.x);
                     byte[] byteY = toBytes.intToBytes(horizontal5.y);
@@ -2292,11 +2325,13 @@ namespace 码垛机
                     {
                         k24.x = vertical5.x;
                         k24.y = 1000 - l;
+                        wdf.DrawOcupyArea(vertical5.x, 1000 - l, w, l);
                     }
                     else
                     {
                         k24.x = vertical5.x;
                         k24.y = vertical5.y;
+                        wdf.DrawOcupyArea(vertical5.x, vertical5.y, w, l);
                     }
                     
                     arrayList.Add(k24);
@@ -2438,14 +2473,16 @@ namespace 码垛机
                     if ((rectangle50.length - l + edge) < 360)
                     {
 
-                        k26.x = vertical.x;
+                        k26.x = vertical5.x;
                         k26.y = 1000 - l;
+                        wdf.DrawOcupyArea(vertical5.x, 1000 - l, w, l);
                     }
                     else
                     {
 
-                        k26.x = vertical.x;
-                        k26.y = vertical.y;
+                        k26.x = vertical5.x;
+                        k26.y = vertical5.y;
+                        wdf.DrawOcupyArea(vertical5.x, vertical5.y, w, l);
                     }
 
                     arrayList.Add(k26);
@@ -2454,9 +2491,7 @@ namespace 码垛机
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
-
-                    wdf.DrawOcupyArea(vertical.x, vertical.y, w, l);
-
+                    
                     //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
                     if ((rectangle50.length - l + edge) < 360)
                     {
@@ -2536,12 +2571,14 @@ namespace 码垛机
                     if (length13 - w + edge < 225)
                     {
                         k27.x = 1200 - w;
-                        k27.y = horizontal.y;
+                        k27.y = horizontal5.y;
+                        wdf.DrawOcupyArea(1200 - w, horizontal5.y, w, l);
                     }
                     else
                     {
-                        k27.x = horizontal.x;
-                        k27.y = horizontal.y;
+                        k27.x = horizontal5.x;
+                        k27.y = horizontal5.y;
+                        wdf.DrawOcupyArea(horizontal5.x, horizontal5.y, w, l);
                     }
                   
                     arrayList.Add(k27);
@@ -2550,8 +2587,6 @@ namespace 码垛机
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
-
-                    wdf.DrawOcupyArea(horizontal.x, horizontal.y, w, l);
 
                     if (length13 - w + edge < 225)
                     {
@@ -2629,18 +2664,20 @@ namespace 码垛机
                     return;
                 }
                 //第五列第二个及以上
-                if (rectangle51.length >= l)
+                if (rectangle51.length + edge >= l)
                 {
                     Coordinate k28 = new Coordinate();
                     if ((rectangle51.length - l + edge) < 360)
                     {
-                        k28.x = vertical.x;
+                        k28.x = vertical5.x;
                         k28.y = 1000 - l;
+                        wdf.DrawOcupyArea(vertical5.x, 1000 - l, w, l);
                     }
                     else
                     {
-                        k28.x = vertical.x;
-                        k28.y = vertical.y;
+                        k28.x = vertical5.x;
+                        k28.y = vertical5.y;
+                        wdf.DrawOcupyArea(vertical5.x, vertical5.y, w, l);
                     }
                     
                     arrayList.Add(k28);
@@ -2649,8 +2686,6 @@ namespace 码垛机
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
-
-                    wdf.DrawOcupyArea(vertical.x, vertical.y, w, l);
 
                     //如果剩余长度放不了下一个箱子，则将当前箱子往外挪
                     if ((rectangle51.length - l + edge) < 360)
@@ -2730,6 +2765,7 @@ namespace 码垛机
                 //第4层第一个
                 if ((count14 == 0) && (length14 + edge >= l) && (width14 + edge >= w))
                 {
+                    wdf.changeText1("第四层");
                     Coordinate k29 = new Coordinate();
                     k29.x = 0;
                     k29.y = 0;
@@ -2739,6 +2775,9 @@ namespace 码垛机
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+
+                    WorkingDetailForm.arrayList1.RemoveRange(0, WorkingDetailForm.arrayList1.Count);
+                    wdf.DrawOcupyArea(0,0,l,w);
 
                     //第一个箱子直接放在原点(0,0,0)
                     //发坐标（包含挡板状态）
@@ -2789,11 +2828,13 @@ namespace 码垛机
                     {
                         k30.x = 1200 - l;
                         k30.y = horizontal6.y;
+                        wdf.DrawOcupyArea(1200 - l, horizontal6.y, l, w);
                     }
                     else
                     {
                         k30.x = horizontal6.x;
                         k30.y = horizontal6.y;
+                        wdf.DrawOcupyArea(horizontal6.x, horizontal6.y, l, w);
                     }
                     
                     arrayList.Add(k30);
@@ -2808,7 +2849,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal6.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "0", "1", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -2877,13 +2918,66 @@ namespace 码垛机
                 if ((width14 + edge>= w) && (!isJudged))
                 {
                     Coordinate k31 = new Coordinate();
-                    k31.x = vertical6.x;
-                    k31.y = vertical6.y;
+                    if (width14 - w + edge < 225)
+                    {
+                        k31.x = vertical6.x;
+                        k31.y = 1000 - w;
+                        wdf.DrawOcupyArea(vertical6.x, 1000 - w, l, w);
+                    }
+                    else
+                    {
+                        k31.x = vertical6.x;
+                        k31.y = vertical6.y;
+                        wdf.DrawOcupyArea(vertical6.x, vertical6.y, l, w);
+                    }
+                   
                     arrayList.Add(k31);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
+                    }               
+
+                    if (width14 - w + edge < 225)
+                    {
+                        byte[] byteX1 = toBytes.intToBytes(vertical6.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - w);
+                        vertical6.y = 1000 - w;
+                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        string[] status1 = new string[] { "0", "0", "1", "1" };
+                        string status21 = string.Join("", status1);
+                        int a1 = Convert.ToInt32(status21, 2);
+                        byte[] b1 = toBytes.intToBytes(a1);
+
+                        BF.sendbuf[0] = 0xFA;
+                        BF.sendbuf[1] = 0x10;
+                        BF.sendbuf[2] = byteX1[3];
+                        BF.sendbuf[3] = byteX1[2];
+                        BF.sendbuf[4] = byteX1[1];
+                        BF.sendbuf[5] = byteX1[0];
+                        BF.sendbuf[6] = byteY1[3];
+                        BF.sendbuf[7] = byteY1[2];
+                        BF.sendbuf[8] = byteY1[1];
+                        BF.sendbuf[9] = byteY1[0];
+                        BF.sendbuf[10] = byteZ1[3];
+                        BF.sendbuf[11] = byteZ1[2];
+                        BF.sendbuf[12] = byteZ1[1];
+                        BF.sendbuf[13] = byteZ1[0];
+                        BF.sendbuf[14] = b1[3];
+                        BF.sendbuf[15] = b1[2];
+                        BF.sendbuf[16] = b1[1];
+                        BF.sendbuf[17] = b1[0];
+                        BF.sendbuf[18] = 0xF5;
+                        SendMenuCommand(BF.sendbuf, 19);
+                        count14++;
+                        rectangle22.length = length14 - l;
+                        horizontal6.x = vertical6.x + l;
+                        horizontal6.y = vertical6.y;
+                        vertical6.x += 0;
+                        vertical6.y += (w + gap);
+                        isJudged = true;
+                        isLastRowOrCol = true;
+                        return;
                     }
 
                     byte[] byteX = toBytes.intToBytes(vertical6.x);
@@ -2933,11 +3027,13 @@ namespace 码垛机
                     {
                         k32.x = 1200 - l;
                         k32.y = horizontal6.y;
+                        wdf.DrawOcupyArea(1200 - l, horizontal6.y, l, w);
                     }
                     else
                     {
                         k32.x = horizontal6.x;
                         k32.y = horizontal6.y;
+                        wdf.DrawOcupyArea(horizontal6.x, horizontal6.y, l, w);
                     }
                    
                     arrayList.Add(k32);
@@ -2952,7 +3048,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal6.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "0", "1", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -2980,6 +3076,11 @@ namespace 码垛机
                         count14++;
                         rectangle22.length -= l;
                         isJudged = false;
+                        if (isLastRowOrCol)
+                        {
+                            finish_1();
+                            isLastRowOrCol = false;
+                        }
                         return;
                     }
 
@@ -3031,6 +3132,8 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
+                    wdf.DrawOcupyArea(vertical6.x, vertical6.y, l, w);
+
                     byte[] byteX = toBytes.intToBytes(vertical6.x);
                     byte[] byteY = toBytes.intToBytes(vertical6.y);
                     byte[] byteZ = toBytes.intToBytes(0);
@@ -3077,12 +3180,14 @@ namespace 码垛机
                     if (rectangle52.length - l + edge < 360)
                     {
                         k34.x = 1200 - l;
-                        k34.y = horizontal4.y;
+                        k34.y = horizontal6.y;
+                        wdf.DrawOcupyArea(1200 - l, horizontal6.y, l, w);
                     }
                     else
                     {
-                        k34.x = horizontal4.x;
-                        k34.y = horizontal4.y;
+                        k34.x = horizontal6.x;
+                        k34.y = horizontal6.y;
+                        wdf.DrawOcupyArea(horizontal6.x, horizontal6.y, l, w);
                     }
                
                     arrayList.Add(k34);
@@ -3097,7 +3202,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal6.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "0", "1", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -3171,11 +3276,13 @@ namespace 码垛机
                     {
                         k35.x = vertical6.x;
                         k35.y = 1000 - w;
+                        wdf.DrawOcupyArea(vertical6.x, 1000 - w, l, w);
                     }
                     else
                     {
                         k35.x = vertical6.x;
                         k35.y = vertical6.y;
+                        wdf.DrawOcupyArea(vertical6.x, vertical6.y, l, w);
                     }
                     
                     arrayList.Add(k35);
@@ -3190,7 +3297,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical6.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - w);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "0", "1", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -3261,18 +3368,20 @@ namespace 码垛机
                     return;
                 }
                 //第四行第二个及以上
-                if (rectangle53.length > l)
+                if (rectangle53.length +edge > l)
                 {
                     Coordinate k36 = new Coordinate();
                     if (rectangle53.length - l + edge < 360)
                     {
                         k36.x = 1200 - l;
-                        k36.y = horizontal4.y;
+                        k36.y = horizontal6.y;
+                        wdf.DrawOcupyArea(1200 - l, horizontal6.y, l, w);
                     }
                     else
                     {
-                        k36.x = horizontal4.x;
-                        k36.y = horizontal4.y;
+                        k36.x = horizontal6.x;
+                        k36.y = horizontal6.y;
+                        wdf.DrawOcupyArea(horizontal6.x, horizontal6.y, l, w);
                     }
                   
                     arrayList.Add(k36);
@@ -3284,10 +3393,11 @@ namespace 码垛机
 
                     if (rectangle53.length - l + edge < 360)
                     {
+
                         byte[] byteX1 = toBytes.intToBytes(1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal6.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "0", "1", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -3311,10 +3421,10 @@ namespace 码垛机
                         BF.sendbuf[16] = b1[1];
                         BF.sendbuf[17] = b1[0];
                         BF.sendbuf[18] = 0xF5;
-                        SendMenuCommand(BF.sendbuf, 19);
+                        SendMenuCommand(BF.sendbuf, 19);                       
                         count14++;
                         rectangle53.length -= l;
-                        isJudged = true;
+                        isJudged = true;                      
                         return;
                     }
 
@@ -3347,15 +3457,14 @@ namespace 码垛机
                     BF.sendbuf[18] = 0xF5;
                     SendMenuCommand(BF.sendbuf, 19);
                     count14++;
-
                     horizontal6.x += l;
                     horizontal6.y += 0;
                     rectangle53.length -= l;
                     return;
                 }
-                MessageBox.Show("码盘1码垛完成,请移走!", "警告");
+                
 
-            }
+            }          
 
             /*************************************************************************************/
             //2号码盘找坐标
@@ -3448,7 +3557,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical2.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -3597,7 +3706,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical2.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -3747,7 +3856,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical2.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -3897,7 +4006,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical2.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -3992,7 +4101,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - w);
                         byte[] byteY1 = toBytes.intToBytes(horizontal2.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -4092,7 +4201,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical2.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -4165,6 +4274,7 @@ namespace 码垛机
                 //第二层第一个
                 if ((count22 == 0) && (length22 + edge >= l) && (width22 + edge >= w))
                 {
+                    wdf.changeText2("第二层");
                     Coordinate k47 = new Coordinate();
                     k47.x = 1400;
                     k47.y = 0;
@@ -4174,6 +4284,9 @@ namespace 码垛机
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+
+                    WorkingDetailForm.arrayList2.RemoveRange(0, WorkingDetailForm.arrayList2.Count);
+                    wdf.DrawOcupyArea2(0, 0, l, w);
 
                     //第一个箱子直接放在原点(0,0,0)
                     //发坐标（包含挡板状态）
@@ -4224,11 +4337,13 @@ namespace 码垛机
                     {
                         k48.x = 2600 - l;
                         k48.y = horizontal7.y;
+                        wdf.DrawOcupyArea2(1200 - l, horizontal7.y, l, w);
                     }
                     else
                     {
                         k48.x = horizontal7.x;
                         k48.y = horizontal7.y;
+                        wdf.DrawOcupyArea2(horizontal7.x - 1400, horizontal7.y, l, w);
                     }
                     
                     arrayList.Add(k48);
@@ -4243,7 +4358,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal7.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -4320,6 +4435,8 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
+                    wdf.DrawOcupyArea2(vertical7.x - 1400, vertical7.y, l, w);
+
                     byte[] byteX = toBytes.intToBytes(vertical7.x);
                     byte[] byteY = toBytes.intToBytes(vertical7.y);
                     byte[] byteZ = toBytes.intToBytes(0);
@@ -4367,11 +4484,13 @@ namespace 码垛机
                     {
                         k50.x = 2600 - l;
                         k50.y = horizontal7.y;
+                        wdf.DrawOcupyArea2(1200 - l, horizontal7.y, l, w);
                     }
                     else
                     {
                         k50.x = horizontal7.x;
                         k50.y = horizontal7.y;
+                        wdf.DrawOcupyArea2(horizontal7.x - 1400, horizontal7.y, l, w);
                     }
                    
                     arrayList.Add(k50);
@@ -4386,7 +4505,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal7.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -4465,6 +4584,8 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
+                    wdf.DrawOcupyArea2(vertical7.x - 1400, vertical7.y, l, w);
+
                     byte[] byteX = toBytes.intToBytes(vertical7.x);
                     byte[] byteY = toBytes.intToBytes(vertical7.y);
                     byte[] byteZ = toBytes.intToBytes(0);
@@ -4512,11 +4633,13 @@ namespace 码垛机
                     {
                         k52.x = 2600 - l;
                         k52.y = horizontal7.y;
+                        wdf.DrawOcupyArea2(1200 - l, horizontal7.y, l, w);
                     }
                     else
                     {
                         k52.x = horizontal7.x;
                         k52.y = horizontal7.y;
+                        wdf.DrawOcupyArea2(horizontal7.x - 1400, horizontal7.y, l, w);
                     }
                   
                     arrayList.Add(k52);
@@ -4531,7 +4654,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal7.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -4605,11 +4728,13 @@ namespace 码垛机
                     {
                         k53.x = vertical7.x;
                         k53.y = 1000 - w;
+                        wdf.DrawOcupyArea2(vertical7.x - 1400, 1000 - w, l, w);
                     }
                     else
                     {
                         k53.x = vertical7.x;
                         k53.y = vertical7.y;
+                        wdf.DrawOcupyArea2(vertical7.x - 1400, vertical7.y, l, w);
                     }
                     
                     arrayList.Add(k53);
@@ -4624,7 +4749,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical7.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - w);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -4702,11 +4827,13 @@ namespace 码垛机
                     {
                         k54.x = 2600 - l;
                         k54.y = horizontal7.y;
+                        wdf.DrawOcupyArea2(1200 - l, horizontal7.y, l, w);
                     }
                     else
                     {
                         k54.x = horizontal7.x;
                         k54.y = horizontal7.y;
+                        wdf.DrawOcupyArea2(horizontal7.x - 1400, horizontal7.y, l, w);
                     }
                     
                     arrayList.Add(k54);
@@ -4721,7 +4848,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal7.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -4792,6 +4919,7 @@ namespace 码垛机
 
                 if ((count23 == 0) && (width23 + edge >= l) && (length23 + edge >= w))
                 {
+                    wdf.changeText2("第三层");
                     Coordinate k55 = new Coordinate();
                     k55.x = 1400;
                     k55.y = 0;
@@ -4801,6 +4929,9 @@ namespace 码垛机
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+
+                    WorkingDetailForm.arrayList2.RemoveRange(0, WorkingDetailForm.arrayList2.Count);
+                    wdf.DrawOcupyArea2(0,0,w,l);
 
                     //第一个箱子直接放在原点(1400,0,0)
                     //发坐标（包含挡板状态）
@@ -4851,11 +4982,13 @@ namespace 码垛机
                     {
                         k56.x = vertical8.x;
                         k56.y = 1000 - l;
+                        wdf.DrawOcupyArea2(vertical8.x - 1400, 1000 - l, w, l);
                     }
                     else
                     {
                         k56.x = vertical8.x;
                         k56.y = vertical8.y;
+                        wdf.DrawOcupyArea2(vertical8.x - 1400, vertical8.y, w, l);
                     }
                    
                     arrayList.Add(k56);
@@ -4871,7 +5004,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical8.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -4949,6 +5082,8 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
+                    wdf.DrawOcupyArea2(horizontal8.x - 1400, horizontal8.y, w, l);
+
                     byte[] byteX = toBytes.intToBytes(horizontal8.x);
                     byte[] byteY = toBytes.intToBytes(horizontal8.y);
                     byte[] byteZ = toBytes.intToBytes(0);
@@ -4979,7 +5114,7 @@ namespace 码垛机
                     SendMenuCommand(BF.sendbuf, 19);
                     count23++;
 
-                    vertical8.x = horizontal.x;
+                    vertical8.x = horizontal8.x;
                     vertical8.y = l;
                     horizontal8.x += (w + gap);
                     horizontal8.y += 0;
@@ -4996,11 +5131,13 @@ namespace 码垛机
                     {
                         k58.x = vertical8.x;
                         k58.y = 1000 - l;
+                        wdf.DrawOcupyArea2(vertical8.x - 1400, 1000 - l, w, l);
                     }
                     else
                     {
                         k58.x = vertical8.x;
                         k58.y = vertical8.y;
+                        wdf.DrawOcupyArea2(vertical8.x - 1400, vertical8.y, w, l);
                     }
                   
                     arrayList.Add(k58);
@@ -5016,7 +5153,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical8.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -5083,7 +5220,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第三个
-                if ((length3 + edge >= w) && (!isJudged))
+                if ((length23 + edge >= w) && (!isJudged))
                 {
                     Coordinate k59 = new Coordinate();
                     k59.x = horizontal8.x;
@@ -5094,6 +5231,8 @@ namespace 码垛机
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+
+                    wdf.DrawOcupyArea2(horizontal8.x - 1400, horizontal8.y, w, l);
 
                     byte[] byteX = toBytes.intToBytes(horizontal8.x);
                     byte[] byteY = toBytes.intToBytes(horizontal8.y);
@@ -5142,11 +5281,13 @@ namespace 码垛机
                     {
                         k60.x = vertical8.x;
                         k60.y = 1000 - l;
+                        wdf.DrawOcupyArea2(vertical8.x - 1400, 1000 - l, w, l);
                     }
                     else
                     {
                         k60.x = vertical8.x;
                         k60.y = vertical8.y;
+                        wdf.DrawOcupyArea2(vertical8.x - 1400, vertical8.y, w, l);
                     }
                     
                     arrayList.Add(k60);
@@ -5162,7 +5303,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical8.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -5242,6 +5383,8 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
+                    wdf.DrawOcupyArea2(horizontal8.x - 1400, horizontal8.y, w, l);
+
                     byte[] byteX = toBytes.intToBytes(horizontal8.x);
                     byte[] byteY = toBytes.intToBytes(horizontal8.y);
                     byte[] byteZ = toBytes.intToBytes(0);
@@ -5289,11 +5432,13 @@ namespace 码垛机
                     {
                         k62.x = vertical8.x;
                         k62.y = 1000 - l;
+                        wdf.DrawOcupyArea2(vertical8.x - 1400, 1000 - l, w, l);
                     }
                     else
                     {
                         k62.x = vertical8.x;
                         k62.y = vertical8.y;
+                        wdf.DrawOcupyArea2(vertical8.x - 1400, vertical8.y, w, l);
                     }
                     
                     arrayList.Add(k62);
@@ -5309,7 +5454,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical8.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -5384,11 +5529,13 @@ namespace 码垛机
                     {
                         k63.x = 2600 - w;
                         k63.y = horizontal8.y;
+                        wdf.DrawOcupyArea2(1200 - w, horizontal8.y, w, l);
                     }
                     else
                     {
                         k63.x = horizontal8.x;
                         k63.y = horizontal8.y;
+                        wdf.DrawOcupyArea2(horizontal8.x - 1400, horizontal8.y, w, l);
                     }
                     
                     arrayList.Add(k63);
@@ -5403,7 +5550,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - w);
                         byte[] byteY1 = toBytes.intToBytes(horizontal8.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -5481,11 +5628,13 @@ namespace 码垛机
                     {
                         k64.x = vertical8.x;
                         k64.y = 1000 - l;
+                        wdf.DrawOcupyArea2(vertical8.x - 1400, 1000 - l, w, l);
                     }
                     else
                     {
                         k64.x = vertical8.x;
                         k64.y = vertical8.y;
+                        wdf.DrawOcupyArea2(vertical8.x - 1400, vertical8.y, w, l);
                     }
                 
                     arrayList.Add(k64);
@@ -5501,7 +5650,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical8.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -5574,6 +5723,7 @@ namespace 码垛机
                 //第4层第一个
                 if ((count24 == 0) && (length24 + edge >= l) && (width24 + edge >= w))
                 {
+                    wdf.changeText2("第四层");
                     Coordinate k65 = new Coordinate();
                     k65.x = 1400;
                     k65.y = 0;
@@ -5583,6 +5733,9 @@ namespace 码垛机
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+
+                    WorkingDetailForm.arrayList2.RemoveRange(0, WorkingDetailForm.arrayList2.Count);
+                    wdf.DrawOcupyArea2(0,0,l,w);
 
                     //第一个箱子直接放在原点(1400,0,0)
                     //发坐标（包含挡板状态）
@@ -5633,11 +5786,13 @@ namespace 码垛机
                     {
                         k66.x = 2600 - l;
                         k66.y = horizontal9.y;
+                        wdf.DrawOcupyArea2(1200 - l, horizontal9.y, l, w);
                     }
                     else
                     {
                         k66.x = horizontal9.x;
                         k66.y = horizontal9.y;
+                        wdf.DrawOcupyArea2(horizontal9.x - 1400, horizontal9.y, l, w);
                     }
                 
                     arrayList.Add(k66);
@@ -5652,7 +5807,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal9.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -5729,6 +5884,8 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
+                    wdf.DrawOcupyArea2(vertical9.x - 1400, vertical9.y, l, w);
+
                     byte[] byteX = toBytes.intToBytes(vertical9.x);
                     byte[] byteY = toBytes.intToBytes(vertical9.y);
                     byte[] byteZ = toBytes.intToBytes(0);
@@ -5776,11 +5933,13 @@ namespace 码垛机
                     {
                         k68.x = 2600 - l;
                         k68.y = horizontal9.y;
+                        wdf.DrawOcupyArea2(1200 - l, horizontal9.y, l, w);
                     }
                     else
                     {
                         k68.x = horizontal9.x;
                         k68.y = horizontal9.y;
+                        wdf.DrawOcupyArea2(horizontal9.x - 1400, horizontal9.y, l, w);
                     }
                     
                     arrayList.Add(k68);
@@ -5795,7 +5954,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal9.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -5874,6 +6033,8 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
+                    wdf.DrawOcupyArea2(vertical9.x - 1400, vertical9.y, l, w);
+
                     byte[] byteX = toBytes.intToBytes(vertical9.x);
                     byte[] byteY = toBytes.intToBytes(vertical9.y);
                     byte[] byteZ = toBytes.intToBytes(0);
@@ -5921,11 +6082,13 @@ namespace 码垛机
                     {
                         k70.x = 2600 - l;
                         k70.y = horizontal9.y;
+                        wdf.DrawOcupyArea2(1200 - l, horizontal9.y, l, w);
                     }
                     else
                     {
                         k70.x = horizontal9.x;
                         k70.y = horizontal9.y;
+                        wdf.DrawOcupyArea2(horizontal9.x - 1400, horizontal9.y, l, w);
                     }
                    
                     arrayList.Add(k70);
@@ -5940,7 +6103,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1400 + 1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal9.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -6010,21 +6173,33 @@ namespace 码垛机
                 if ((width24 + edge >= w) && (!isJudged))
                 {
                     Coordinate k71 = new Coordinate();
-                    k71.x = vertical9.x;
-                    k71.y = vertical9.y;
+                    if (width24 - w + edge < 240)
+                    {
+                        k71.x = vertical9.x;
+                        k71.y = 1000 - w;
+                        wdf.DrawOcupyArea2(vertical9.x - 1400, 1000 -w, l, w);
+                    }
+                    else
+                    {
+                        k71.x = vertical9.x;
+                        k71.y = vertical9.y;
+                        wdf.DrawOcupyArea2(vertical9.x - 1400, vertical9.y, l, w);
+                    }
+                  
                     arrayList.Add(k71);
                     if (arrayList.Count == 2)
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+                  
 
                     if (width24 - w + edge < 240)
                     {
                         byte[] byteX1 = toBytes.intToBytes(vertical9.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - w);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -6102,11 +6277,13 @@ namespace 码垛机
                     {
                         k72.x = 1200 - l;
                         k72.y = horizontal9.y;
+                        wdf.DrawOcupyArea2(1200 - l, horizontal9.y, l, w);
                     }
                     else
                     {
                         k72.x = horizontal9.x;
                         k72.y = horizontal9.y;
+                        wdf.DrawOcupyArea2(horizontal9.x - 1400, horizontal9.y, l, w);
                     }
                     
                     arrayList.Add(k72);
@@ -6121,7 +6298,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal9.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -6149,6 +6326,7 @@ namespace 码垛机
                         count24++;
                         rectangle57.length -= l;
                         isJudged = false;
+                        finish_2();
                         return;
                     }
 
@@ -6186,9 +6364,8 @@ namespace 码垛机
                     horizontal9.y += 0;
                     rectangle57.length -= l;
                     return;
-                }
-
-                MessageBox.Show("码盘2码垛完成,请移走!", "警告");
+                }          
+                
             }
 
             /**********************************************************************************************/
@@ -6205,8 +6382,7 @@ namespace 码垛机
                     {
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
-                    }
-
+                    }                   
                     wdf.DrawOcupyArea3(0, 0, l, w);
 
                     //第一个箱子直接放在原点(2800,0,0)
@@ -6279,7 +6455,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal3.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -6395,6 +6571,10 @@ namespace 码垛机
                     vertical3.y += (w + gap);                   
                     rectangle12.length = 1000 - l;
                     width3 -= (w + gap);
+                    if (rectangle12.length + edge < l)
+                    {
+                        return;
+                    }
                     isJudged = true;
                     return;
                 }
@@ -6427,7 +6607,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(2800 + 1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal3.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -6517,13 +6697,12 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
                    
-
                     if (width3 - w + edge < 320)
                     {
                         byte[] byteX1 = toBytes.intToBytes(vertical3.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - w);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -6550,6 +6729,10 @@ namespace 码垛机
                         SendMenuCommand(BF.sendbuf, 19);
                         count3++;
                         rectangle13.length = length3 - l;
+                        if (rectangle13.length + edge < l)
+                        {
+                            return;
+                        }
                         isJudged = true;
                         return;
                     }
@@ -6590,11 +6773,15 @@ namespace 码垛机
                     vertical3.y += (w + gap);                   
                     rectangle13.length = 1000 - l;
                     width3 -= (w + gap);
+                    if (rectangle13.length + edge < l)
+                    {
+                        return;
+                    }
                     isJudged = true;
                     return;
                 }
                 //第三行第二个及以上
-                if (rectangle13.length >= l)
+                if (rectangle13.length + edge >= l)
                 {
                     Coordinate k78 = new Coordinate();
                     if (rectangle13.length - l + edge < 550)
@@ -6623,7 +6810,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(2800 + 1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal3.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -6694,6 +6881,7 @@ namespace 码垛机
 
                 if ((count32 == 0) && (width32 + edge >= l) && (length32 + edge>= w))
                 {
+                    wdf.changeText3("第二层");
                     Coordinate k79 = new Coordinate();
                     k79.x = 2800;
                     k79.y = 0;
@@ -6703,6 +6891,9 @@ namespace 码垛机
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+
+                    WorkingDetailForm.arrayList3.RemoveRange(0, WorkingDetailForm.arrayList3.Count);
+                    wdf.DrawOcupyArea3(0,0,w,l);
 
                     //第一个箱子直接放在原点(2800,0,0)
                     //发坐标（包含挡板状态）
@@ -6753,11 +6944,13 @@ namespace 码垛机
                     {
                         k80.x = vertical10.x;
                         k80.y = 1000 - l;
+                        wdf.DrawOcupyArea3(vertical10.x - 2800, 1000 - l, w, l);
                     }
                     else
                     {
                         k80.x = vertical10.x;
                         k80.y = vertical10.y;
+                        wdf.DrawOcupyArea3(vertical10.x - 2800, vertical10.y, w, l);
                     }
                    
                     arrayList.Add(k80);
@@ -6772,7 +6965,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical10.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -6850,6 +7043,8 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
+                    wdf.DrawOcupyArea3(horizontal10.x - 2800, horizontal10.y, w, l);
+
                     byte[] byteX = toBytes.intToBytes(horizontal10.x);
                     byte[] byteY = toBytes.intToBytes(horizontal10.y);
                     byte[] byteZ = toBytes.intToBytes(0);
@@ -6886,22 +7081,28 @@ namespace 码垛机
                     horizontal10.y += 0;
                     rectangle33.length = width32 - l;
                     length32 -= (w + gap);
+                    if (rectangle33.length + edge < l)
+                    {
+                        return;
+                    }
                     isJudged = true;
                     return;
                 }
                 //第二列第二个及以上
-                if (rectangle33.length >= l)
+                if (rectangle33.length + edge>= l)
                 {
                     Coordinate k82 = new Coordinate();
                     if ((rectangle33.length - l + edge) < 550)
                     {
                         k82.x = vertical10.x;
                         k82.y = 1000 - l;
+                        wdf.DrawOcupyArea3(vertical10.x - 2800, 1000 - l, w, l);
                     }
                     else
                     {
                         k82.x = vertical10.x;
                         k82.y = vertical10.y;
+                        wdf.DrawOcupyArea3(vertical10.x - 2800, vertical10.y, w, l);
                     }
                     
                     arrayList.Add(k82);
@@ -6916,7 +7117,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical10.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -6983,7 +7184,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第三个
-                if ((length32 >= w) && (!isJudged))
+                if ((length32 + edge >= w) && (!isJudged))
                 {
                     Coordinate k83 = new Coordinate();
                     k83.x = horizontal10.x;
@@ -6994,6 +7195,8 @@ namespace 码垛机
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+
+                    wdf.DrawOcupyArea3(vertical10.x - 2800, vertical10.y, w, l);
 
                     byte[] byteX = toBytes.intToBytes(horizontal10.x);
                     byte[] byteY = toBytes.intToBytes(horizontal10.y);
@@ -7031,22 +7234,28 @@ namespace 码垛机
                     horizontal10.y += 0;
                     rectangle34.length = width32 - l;
                     length32 -= (w + gap);
+                    if (rectangle34.length + edge < l)
+                    {
+                        return;
+                    }
                     isJudged = true;
                     return;
                 }
                 //第三列第二个及以上
-                if (rectangle33.length >= l)
+                if (rectangle34.length + edge >= l)
                 {
                     Coordinate k84 = new Coordinate();
                     if ((rectangle34.length - l + edge) < 550)
                     {
                         k84.x = vertical10.x;
                         k84.y = 1000 - l;
+                        wdf.DrawOcupyArea3(vertical10.x - 2800, 1000 - l, w, l);
                     }
                     else
                     {
                         k84.x = vertical10.x;
                         k84.y = vertical10.y;
+                        wdf.DrawOcupyArea3(vertical10.x - 2800, vertical10.y, w, l);
                     }
                    
                     arrayList.Add(k84);
@@ -7061,7 +7270,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical10.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -7135,11 +7344,13 @@ namespace 码垛机
                     {
                         k85.x = 4000 - w;
                         k85.y = horizontal10.y;
+                        wdf.DrawOcupyArea3(1200 - w, vertical10.y, w, l);
                     }
                     else
                     {
                         k85.x = horizontal10.x;
                         k85.y = horizontal10.y;
+                        wdf.DrawOcupyArea3(horizontal10.x - 2800, horizontal10.y, w, l);
                     }
                     
                     arrayList.Add(k85);
@@ -7154,7 +7365,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(2800 + 1200 - w);
                         byte[] byteY1 = toBytes.intToBytes(horizontal10.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -7181,6 +7392,10 @@ namespace 码垛机
                         SendMenuCommand(BF.sendbuf, 19);
                         count32++;
                         rectangle58.length = width32 - l;
+                        if (rectangle58.length + edge < l)
+                        {
+                            return;
+                        }
                         isJudged = true;
                         return;
                     }
@@ -7221,22 +7436,28 @@ namespace 码垛机
                     horizontal10.y += 0;
                     rectangle58.length = width32 - l;
                     length32 -= (w + gap);
+                    if (rectangle58.length + edge < l)
+                    {
+                        return;
+                    }
                     isJudged = true;
                     return;
                 }
                 //第四列第二个及以上
-                if (rectangle58.length >= l)
+                if (rectangle58.length + edge >= l)
                 {
                     Coordinate k86 = new Coordinate();
                     if ((rectangle58.length - l + edge) < 550)
                     {
                         k86.x = vertical10.x;
                         k86.y = 1000 - l;
+                        wdf.DrawOcupyArea3(vertical10.x - 2800, 1000 - l, w, l);
                     }
                     else
                     {
                         k86.x = vertical10.x;
                         k86.y = vertical10.y;
+                        wdf.DrawOcupyArea3(vertical10.x - 2800, vertical10.y, w, l);
                     }
                  
                     arrayList.Add(k86);
@@ -7251,7 +7472,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical10.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -7323,6 +7544,7 @@ namespace 码垛机
                 //第3层第一个
                 if ((count33 == 0) && (length33 + edge >= l) && (width33 + edge >= w))
                 {
+                    wdf.changeText3("第三层");
                     Coordinate k87 = new Coordinate();
                     k87.x = 2800;
                     k87.y = 0;
@@ -7332,6 +7554,9 @@ namespace 码垛机
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+
+                    WorkingDetailForm.arrayList3.RemoveRange(0, WorkingDetailForm.arrayList3.Count);
+                    wdf.DrawOcupyArea3(0,0,l,w);
 
                     //第一个箱子直接放在原点(2800,0,0)
                     //发坐标（包含挡板状态）
@@ -7382,11 +7607,13 @@ namespace 码垛机
                     {
                         k88.x = 4000 - l;
                         k88.y = horizontal11.y;
+                        wdf.DrawOcupyArea3(1200 - l, horizontal11.y, l, w);
                     }
                     else
                     {
                         k88.x = horizontal11.x;
                         k88.y = horizontal11.y;
+                        wdf.DrawOcupyArea3(horizontal11.x - 2800, horizontal11.y, l, w);
                     }
                    
                     arrayList.Add(k88);
@@ -7401,7 +7628,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(2800 + 1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal11.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -7479,6 +7706,8 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
+                    wdf.DrawOcupyArea3(vertical11.x - 2800, vertical11.y, l, w);
+
                     byte[] byteX = toBytes.intToBytes(vertical11.x);
                     byte[] byteY = toBytes.intToBytes(vertical11.y);
                     byte[] byteZ = toBytes.intToBytes(0);
@@ -7515,6 +7744,10 @@ namespace 码垛机
                     vertical11.y += (w + gap);
                     rectangle36.length = length33 - l;
                     width33 -= (w + gap);
+                    if (rectangle36.length + edge < l)
+                    {
+                        return;
+                    }                  
                     isJudged = true;
                     return;
                 }
@@ -7526,11 +7759,13 @@ namespace 码垛机
                     {
                         k90.x = 4000 - l;
                         k90.y = horizontal11.y;
+                        wdf.DrawOcupyArea3(1200 - l, horizontal11.y, l, w);
                     }
                     else
                     {
                         k90.x = horizontal11.x;
                         k90.y = horizontal11.y;
+                        wdf.DrawOcupyArea3(horizontal11.x - 2800, horizontal11.y, l, w);
                     }
                     
                     arrayList.Add(k90);
@@ -7545,7 +7780,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(2800 + 1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal11.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -7619,11 +7854,13 @@ namespace 码垛机
                     {
                         k91.x = vertical11.x;
                         k91.y = 1000 - w;
+                        wdf.DrawOcupyArea3(vertical11.x - 2800, 1000 - w, l, w);
                     }
                     else
                     {
                         k91.x = vertical11.x;
                         k91.y = vertical11.y;
+                        wdf.DrawOcupyArea3(vertical11.x - 2800, vertical11.y, l, w);
                     }
            
                     arrayList.Add(k91);
@@ -7638,7 +7875,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical11.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - w);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -7665,6 +7902,11 @@ namespace 码垛机
                         SendMenuCommand(BF.sendbuf, 19);
                         count33++;
                         rectangle59.length = length33 - l;
+                        width33 -= (w + gap);
+                        if (rectangle59.length + edge < l)
+                        {
+                            return;
+                        }
                         isJudged = true;
                         return;
                     }
@@ -7705,6 +7947,10 @@ namespace 码垛机
                     vertical11.y += (w + gap);
                     rectangle59.length = length33 - l;
                     width33 -= (w + gap);
+                    if (rectangle59.length + edge < l)
+                    {
+                        return;
+                    }
                     isJudged = true;
                     return;
                 }
@@ -7716,11 +7962,13 @@ namespace 码垛机
                     {
                         k92.x = 4000 - l;
                         k92.y = horizontal11.y;
+                        wdf.DrawOcupyArea3(1200 - l, horizontal11.y, l, w);
                     }
                     else
                     {
                         k92.x = horizontal11.x;
                         k92.y = horizontal11.y;
+                        wdf.DrawOcupyArea3(horizontal11.x - 2800, horizontal11.y, l, w);
                     }
                   
                     arrayList.Add(k92);
@@ -7735,7 +7983,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(2800 + 1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal11.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -7805,8 +8053,9 @@ namespace 码垛机
                 //如果走到这，说明第3层不能码了，该码放第4层了            
 
                 //第4层第一个
-                if ((count34 == 0) && (length34  + edge>= l) && (width34 + edge >= w))
+                if ((count34 == 0) && (length34 + edge>= l) && (width34 + edge >= w))
                 {
+                    wdf.changeText3("第四层");
                     Coordinate k93 = new Coordinate();
                     k93.x = 2800;
                     k93.y = 0;
@@ -7816,6 +8065,9 @@ namespace 码垛机
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+
+                    WorkingDetailForm.arrayList3.RemoveRange(0, WorkingDetailForm.arrayList3.Count);
+                    wdf.DrawOcupyArea3(0, 0, w, l);
 
                     //第一个箱子直接放在原点(2800,0,0)
                     //发坐标（包含挡板状态）
@@ -7866,11 +8118,13 @@ namespace 码垛机
                     {
                         k94.x = vertical12.x;
                         k94.y = 1000 - l;
+                        wdf.DrawOcupyArea3(vertical12.x - 2800, 1000 - l, w, l);
                     }
                     else
                     {
                         k94.x = vertical12.x;
                         k94.y = vertical12.y;
+                        wdf.DrawOcupyArea3(vertical12.x - 2800, vertical12.y, w, l);
                     }
                     
                     arrayList.Add(k94);
@@ -7885,7 +8139,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical12.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -7954,8 +8208,8 @@ namespace 码垛机
                 if ((length34 + edge >= w) && (!isJudged))
                 {
                     Coordinate k95 = new Coordinate();
-                    k95.x = vertical12.x;
-                    k95.y = vertical12.y;
+                    k95.x = horizontal12.x;
+                    k95.y = horizontal12.y;
                     arrayList.Add(k95);
                     if (arrayList.Count == 2)
                     {
@@ -7963,8 +8217,10 @@ namespace 码垛机
                         arrayList.RemoveAt(0);
                     }
 
-                    byte[] byteX = toBytes.intToBytes(vertical12.x);
-                    byte[] byteY = toBytes.intToBytes(vertical12.y);
+                    wdf.DrawOcupyArea3(horizontal12.x - 2800, horizontal12.y, w, l);
+
+                    byte[] byteX = toBytes.intToBytes(horizontal12.x);
+                    byte[] byteY = toBytes.intToBytes(horizontal12.y);
                     byte[] byteZ = toBytes.intToBytes(0);
                     string[] status = new string[] { "1", "0", "0", "0" };
                     string status2 = string.Join("", status);
@@ -7999,6 +8255,10 @@ namespace 码垛机
                     horizontal12.y += 0;
                     rectangle38.length = width34 - l;
                     length34 -= (w + gap);
+                    if (rectangle38.length + edge < l)
+                    {
+                        return;
+                    }
                     isJudged = true;
                     return;
 
@@ -8011,11 +8271,13 @@ namespace 码垛机
                     {
                         k96.x = vertical12.x;
                         k96.y = 1000 - l;
+                        wdf.DrawOcupyArea3(vertical12.x - 2800, 1000 - l, w, l);
                     }
                     else
                     {
                         k96.x = vertical12.x;
                         k96.y = vertical12.y;
+                        wdf.DrawOcupyArea3(vertical12.x - 2800, vertical12.y, w, l);
                     }
                  
                     arrayList.Add(k96);
@@ -8030,7 +8292,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical12.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -8097,7 +8359,7 @@ namespace 码垛机
                     return;
                 }
                 //第一行第三个
-                if ((width34 + edge >= w) && (!isJudged))
+                if ((length34 + edge >= w) && (!isJudged))
                 {
                     Coordinate k97 = new Coordinate();
                     k97.x = horizontal12.x;
@@ -8108,6 +8370,8 @@ namespace 码垛机
                         CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
+
+                    wdf.DrawOcupyArea3(horizontal12.x - 2800, horizontal12.y, w, l);
 
                     byte[] byteX = toBytes.intToBytes(horizontal12.x);
                     byte[] byteY = toBytes.intToBytes(horizontal12.y);
@@ -8139,30 +8403,35 @@ namespace 码垛机
                     SendMenuCommand(BF.sendbuf, 19);
                     count34++;
 
-
                     vertical12.x = horizontal12.x;
                     vertical12.y = l;
                     horizontal12.x += (w + gap);
                     horizontal12.y += 0;
                     rectangle60.length = width34 - l;
                     length34 -= (w + gap);
+                    if (rectangle60.length + edge < l)
+                    {
+                        return;
+                    }
                     isJudged = true;
                     return;
                  
                 }
                 //第三列第二个及以上
-                if (rectangle60.length >= l)
+                if (rectangle60.length + edge >= l)
                 {
                     Coordinate k98 = new Coordinate();
                     if ((rectangle60.length - l + edge) < 550)
                     {
                         k98.x = vertical12.x;
                         k98.y = 1000 - l;
+                        wdf.DrawOcupyArea3(vertical12.x - 2800, 1000 - l, w, l);
                     }
                     else
                     {
                         k98.x = vertical12.x;
                         k98.y = vertical12.y;
+                        wdf.DrawOcupyArea3(vertical12.x - 2800, vertical12.y, w, l);
                     }
                    
                     arrayList.Add(k98);
@@ -8177,7 +8446,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical12.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -8251,11 +8520,13 @@ namespace 码垛机
                     {
                         k99.x = 4000 - w;
                         k99.y = horizontal12.y;
+                        wdf.DrawOcupyArea3(1200 - w, horizontal12.y, w, l);
                     }
                     else
                     {
                         k99.x = horizontal12.x;
                         k99.y = horizontal12.y;
+                        wdf.DrawOcupyArea3(horizontal12.x - 2800, horizontal12.y, w, l);
                     }
                    
                     arrayList.Add(k99);
@@ -8271,7 +8542,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(2800 + 1200 - w);
                         byte[] byteY1 = toBytes.intToBytes(horizontal12.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -8298,6 +8569,10 @@ namespace 码垛机
                         SendMenuCommand(BF.sendbuf, 19);
                         count34++;
                         rectangle61.length = width34 - l;
+                        if (rectangle61.length + edge < l)
+                        {
+                            return;
+                        }
                         isJudged = true;
                         return;
                     }
@@ -8339,6 +8614,10 @@ namespace 码垛机
                     horizontal12.y += 0;
                     rectangle61.length = width34 - l;
                     length34 -= (w + gap);
+                    if (rectangle61.length + edge < l)
+                    {
+                        return;
+                    }
                     isJudged = true;
                     return;
 
@@ -8351,11 +8630,13 @@ namespace 码垛机
                     {
                         k100.x = vertical12.x;
                         k100.y = 1000 - l;
+                        wdf.DrawOcupyArea3(vertical12.x - 2800, 1000 - l, w, l);
                     }
                     else
                     {
                         k100.x = vertical12.x;
                         k100.y = vertical12.y;
+                        wdf.DrawOcupyArea3(vertical12.x - 2800, vertical12.y, w, l);
                     }
                  
                     arrayList.Add(k100);
@@ -8370,7 +8651,7 @@ namespace 码垛机
                         byte[] byteX1 = toBytes.intToBytes(vertical12.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        string[] status1 = new string[] { "0", "0", "1", "0" };
+                        string[] status1 = new string[] { "1", "0", "0", "0" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
                         byte[] b1 = toBytes.intToBytes(a1);
@@ -8398,6 +8679,7 @@ namespace 码垛机
                         count34++;
                         rectangle61.length -= l;
                         isJudged = false;
+                        finish_3();
                         return;
                     }
 
@@ -8436,12 +8718,50 @@ namespace 码垛机
                     rectangle61.length -= l;
                     return;
                 }
-
-                MessageBox.Show("码盘3码垛完成,请移走!", "警告");
             }
         }       
 
+        /// <summary>
+        /// 码盘摆满
+        /// </summary>
+        public static void finish_1()
+        {
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x04;
+            BF.sendbuf[2] = 0x0C;
+            BF.sendbuf[3] = 0x01;
+            BF.sendbuf[4] = 0x09;
+            BF.sendbuf[5] = 0x01;
+            BF.sendbuf[6] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 7);
+            MessageBox.Show("码盘1码垛完成,请移走!", "警告");
+        }
 
+        public static void finish_2()
+        {
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x04;
+            BF.sendbuf[2] = 0x0C;
+            BF.sendbuf[3] = 0x01;
+            BF.sendbuf[4] = 0x0A;
+            BF.sendbuf[5] = 0x01;
+            BF.sendbuf[6] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 7);
+            MessageBox.Show("码盘2码垛完成,请移走!", "警告");
+        }
+
+        public static void finish_3()
+        {
+            BF.sendbuf[0] = 0xFA;
+            BF.sendbuf[1] = 0x04;
+            BF.sendbuf[2] = 0x0C;
+            BF.sendbuf[3] = 0x01;
+            BF.sendbuf[4] = 0x0B;
+            BF.sendbuf[5] = 0x01;
+            BF.sendbuf[6] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 7);
+            MessageBox.Show("码盘3码垛完成,请移走!", "警告");
+        }
 
 
         /// <summary>
@@ -8451,6 +8771,7 @@ namespace 码垛机
         {
             Thread thread = new Thread(new ThreadStart(GetCoordinate));
             thread.IsBackground = true;
+            thread.Priority = ThreadPriority.BelowNormal;
             thread.Start();
         }
 
@@ -8480,6 +8801,7 @@ namespace 码垛机
         {
             Thread thread = new Thread(new ThreadStart(requestAlrInfo));
             thread.IsBackground = true;
+            thread.Priority = ThreadPriority.BelowNormal;
             thread.Start();
         }
         public static void requestAlrInfo()
@@ -8506,6 +8828,7 @@ namespace 码垛机
         public static void confirmCompleted()
         {
             Thread thread = new Thread(new ThreadStart(requestStatus));
+            thread.Priority = ThreadPriority.BelowNormal;
             thread.IsBackground = true;
             thread.Start();
         }
@@ -8569,6 +8892,30 @@ namespace 码垛机
                 int z_value;
                 int y_value;
                 int o_value;
+
+                //下发指令的应答
+                if (binary_data_1[2] == 0x0D)
+                {
+                    if(binary_data_1[3] == 0x01)
+                    {
+                        WorkingDetailForm.isReceived1 = true;
+                    }
+                    if(binary_data_1[3] == 0x02)
+                    {
+                        WorkingDetailForm.isReceived2 = true;
+                    }
+                    if (binary_data_1[3] == 0x03)
+                    {
+                        WorkingDetailForm.isReceived3 = true;
+                    }
+                    if (binary_data_1[3] == 0x04)
+                    {
+                        WorkingDetailForm.isReceived4 = true;
+                    }
+                }
+
+
+
                 //解析报警信息
                 //第三个数据用于判断是否是报警信息数据
                 if ((binary_data_1[1] == 0x02) && (binary_data_1[2] == 0x0E))
@@ -8687,7 +9034,7 @@ namespace 码垛机
                     xinlei = false;
                     fight = false;
                     completed = false;
-                    SendMaduoInfo();
+                    SendMaduoInfo();                   
                     xinlei = true;
                     fight = true;
                     completed = true;

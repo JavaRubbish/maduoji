@@ -25,7 +25,7 @@ namespace 码垛机
         /// <param name="sender"></param>
         /// <param name="e"></param>
 
-        int a = 5;
+        int a = 3;
         private void timer1_Tick_1(object sender, EventArgs e)
         {
             if(a > 0)

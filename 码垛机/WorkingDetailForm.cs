@@ -24,6 +24,11 @@ namespace 码垛机
         {
         }
 
+        public static bool isReceived1 = false;
+        public static bool isReceived2 = false;
+        public static bool isReceived3 = false;
+        public static bool isReceived4 = false;
+
         public static ArrayList arrayList1 = new ArrayList();
         public static ArrayList arrayList2 = new ArrayList();
         public static ArrayList arrayList3 = new ArrayList();
@@ -43,6 +48,11 @@ namespace 码垛机
             arrayList1.Add(c);
             arrayList1.Add(d);
             Graphics gp = panel6.CreateGraphics();
+            if (arrayList1.Count == 4)
+            {
+                gp.Clear(panel6.BackColor);
+            }
+            
             System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
             //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
             gp.FillRectangle(Brushes.Blue, rect); //填充
@@ -60,6 +70,10 @@ namespace 码垛机
             arrayList2.Add(c);
             arrayList2.Add(d);
             Graphics gp = panel7.CreateGraphics();
+            if (arrayList2.Count == 4)
+            {
+                gp.Clear(panel7.BackColor);
+            }
             System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
             //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
             gp.FillRectangle(Brushes.Blue, rect); //填充
@@ -77,13 +91,35 @@ namespace 码垛机
             arrayList3.Add(c);
             arrayList3.Add(d);
             Graphics gp = panel8.CreateGraphics();
+            if (arrayList3.Count == 4)
+            {
+                gp.Clear(panel8.BackColor);
+            }
             System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
             //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
             gp.FillRectangle(Brushes.Blue, rect); //填充
             gp.Flush();
 
         }
+        /// <summary>
+        /// 改变码盘旁边的标签提示当前码垛到哪一层
+        /// </summary>
+        public void changeText1(string str)
+        {
+            CheckForIllegalCrossThreadCalls = false;
+            label1.Text = str;
+        }
 
+        public void changeText2(string str)
+        {
+            CheckForIllegalCrossThreadCalls = false;
+            label2.Text = str;
+        }
+        public void changeText3(string str)
+        {
+            CheckForIllegalCrossThreadCalls = false;
+            label3.Text = str;
+        }
         public void GetTotalNum(int a)
         {
             CheckForIllegalCrossThreadCalls = false;
@@ -99,22 +135,31 @@ namespace 码垛机
             this.label20.Text = o.ToString();
         }
 
-
+        /// <summary>
+        /// 清空
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void clr_btn4_Click(object sender, EventArgs e)
         {
-            HomeForm.xinlei = false;
-            HomeForm.fight = false;
-            HomeForm.completed = false;
-            label22.Text = 0.ToString();
-            BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x02;
-            BF.sendbuf[2] = 0x0D;
-            BF.sendbuf[3] = 0x04;
-            BF.sendbuf[4] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 5);
-            HomeForm.xinlei = true;
-            HomeForm.fight = true;
-            HomeForm.completed = true;
+            while (!isReceived4)
+            {
+                Thread.Sleep(500);
+                HomeForm.xinlei = false;
+                HomeForm.fight = false;
+                HomeForm.completed = false;
+                label22.Text = 0.ToString();
+                BF.sendbuf[0] = 0xFA;
+                BF.sendbuf[1] = 0x02;
+                BF.sendbuf[2] = 0x0D;
+                BF.sendbuf[3] = 0x04;
+                BF.sendbuf[4] = 0xF5;
+                SendMenuCommand(BF.sendbuf, 5);
+                HomeForm.xinlei = true;
+                HomeForm.fight = true;
+                HomeForm.completed = true;
+            }
+            isReceived4 = false;          
         }
 
 
@@ -125,50 +170,69 @@ namespace 码垛机
         /// <param name="e"></param>
         private void str_btn_Click(object sender, EventArgs e)
         {
-            HomeForm.xinlei = false;
-            HomeForm.fight = false;
-            HomeForm.completed = false;
-            BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x02;
-            BF.sendbuf[2] = 0x0D;
-            BF.sendbuf[3] = 0x01;
-            BF.sendbuf[4] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 5);
-            HomeForm.xinlei = true;
-            HomeForm.fight = true;
-            HomeForm.completed = true;
+            while (!isReceived1)
+            {
+                Thread.Sleep(500);
+                HomeForm.xinlei = false;
+                HomeForm.fight = false;
+                HomeForm.completed = false;
+                BF.sendbuf[0] = 0xFA;
+                BF.sendbuf[1] = 0x02;
+                BF.sendbuf[2] = 0x0D;
+                BF.sendbuf[3] = 0x01;
+                BF.sendbuf[4] = 0xF5;
+                SendMenuCommand(BF.sendbuf, 5);
+                HomeForm.xinlei = true;
+                HomeForm.fight = true;
+                HomeForm.completed = true;
+            }
+            isReceived1 = false;
         }
             
         private void pause_btn_Click(object sender, EventArgs e)
         {
-            HomeForm.xinlei = false;
-            HomeForm.fight = false;
-            HomeForm.completed = false;
-            BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x02;
-            BF.sendbuf[2] = 0x0D;
-            BF.sendbuf[3] = 0x02;
-            BF.sendbuf[4] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 5);
-            HomeForm.xinlei = true;
-            HomeForm.fight = true;
-            HomeForm.completed = true;
+            while (!isReceived2)
+            {
+                Thread.Sleep(500);
+                HomeForm.xinlei = false;
+                HomeForm.fight = false;
+                HomeForm.completed = false;
+                BF.sendbuf[0] = 0xFA;
+                BF.sendbuf[1] = 0x02;
+                BF.sendbuf[2] = 0x0D;
+                BF.sendbuf[3] = 0x02;
+                BF.sendbuf[4] = 0xF5;
+                SendMenuCommand(BF.sendbuf, 5);
+                HomeForm.xinlei = true;
+                HomeForm.fight = true;
+                HomeForm.completed = true;
+            }
+            isReceived2 = false;
         }
-
+        /// <summary>
+        /// 回零
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button6_Click(object sender, EventArgs e)
         {
-            HomeForm.xinlei = false;
-            HomeForm.fight = false;
-            HomeForm.completed = false;
-            BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x02;
-            BF.sendbuf[2] = 0x0D;
-            BF.sendbuf[3] = 0x03;
-            BF.sendbuf[4] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 5);
-            HomeForm.xinlei = true;
-            HomeForm.fight = true;
-            HomeForm.completed = true;
+            while (!isReceived3)
+            {
+                Thread.Sleep(500);
+                HomeForm.xinlei = false;
+                HomeForm.fight = false;
+                HomeForm.completed = false;
+                BF.sendbuf[0] = 0xFA;
+                BF.sendbuf[1] = 0x02;
+                BF.sendbuf[2] = 0x0D;
+                BF.sendbuf[3] = 0x03;
+                BF.sendbuf[4] = 0xF5;
+                SendMenuCommand(BF.sendbuf, 5);
+                HomeForm.xinlei = true;
+                HomeForm.fight = true;
+                HomeForm.completed = true;
+            }
+            isReceived3 = false;            
         }
 
         private void label18_Click(object sender, EventArgs e)
@@ -210,6 +274,11 @@ namespace 码垛机
                 gp.FillRectangle(Brushes.Blue, rect); //填充
                 gp.Flush();
             }
+        }
+
+        private void label13_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
