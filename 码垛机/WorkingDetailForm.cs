@@ -142,24 +142,21 @@ namespace 码垛机
         /// <param name="e"></param>
         private void clr_btn4_Click(object sender, EventArgs e)
         {
-            while (!isReceived4)
+            lock (locker)
             {
-                Thread.Sleep(500);
-                HomeForm.xinlei = false;
-                HomeForm.fight = false;
-                HomeForm.completed = false;
-                label22.Text = 0.ToString();
-                BF.sendbuf[0] = 0xFA;
-                BF.sendbuf[1] = 0x02;
-                BF.sendbuf[2] = 0x0D;
-                BF.sendbuf[3] = 0x04;
-                BF.sendbuf[4] = 0xF5;
-                SendMenuCommand(BF.sendbuf, 5);
-                HomeForm.xinlei = true;
-                HomeForm.fight = true;
-                HomeForm.completed = true;
-            }
-            isReceived4 = false;          
+                while (!isReceived4)
+                {                 
+                    label22.Text = 0.ToString();
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x02;
+                    BF.sendbuf[2] = 0x0D;
+                    BF.sendbuf[3] = 0x04;
+                    BF.sendbuf[4] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 5);
+                    Thread.Sleep(500);
+                }
+                isReceived4 = false;
+            }          
         }
 
 
@@ -170,44 +167,45 @@ namespace 码垛机
         /// <param name="e"></param>
         private void str_btn_Click(object sender, EventArgs e)
         {
-            while (!isReceived1)
+            lock (locker)
             {
-                Thread.Sleep(500);
-                HomeForm.xinlei = false;
-                HomeForm.fight = false;
-                HomeForm.completed = false;
-                BF.sendbuf[0] = 0xFA;
-                BF.sendbuf[1] = 0x02;
-                BF.sendbuf[2] = 0x0D;
-                BF.sendbuf[3] = 0x01;
-                BF.sendbuf[4] = 0xF5;
-                SendMenuCommand(BF.sendbuf, 5);
-                HomeForm.xinlei = true;
-                HomeForm.fight = true;
-                HomeForm.completed = true;
+                while (!isReceived1)
+                {
+                    Thread.Sleep(500);
+                    //HomeForm.xinlei = false;
+                    //HomeForm.fight = false;
+                    //HomeForm.completed = false;
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x02;
+                    BF.sendbuf[2] = 0x0D;
+                    BF.sendbuf[3] = 0x01;
+                    BF.sendbuf[4] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 5);
+                    Thread.Sleep(500);
+                    //HomeForm.xinlei = true;
+                    //HomeForm.fight = true;
+                    //HomeForm.completed = true;
+                }
+                isReceived1 = false;
             }
-            isReceived1 = false;
         }
             
         private void pause_btn_Click(object sender, EventArgs e)
         {
-            while (!isReceived2)
+            lock (locker)
             {
-                Thread.Sleep(500);
-                HomeForm.xinlei = false;
-                HomeForm.fight = false;
-                HomeForm.completed = false;
-                BF.sendbuf[0] = 0xFA;
-                BF.sendbuf[1] = 0x02;
-                BF.sendbuf[2] = 0x0D;
-                BF.sendbuf[3] = 0x02;
-                BF.sendbuf[4] = 0xF5;
-                SendMenuCommand(BF.sendbuf, 5);
-                HomeForm.xinlei = true;
-                HomeForm.fight = true;
-                HomeForm.completed = true;
+                while (!isReceived2)
+                {                                       
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x02;
+                    BF.sendbuf[2] = 0x0D;
+                    BF.sendbuf[3] = 0x02;
+                    BF.sendbuf[4] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 5);
+                    Thread.Sleep(500);               
+                }
+                isReceived2 = false;
             }
-            isReceived2 = false;
         }
         /// <summary>
         /// 回零
@@ -216,23 +214,20 @@ namespace 码垛机
         /// <param name="e"></param>
         private void button6_Click(object sender, EventArgs e)
         {
-            while (!isReceived3)
+            lock (locker)
             {
-                Thread.Sleep(500);
-                HomeForm.xinlei = false;
-                HomeForm.fight = false;
-                HomeForm.completed = false;
-                BF.sendbuf[0] = 0xFA;
-                BF.sendbuf[1] = 0x02;
-                BF.sendbuf[2] = 0x0D;
-                BF.sendbuf[3] = 0x03;
-                BF.sendbuf[4] = 0xF5;
-                SendMenuCommand(BF.sendbuf, 5);
-                HomeForm.xinlei = true;
-                HomeForm.fight = true;
-                HomeForm.completed = true;
-            }
-            isReceived3 = false;            
+                while (!isReceived3)
+                {                   
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x02;
+                    BF.sendbuf[2] = 0x0D;
+                    BF.sendbuf[3] = 0x03;
+                    BF.sendbuf[4] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 5);
+                    Thread.Sleep(500);                 
+                }
+                isReceived3 = false;
+            }                   
         }
 
         private void label18_Click(object sender, EventArgs e)
@@ -277,6 +272,16 @@ namespace 码垛机
         }
 
         private void label13_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label22_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel5_Paint(object sender, PaintEventArgs e)
         {
 
         }

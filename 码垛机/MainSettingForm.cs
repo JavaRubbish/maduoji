@@ -16,6 +16,8 @@ namespace 码垛机
         public MainSettingForm()
         {
             InitializeComponent();
+
+
             HomeForm.xinlei = false;
             if(INIhelp.GetValue("当前用户") != "管理员权限")
             {
@@ -27,6 +29,7 @@ namespace 码垛机
             }           
         }
 
+       
         /// <summary>
         /// 打开设置界面，根据权限设置是否禁用
         /// </summary>
@@ -35,6 +38,7 @@ namespace 码垛机
         //public static HandSettingForm hsf = null;
         public static IOSettingForm iof = null;
         public AboutUsForm auf = null;
+        public USBForm usbf = null;
 
         private void userset_btn_Click(object sender, EventArgs e)
         {
@@ -117,6 +121,19 @@ namespace 码垛机
                 this.Show();
             }
 
+        }
+
+        private void Upan_btn_Click(object sender, EventArgs e)
+        {
+            usbf = new USBForm();
+            this.Parent.FindForm().Hide();
+            this.Hide();
+
+            if (usbf.ShowDialog() == DialogResult.OK)
+            {
+                this.Parent.FindForm().Show();
+                this.Show();
+            }
         }
     }
 }

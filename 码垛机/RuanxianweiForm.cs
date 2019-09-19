@@ -17,6 +17,7 @@ namespace 码垛机
         public RuanxianweiForm()
         {
             InitializeComponent();
+            AutoScale(this);
             //加载软限位设置(读上次保存)
             textBox1.Text = INIhelp.GetValue("X轴上限位");
             textBox4.Text = INIhelp.GetValue("X轴下限位");
@@ -32,7 +33,27 @@ namespace 码垛机
             comboBox4.Text = INIhelp.GetValue("O轴开关");
         }
 
-  
+        public static void AutoScale(Form frm)
+        {
+            frm.Tag = frm.Width.ToString() + "," + frm.Height.ToString();
+            frm.SizeChanged += new EventHandler(frm_SizeChanged);
+        }
+
+        static void frm_SizeChanged(object sender, EventArgs e)
+        {
+            string[] tmp = ((Form)sender).Tag.ToString().Split(',');
+            float width = (float)((Form)sender).Width / (float)Convert.ToInt16(tmp[0]);
+            float heigth = (float)((Form)sender).Height / (float)Convert.ToInt16(tmp[1]);
+
+            ((Form)sender).Tag = ((Form)sender).Width.ToString() + "," + ((Form)sender).Height;
+
+            foreach (Control control in ((Form)sender).Controls)
+            {
+                control.Scale(new SizeF(width, heigth));
+
+            }
+        }
+
         /// <summary>
         /// 保存设置(下发指令并且设置保存)
         /// </summary>

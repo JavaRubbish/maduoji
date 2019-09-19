@@ -18,6 +18,7 @@ namespace 码垛机
             HomeForm.xinlei = false;
         }
 
+
         private void HistoryDataForm_Load(object sender, EventArgs e)
         {
 

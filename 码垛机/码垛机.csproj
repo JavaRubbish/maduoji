@@ -106,13 +106,13 @@
     <Compile Include="SplashForm.Designer.cs">
       <DependentUpon>SplashForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="TestForm.cs">
+    <Compile Include="toBytes.cs" />
+    <Compile Include="USBForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TestForm.Designer.cs">
-      <DependentUpon>TestForm.cs</DependentUpon>
+    <Compile Include="USBForm.Designer.cs">
+      <DependentUpon>USBForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="toBytes.cs" />
     <Compile Include="UserSettingForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -161,8 +161,8 @@
     <EmbeddedResource Include="SplashForm.resx">
       <DependentUpon>SplashForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TestForm.resx">
-      <DependentUpon>TestForm.cs</DependentUpon>
+    <EmbeddedResource Include="USBForm.resx">
+      <DependentUpon>USBForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserSettingForm.resx">
       <DependentUpon>UserSettingForm.cs</DependentUpon>

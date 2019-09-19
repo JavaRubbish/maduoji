@@ -87,6 +87,7 @@
             this.Upan_btn.TabIndex = 8;
             this.Upan_btn.Text = "U盘助手";
             this.Upan_btn.UseVisualStyleBackColor = true;
+            this.Upan_btn.Click += new System.EventHandler(this.Upan_btn_Click);
             // 
             // ruanxianweiset_btn
             // 

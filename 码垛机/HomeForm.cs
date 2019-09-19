@@ -16,8 +16,9 @@ namespace 码垛机
     public partial class HomeForm : Form
     {
 
+
         public static SerialPort sp = new SerialPort();
-        // public static SerialPort sp2 = new SerialPort();
+        public static SerialPort sp2 = new SerialPort();
         // public static SerialPort sp3 = new SerialPort();
 
         public static class BF
@@ -28,11 +29,32 @@ namespace 码垛机
         public HomeForm()
         {
             InitializeComponent();
-
-            StartThread();
+            AutoScale(this);
+          //  StartThread();
             searchAlarmInfo();
             confirmCompleted();
             initialIOSetting();
+        }
+
+        public static void AutoScale(Form frm)
+        {
+            frm.Tag = frm.Width.ToString() + "," + frm.Height.ToString();
+            frm.SizeChanged += new EventHandler(frm_SizeChanged);
+        }
+
+        static void frm_SizeChanged(object sender, EventArgs e)
+        {
+            string[] tmp = ((Form)sender).Tag.ToString().Split(',');
+            float width = (float)((Form)sender).Width / (float)Convert.ToInt16(tmp[0]);
+            float heigth = (float)((Form)sender).Height / (float)Convert.ToInt16(tmp[1]);
+
+            ((Form)sender).Tag = ((Form)sender).Width.ToString() + "," + ((Form)sender).Height;
+
+            foreach (Control control in ((Form)sender).Controls)
+            {
+                control.Scale(new SizeF(width, heigth));
+                //control.Font = new Font(control.Font.FontFamily,12 * width,control.Font.Style);
+            }
         }
 
         private void initialIOSetting()
@@ -67,18 +89,31 @@ namespace 码垛机
             ahf.TopLevel = false;
             panel1.Controls.Add(ahf);
 
+            hf = new HistoryDataForm();
+            hf.TopLevel = false;
+            panel1.Controls.Add(hf);
+
+            msf = new MainSettingForm();
+            msf.TopLevel = false;
+            panel1.Controls.Add(msf);
+
             hsf = new HandSettingForm();
             hsf.Hide();
             //默认使用端口3，波特率9600
             initCommPara(sp, "COM3", 9600);
-            // initCommPara(sp2, "COM5", 9600);
+            initCommPara(sp2, "COM5", 9600);
+
+            timer2.Interval = 1000;
+            timer2.Start();
 
         }
+
+     
         /// <summary>
         /// 解决重复打开子窗口问题
         /// </summary>
-        public HistoryDataForm hf = null;
-        public MainSettingForm msf = null;
+        public static HistoryDataForm hf = null;
+        public static MainSettingForm msf = null;
         public static AlarmHistoryForm ahf = null;
         public static WorkingDetailForm wdf = null;
         public static HandSettingForm hsf = null;
@@ -101,6 +136,8 @@ namespace 码垛机
         private void historydata_btn_Click(object sender, EventArgs e)
         {
             this.Text = "历史数据";
+            hf.Show();
+
             work_btn.BackColor = Color.FromArgb(220, 220, 220);
             historydata_btn.BackColor = Color.FromArgb(65, 105, 225);
             setting_btn.BackColor = Color.FromArgb(220, 220, 220);
@@ -108,7 +145,7 @@ namespace 码垛机
 
             if (msf != null)
             {
-                msf.Close();
+                msf.Visible = false;
             }
             if (ahf != null)
             {
@@ -119,18 +156,7 @@ namespace 码垛机
                 xinlei = false;
                 wdf.Visible = false;
             }
-            //判断该子窗口是否已经打开过
-            if (hf == null || hf.IsDisposed)
-            {
-                hf = new HistoryDataForm();
-                hf.TopLevel = false;//设置为非顶级窗口
-                panel1.Controls.Add(hf);
-                hf.Show();
-            }
-            else
-            {
-
-            }
+            
         }
         /// <summary>
         /// 设置调试
@@ -140,6 +166,7 @@ namespace 码垛机
         private void setting_btn_Click(object sender, EventArgs e)
         {
             this.Text = "设置调试";
+            msf.Show();
 
             work_btn.BackColor = Color.FromArgb(220, 220, 220);
             historydata_btn.BackColor = Color.FromArgb(220, 220, 220);
@@ -148,7 +175,7 @@ namespace 码垛机
 
             if (hf != null)
             {
-                hf.Close();
+                hf.Visible = false;
             }
             if (ahf != null)
             {
@@ -159,22 +186,7 @@ namespace 码垛机
                 xinlei = false;
                 wdf.Visible = false;
             }
-
-            if (msf == null || msf.IsDisposed)
-            {
-
-                //this.IsMdiContainer = true;
-
-                msf = new MainSettingForm();
-
-                msf.TopLevel = false;
-                panel1.Controls.Add(msf);
-                msf.Show();
-            }
-            else
-            {
-
-            }
+            
         }
         /// <summary>
         /// 报警历史
@@ -194,18 +206,17 @@ namespace 码垛机
 
             if (hf != null)
             {
-                hf.Close();
+                hf.Visible = false;
             }
             if (msf != null)
             {
-                msf.Close();
+                msf.Visible = false;
             }
             if (wdf != null)
             {
                 xinlei = false;
                 wdf.Visible = false;
             }
-
 
         }
         /// <summary>
@@ -228,7 +239,7 @@ namespace 码垛机
             alarmhistory_btn.BackColor = Color.FromArgb(220, 220, 220);
             if (hf != null)
             {
-                hf.Close();
+                hf.Visible = false;
             }
             if (ahf != null)
             {
@@ -236,7 +247,7 @@ namespace 码垛机
             }
             if (msf != null)
             {
-                msf.Close();
+                msf.Visible = false;
             }
 
             //if (wdf == null || wdf.IsDisposed)
@@ -275,7 +286,7 @@ namespace 码垛机
             }
             catch (System.Exception ex)
             {
-                MessageBox.Show("串口无法打开");
+              //  MessageBox.Show("串口无法打开");
             }
         }
 
@@ -298,9 +309,16 @@ namespace 码垛机
 
             } catch
             {
-                MessageBox.Show(comName + "串口打开失败!", "系统提示");
+              //  MessageBox.Show(comName + "串口打开失败!", "系统提示");
             }
         }
+
+        /// <summary>
+        /// 接收扫码枪的数据
+        /// </summary>
+        /// <param name="sp"></param>
+        /// <param name="comName"></param>
+        /// <param name="baudRate"></param>
 
         public struct Rectangle
         {
@@ -315,6 +333,18 @@ namespace 码垛机
             public int z;
         }
 
+        public struct Guige
+        {
+            public int l;
+            public int w;
+            public int h;
+            public int num;
+        }
+        public static Guige g1 = new Guige();
+        
+        
+        public static ArrayList usbList = new ArrayList();
+
         public void getZhixiangInfo(int length,int width,int height)
         {
 
@@ -324,18 +354,37 @@ namespace 码垛机
 
 
         /// <summary>
-        /// 计算一次码垛要花的时间并下发      
+        /// 计算一次码垛要花的时间并下发(弃用)      
         /// </summary>
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static void CalcCityDistance(Coordinate a,Coordinate b)
-        {
-            Thread.CurrentThread.Priority = ThreadPriority.Highest
-                ;
-            int result =a.y + b.y + Math.Abs(a.x - b.x);
-            int sec = result / 500;
+        //public static void CalcCityDistance(Coordinate a,Coordinate b)
+        //{
+        //    Thread.CurrentThread.Priority = ThreadPriority.Highest;
+        //    int result =a.y + b.y + Math.Abs(a.x - b.x);
+        //    int sec = result / 500;
 
+        //    byte[] secbyte = toBytes.intToBytes(sec);
+        //    BF.sendbuf[0] = 0xFA;
+        //    BF.sendbuf[1] = 0x06;
+        //    BF.sendbuf[2] = 0x0E;
+        //    BF.sendbuf[3] = 0x06;
+        //    BF.sendbuf[4] = secbyte[3];
+        //    BF.sendbuf[5] = secbyte[2];
+        //    BF.sendbuf[6] = secbyte[1];
+        //    BF.sendbuf[7] = secbyte[0];
+        //    BF.sendbuf[8] = 0xF5;
+        //    SendMenuCommand(BF.sendbuf, 9);
+            
+        //}
+
+
+        //计算挡板下落时间        
+        public static void DropTime()
+        {
+            Thread.CurrentThread.Priority = ThreadPriority.Normal;
+            int sec = (int)larrayList[0] * 100 / 500;
             byte[] secbyte = toBytes.intToBytes(sec);
             BF.sendbuf[0] = 0xFA;
             BF.sendbuf[1] = 0x06;
@@ -347,8 +396,10 @@ namespace 码垛机
             BF.sendbuf[7] = secbyte[0];
             BF.sendbuf[8] = 0xF5;
             SendMenuCommand(BF.sendbuf, 9);
-            
+            larrayList.RemoveAt(0);
         }
+
+
 
 
         /// <summary>
@@ -356,10 +407,11 @@ namespace 码垛机
         /// </summary>
         public static void SendMaduoInfo()
         {
-            Thread thread = new Thread(new ThreadStart(CalculateCoornidateAndSend));
-            thread.IsBackground = true;
-            thread.Priority = ThreadPriority.Highest;
-            thread.Start();
+              Thread thread = new Thread(new ThreadStart(CalculateCoornidateAndSend));
+              thread.IsBackground = true;
+              thread.Priority = ThreadPriority.Highest;
+              thread.Start();           
+            
         }
 
 
@@ -410,6 +462,8 @@ namespace 码垛机
         public static int count33 = 0;
         public static int count34 = 0;
         public static ArrayList arrayList = new ArrayList();
+        //存放扫码得到的纸箱长度，以计算挡板下放时间
+        public static ArrayList larrayList = new ArrayList();
 
         //定义矩形区域
         //1号盘
@@ -509,6 +563,10 @@ namespace 码垛机
         public static bool isJudged = false;
         //判断是否走到了最后一行或一列(用于发出码盘摆满的报警)
         public static bool isLastRowOrCol = false;
+        //判断是否已存在此规格，用于存储规格数量拷贝进U盘
+        public static bool exist = false;
+
+        public static bool sendflag = true;
         public static void CalculateCoornidateAndSend()
         {
 
@@ -525,7 +583,7 @@ namespace 码垛机
                     arrayList.Add(k1);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0],(Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0],(Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
                     //工作界面绘图
@@ -602,7 +660,7 @@ namespace 码垛机
                     arrayList.Add(k2);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                      //  CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -712,7 +770,7 @@ namespace 码垛机
                     arrayList.Add(k3);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }                 
 
@@ -832,7 +890,7 @@ namespace 码垛机
                     arrayList.Add(k4);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                      //  CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
                     
@@ -928,7 +986,7 @@ namespace 码垛机
                     arrayList.Add(k11);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
                     WorkingDetailForm.arrayList1.RemoveRange(0,WorkingDetailForm.arrayList1.Count);
@@ -937,7 +995,7 @@ namespace 码垛机
                     //发坐标（包含挡板状态）
                     byte[] byteX = toBytes.intToBytes(0);
                     byte[] byteY = toBytes.intToBytes(0);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(280);
                     string[] status = new string[] { "0", "0", "1", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -1003,7 +1061,7 @@ namespace 码垛机
                     arrayList.Add(k12);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                      //  CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -1011,12 +1069,12 @@ namespace 码垛机
                     {
                         byte[] byteX1 = toBytes.intToBytes(1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal4.y);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        byte[] byteZ1 = toBytes.intToBytes(280);
                         if (rectangle4.length < l)
                         {
                              byteX1 = toBytes.intToBytes(horizontal4.x);
                              byteY1 = toBytes.intToBytes(horizontal4.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                             byteZ1 = toBytes.intToBytes(280);
                         }
                         string[] status1 = new string[] { "0", "0", "1", "1" };
                         string status21 = string.Join("", status1);
@@ -1050,7 +1108,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(horizontal4.x);
                     byte[] byteY = toBytes.intToBytes(horizontal4.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(280);
                     string[] status = new string[] { "0", "0", "1", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -1112,7 +1170,7 @@ namespace 码垛机
                     arrayList.Add(k13);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }               
 
@@ -1120,12 +1178,12 @@ namespace 码垛机
                     {
                         byte[] byteX1 = toBytes.intToBytes(vertical4.x);
                         byte[] byteY1 = toBytes.intToBytes(vertical4.y);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        byte[] byteZ1 = toBytes.intToBytes(280);
                         if (width12 > w)
                         {
                             byteX1 = toBytes.intToBytes(vertical4.x);
                             byteY1 = toBytes.intToBytes(1000 - w);
-                            byteZ1 = toBytes.intToBytes(0);
+                            byteZ1 = toBytes.intToBytes(280);
                             vertical4.y = 1000 - w;
                         }
                         string[] status1 = new string[] { "0", "0", "1", "1" };
@@ -1166,7 +1224,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(vertical4.x);
                     byte[] byteY = toBytes.intToBytes(vertical4.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(280);
                     string[] status = new string[] { "0", "0", "1", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -1232,7 +1290,7 @@ namespace 码垛机
                     arrayList.Add(k14);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                      //  CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -1240,12 +1298,12 @@ namespace 码垛机
                     {
                         byte[] byteX1 = toBytes.intToBytes(1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal4.y);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        byte[] byteZ1 = toBytes.intToBytes(280);
                         if (rectangle15.length < l)
                         {
                              byteX1 = toBytes.intToBytes(horizontal4.x);
                              byteY1 = toBytes.intToBytes(horizontal4.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                             byteZ1 = toBytes.intToBytes(280);
                         }
                         string[] status1 = new string[] { "0", "0", "1", "1" };
                         string status21 = string.Join("", status1);
@@ -1280,7 +1338,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(horizontal4.x);
                     byte[] byteY = toBytes.intToBytes(horizontal4.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(280);
                     string[] status = new string[] { "0", "0", "1", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -1326,7 +1384,7 @@ namespace 码垛机
                     arrayList.Add(k19);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -1336,7 +1394,7 @@ namespace 码垛机
                     //发坐标（包含挡板状态）
                     byte[] byteX = toBytes.intToBytes(0);
                     byte[] byteY = toBytes.intToBytes(0);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(560);
                     string[] status = new string[] { "0", "0", "1", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -1402,7 +1460,7 @@ namespace 码垛机
                     arrayList.Add(k20);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -1410,12 +1468,12 @@ namespace 码垛机
                     {
                         byte[] byteX1 = toBytes.intToBytes(vertical5.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        byte[] byteZ1 = toBytes.intToBytes(560);
                         if (rectangle18.length < l)
                         {
                              byteX1 = toBytes.intToBytes(vertical5.x);
                              byteY1 = toBytes.intToBytes(vertical5.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                             byteZ1 = toBytes.intToBytes(560);
                         }
                         string[] status1 = new string[] { "0", "0", "1", "0" };
                         string status21 = string.Join("", status1);
@@ -1449,7 +1507,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(vertical5.x);
                     byte[] byteY = toBytes.intToBytes(vertical5.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(560);
                     string[] status = new string[] { "0", "0", "1", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -1511,7 +1569,7 @@ namespace 码垛机
                     arrayList.Add(k21);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }                   
 
@@ -1520,12 +1578,12 @@ namespace 码垛机
                     {
                         byte[] byteX1 = toBytes.intToBytes(horizontal5.x);
                         byte[] byteY1 = toBytes.intToBytes(horizontal5.y);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        byte[] byteZ1 = toBytes.intToBytes(560);
                         if (length13 > w)
                         {
                             byteX1 = toBytes.intToBytes(1200 - w);
                             byteY1 = toBytes.intToBytes(horizontal5.y);
-                            byteZ1 = toBytes.intToBytes(0);
+                            byteZ1 = toBytes.intToBytes(560);
                             horizontal5.x = 1200 - w;
                         }
                         string[] status1 = new string[] { "0", "0", "1", "0" };
@@ -1565,7 +1623,7 @@ namespace 码垛机
                     }
                     byte[] byteX = toBytes.intToBytes(horizontal5.x);
                     byte[] byteY = toBytes.intToBytes(horizontal5.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(560);
                     string[] status = new string[] { "0", "0", "1", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -1631,7 +1689,7 @@ namespace 码垛机
                     arrayList.Add(k22);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -1639,12 +1697,12 @@ namespace 码垛机
                     {
                         byte[] byteX1 = toBytes.intToBytes(vertical5.x);
                         byte[] byteY1 = toBytes.intToBytes(1000 - l);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        byte[] byteZ1 = toBytes.intToBytes(560);
                         if (rectangle19.length < l)
                         {
                              byteX1 = toBytes.intToBytes(vertical5.x);
                              byteY1 = toBytes.intToBytes(vertical5.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                             byteZ1 = toBytes.intToBytes(560);
                         }
                         string[] status1 = new string[] { "0", "0", "1", "0" };
                         string status21 = string.Join("", status1);
@@ -1679,7 +1737,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(vertical5.x);
                     byte[] byteY = toBytes.intToBytes(vertical5.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(560);
                     string[] status = new string[] { "0", "0", "1", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -1725,7 +1783,7 @@ namespace 码垛机
                     arrayList.Add(k29);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -1736,7 +1794,7 @@ namespace 码垛机
                     //发坐标（包含挡板状态）
                     byte[] byteX = toBytes.intToBytes(0);
                     byte[] byteY = toBytes.intToBytes(0);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(840);
                     string[] status = new string[] { "0", "0", "1", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -1802,7 +1860,7 @@ namespace 码垛机
                     arrayList.Add(k30);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -1810,12 +1868,12 @@ namespace 码垛机
                     {
                         byte[] byteX1 = toBytes.intToBytes(1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal6.y);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        byte[] byteZ1 = toBytes.intToBytes(840);
                         if (rectangle21.length < l)
                         {
                              byteX1 = toBytes.intToBytes(horizontal6.x);
                              byteY1 = toBytes.intToBytes(horizontal6.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                             byteZ1 = toBytes.intToBytes(840);
                         }
                         string[] status1 = new string[] { "0", "0", "1", "1" };
                         string status21 = string.Join("", status1);
@@ -1849,7 +1907,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(horizontal6.x);
                     byte[] byteY = toBytes.intToBytes(horizontal6.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(840);
                     string[] status = new string[] { "0", "0", "1", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -1911,7 +1969,7 @@ namespace 码垛机
                     arrayList.Add(k31);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }               
 
@@ -1919,12 +1977,12 @@ namespace 码垛机
                     {
                         byte[] byteX1 = toBytes.intToBytes(vertical6.x);
                         byte[] byteY1 = toBytes.intToBytes(vertical6.y);                        
-                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        byte[] byteZ1 = toBytes.intToBytes(840);
                         if (width14 > w)
                         {
                             byteX1 = toBytes.intToBytes(vertical6.x);
                             byteY1 = toBytes.intToBytes(1000 - w);
-                            byteZ1 = toBytes.intToBytes(0);
+                            byteZ1 = toBytes.intToBytes(840);
                             vertical6.y = 1000 - w;
                         }
                         string[] status1 = new string[] { "0", "0", "1", "1" };
@@ -1965,7 +2023,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(vertical6.x);
                     byte[] byteY = toBytes.intToBytes(vertical6.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(840);
                     string[] status = new string[] { "0", "0", "1", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -2031,7 +2089,7 @@ namespace 码垛机
                     arrayList.Add(k32);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -2039,12 +2097,12 @@ namespace 码垛机
                     {
                         byte[] byteX1 = toBytes.intToBytes(1200 - l);
                         byte[] byteY1 = toBytes.intToBytes(horizontal6.y);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        byte[] byteZ1 = toBytes.intToBytes(840);
                         if (rectangle22.length < l)
                         {
                              byteX1 = toBytes.intToBytes(horizontal6.x);
                              byteY1 = toBytes.intToBytes(horizontal6.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                             byteZ1 = toBytes.intToBytes(840);
                         }
                         string[] status1 = new string[] { "0", "0", "1", "1" };
                         string status21 = string.Join("", status1);
@@ -2084,7 +2142,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(horizontal6.x);
                     byte[] byteY = toBytes.intToBytes(horizontal6.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(840);
                     string[] status = new string[] { "0", "0", "1", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -2132,7 +2190,7 @@ namespace 码垛机
                     arrayList.Add(k37);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -2211,7 +2269,7 @@ namespace 码垛机
                     arrayList.Add(k38);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -2219,13 +2277,14 @@ namespace 码垛机
                     if ((rectangle6.length - l + edge) < 390)
                     {
                         byte[] byteX1 = toBytes.intToBytes(vertical2.x);
-                        byte[] byteY1 = toBytes.intToBytes(1500 + 1000 - l);
+                        byte[] byteY1 = toBytes.intToBytes(vertical2.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (rectangle6.length < l)
+                        if (rectangle6.length > l)
                         {
                              byteX1 = toBytes.intToBytes(vertical2.x);
-                             byteY1 = toBytes.intToBytes(vertical2.y);
+                             byteY1 = toBytes.intToBytes(1500 + 1000 - l);
                              byteZ1 = toBytes.intToBytes(0);
+                            vertical2.y = 2500 - l;
                         }
                         string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
@@ -2321,21 +2380,22 @@ namespace 码垛机
                     arrayList.Add(k39);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
 
                     if (length2 - w + edge < 240)
                     {                                            
-                        byte[] byteX1 = toBytes.intToBytes(1200 - w);
+                        byte[] byteX1 = toBytes.intToBytes(horizontal2.x);
                         byte[] byteY1 = toBytes.intToBytes(horizontal2.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (length2 < w)
+                        if (length2 > w)
                         {
-                             byteX1 = toBytes.intToBytes(horizontal2.x);
-                             byteY1 = toBytes.intToBytes(horizontal2.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(1200 - w);
+                            byteY1 = toBytes.intToBytes(horizontal2.y);
+                            byteZ1 = toBytes.intToBytes(0);
+                            horizontal2.x = 1200 - w;
                         }
                         string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
@@ -2441,7 +2501,7 @@ namespace 码垛机
                     arrayList.Add(k40);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -2449,13 +2509,14 @@ namespace 码垛机
                     if ((rectangle7.length - l + edge) < 390)
                     {
                         byte[] byteX1 = toBytes.intToBytes(vertical2.x);
-                        byte[] byteY1 = toBytes.intToBytes(1500 + 1000 - l);
+                        byte[] byteY1 = toBytes.intToBytes(vertical2.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (rectangle7.length < l)
+                        if (rectangle7.length > l)
                         {
-                             byteX1 = toBytes.intToBytes(vertical2.x);
-                             byteY1 = toBytes.intToBytes(vertical2.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(vertical2.x);
+                            byteY1 = toBytes.intToBytes(1500 + 1000 - l);
+                            byteZ1 = toBytes.intToBytes(0);
+                            vertical2.y = 2500 - l;
                         }
                         string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
@@ -2537,7 +2598,7 @@ namespace 码垛机
                     arrayList.Add(k47);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                      //  CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -2548,7 +2609,7 @@ namespace 码垛机
                     //发坐标（包含挡板状态）
                     byte[] byteX = toBytes.intToBytes(0);
                     byte[] byteY = toBytes.intToBytes(1500);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(300);
                     string[] status = new string[] { "0", "1", "0", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -2614,20 +2675,21 @@ namespace 码垛机
                     arrayList.Add(k48);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
                     if (rectangle23.length - l + edge < 390)
                     {
-                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteX1 = toBytes.intToBytes(horizontal7.x);
                         byte[] byteY1 = toBytes.intToBytes(horizontal7.y);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (rectangle23.length < l)
+                        byte[] byteZ1 = toBytes.intToBytes(300);
+                        if (rectangle23.length > l)
                         {
-                             byteX1 = toBytes.intToBytes(horizontal7.x);
-                             byteY1 = toBytes.intToBytes(horizontal7.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(1200 - l);
+                            byteY1 = toBytes.intToBytes(horizontal7.y);
+                            byteZ1 = toBytes.intToBytes(300);
+                            horizontal7.x = 1200 - l;
                         }
                         string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
@@ -2661,7 +2723,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(horizontal7.x);
                     byte[] byteY = toBytes.intToBytes(horizontal7.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(300);
                     string[] status = new string[] { "0", "1", "0", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -2723,20 +2785,21 @@ namespace 码垛机
                     arrayList.Add(k49);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }                    
 
                     if (width22 - w + edge < 240)
                     {
                         byte[] byteX1 = toBytes.intToBytes(vertical7.x);
-                        byte[] byteY1 = toBytes.intToBytes(1500 + 1000 - w);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (width22 < w)
+                        byte[] byteY1 = toBytes.intToBytes(vertical7.y);
+                        byte[] byteZ1 = toBytes.intToBytes(300);
+                        if (width22 > w)
                         {
-                             byteX1 = toBytes.intToBytes(vertical7.x);
-                             byteY1 = toBytes.intToBytes(vertical7.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(vertical7.x);
+                            byteY1 = toBytes.intToBytes(1500 + 1000 - w);
+                            byteZ1 = toBytes.intToBytes(300);
+                            vertical7.y = 2500 - w;
                         }
                         string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
@@ -2776,7 +2839,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(vertical7.x);
                     byte[] byteY = toBytes.intToBytes(vertical7.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(300);
                     string[] status = new string[] { "0", "1", "0", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -2842,20 +2905,21 @@ namespace 码垛机
                     arrayList.Add(k50);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
                     if (rectangle24.length - l + edge < 390)
                     {
-                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteX1 = toBytes.intToBytes(horizontal7.x);
                         byte[] byteY1 = toBytes.intToBytes(horizontal7.y);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (rectangle24.length < l)
+                        byte[] byteZ1 = toBytes.intToBytes(300);
+                        if (rectangle24.length > l)
                         {
-                             byteX1 = toBytes.intToBytes(horizontal7.x);
-                             byteY1 = toBytes.intToBytes(horizontal7.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(1200 - l);
+                            byteY1 = toBytes.intToBytes(horizontal7.y);
+                            byteZ1 = toBytes.intToBytes(300);
+                            horizontal7.x = 1200 - l;
                         }
                         string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
@@ -2890,7 +2954,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(horizontal7.x);
                     byte[] byteY = toBytes.intToBytes(horizontal7.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(300);
                     string[] status = new string[] { "0", "1", "0", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -2935,7 +2999,7 @@ namespace 码垛机
                     arrayList.Add(k55);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -2946,7 +3010,7 @@ namespace 码垛机
                     //发坐标（包含挡板状态）
                     byte[] byteX = toBytes.intToBytes(0);
                     byte[] byteY = toBytes.intToBytes(1500);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(600);
                     string[] status = new string[] { "0", "1", "0", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -3012,7 +3076,7 @@ namespace 码垛机
                     arrayList.Add(k56);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -3021,13 +3085,14 @@ namespace 码垛机
                     {
 
                         byte[] byteX1 = toBytes.intToBytes(vertical8.x);
-                        byte[] byteY1 = toBytes.intToBytes(1500 + 1000 - l);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (rectangle27.length < l)
+                        byte[] byteY1 = toBytes.intToBytes(vertical8.y);
+                        byte[] byteZ1 = toBytes.intToBytes(600);
+                        if (rectangle27.length > l)
                         {
                              byteX1 = toBytes.intToBytes(vertical8.x);
-                             byteY1 = toBytes.intToBytes(vertical8.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                             byteY1 = toBytes.intToBytes(1500 + 1000 - l);
+                             byteZ1 = toBytes.intToBytes(600);
+                            vertical8.y = 2500 - l;
                         }
                         string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
@@ -3061,7 +3126,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(vertical8.x);
                     byte[] byteY = toBytes.intToBytes(vertical8.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(600);
                     string[] status = new string[] { "0", "1", "0", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -3123,20 +3188,21 @@ namespace 码垛机
                     arrayList.Add(k57);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }                   
                    
                     if (length23 - w + edge < 240)
                     {
-                        byte[] byteX1 = toBytes.intToBytes(1200 - w);
+                        byte[] byteX1 = toBytes.intToBytes(horizontal8.x);
                         byte[] byteY1 = toBytes.intToBytes(horizontal8.y);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (length23 < w)
+                        byte[] byteZ1 = toBytes.intToBytes(600);
+                        if (length23 > w)
                         {
-                             byteX1 = toBytes.intToBytes(horizontal8.x);
-                             byteY1 = toBytes.intToBytes(horizontal8.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(1200 - w);
+                            byteY1 = toBytes.intToBytes(horizontal8.y);
+                            byteZ1 = toBytes.intToBytes(600);
+                            horizontal8.x = 1200 - w;
                         }
                         string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
@@ -3176,7 +3242,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(horizontal8.x);
                     byte[] byteY = toBytes.intToBytes(horizontal8.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(600);
                     string[] status = new string[] { "0", "1", "0", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -3242,7 +3308,7 @@ namespace 码垛机
                     arrayList.Add(k58);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -3250,13 +3316,14 @@ namespace 码垛机
                     if ((rectangle28.length - l + edge) < 390)
                     {
                         byte[] byteX1 = toBytes.intToBytes(vertical8.x);
-                        byte[] byteY1 = toBytes.intToBytes(1500 + 1000 - l);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (rectangle28.length < l)
+                        byte[] byteY1 = toBytes.intToBytes(vertical8.y);
+                        byte[] byteZ1 = toBytes.intToBytes(600);
+                        if (rectangle28.length > l)
                         {
-                             byteX1 = toBytes.intToBytes(vertical8.x);
-                             byteY1 = toBytes.intToBytes(vertical8.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(vertical8.x);
+                            byteY1 = toBytes.intToBytes(1500 + 1000 - l);
+                            byteZ1 = toBytes.intToBytes(600);
+                            vertical8.y = 2500 - l;
                         }
                         string[] status1 = new string[] { "0", "1", "0", "0" };
                         string status21 = string.Join("", status1);
@@ -3291,7 +3358,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(vertical8.x);
                     byte[] byteY = toBytes.intToBytes(vertical8.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(600);
                     string[] status = new string[] { "0", "1", "0", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -3338,7 +3405,7 @@ namespace 码垛机
                     arrayList.Add(k65);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -3349,7 +3416,7 @@ namespace 码垛机
                     //发坐标（包含挡板状态）
                     byte[] byteX = toBytes.intToBytes(1400);
                     byte[] byteY = toBytes.intToBytes(0);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(900);
                     string[] status = new string[] { "0", "1", "0", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -3415,20 +3482,21 @@ namespace 码垛机
                     arrayList.Add(k66);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
                     if (rectangle30.length - l + edge < 390)
                     {
-                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteX1 = toBytes.intToBytes(horizontal9.x);
                         byte[] byteY1 = toBytes.intToBytes(horizontal9.y);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (rectangle30.length < l)
+                        byte[] byteZ1 = toBytes.intToBytes(900);
+                        if (rectangle30.length > l)
                         {
-                             byteX1 = toBytes.intToBytes(horizontal9.x);
-                             byteY1 = toBytes.intToBytes(horizontal9.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(1200 - l);
+                            byteY1 = toBytes.intToBytes(horizontal9.y);
+                            byteZ1 = toBytes.intToBytes(900);
+                            horizontal9.x = 1200 - l;
                         }
                         string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
@@ -3462,7 +3530,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(horizontal9.x);
                     byte[] byteY = toBytes.intToBytes(horizontal9.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(900);
                     string[] status = new string[] { "0", "1", "0", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -3524,7 +3592,7 @@ namespace 码垛机
                     arrayList.Add(k67);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
                     
@@ -3532,13 +3600,14 @@ namespace 码垛机
                     if (width24 - w + edge < 240)
                     {                       
                         byte[] byteX1 = toBytes.intToBytes(vertical9.x);
-                        byte[] byteY1 = toBytes.intToBytes(1500 + 1000 - w);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (width24 < w)
+                        byte[] byteY1 = toBytes.intToBytes(vertical9.y);
+                        byte[] byteZ1 = toBytes.intToBytes(900);
+                        if (width24 > w)
                         {
-                             byteX1 = toBytes.intToBytes(vertical9.x);
-                             byteY1 = toBytes.intToBytes(vertical9.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(vertical9.x);
+                            byteY1 = toBytes.intToBytes(1500 + 1000 - w);
+                            byteZ1 = toBytes.intToBytes(900);
+                            vertical9.y = 2500 - w; 
                         }
                         string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
@@ -3579,7 +3648,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(vertical9.x);
                     byte[] byteY = toBytes.intToBytes(vertical9.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(900);
                     string[] status = new string[] { "0", "1", "0", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -3645,20 +3714,21 @@ namespace 码垛机
                     arrayList.Add(k68);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
                     if (rectangle31.length - l + edge < 390)
                     {
-                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteX1 = toBytes.intToBytes(horizontal9.x);
                         byte[] byteY1 = toBytes.intToBytes(horizontal9.y);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (rectangle31.length < l)
+                        byte[] byteZ1 = toBytes.intToBytes(900);
+                        if (rectangle31.length > l)
                         {
-                             byteX1 = toBytes.intToBytes(horizontal9.x);
-                             byteY1 = toBytes.intToBytes(horizontal9.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(1200 - l);
+                            byteY1 = toBytes.intToBytes(horizontal9.y);
+                            byteZ1 = toBytes.intToBytes(900);
+                            horizontal9.x = 1200 - l;
                         }
                         string[] status1 = new string[] { "0", "1", "0", "1" };
                         string status21 = string.Join("", status1);
@@ -3698,7 +3768,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(horizontal9.x);
                     byte[] byteY = toBytes.intToBytes(horizontal9.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(900);
                     string[] status = new string[] { "0", "1", "0", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -3746,7 +3816,7 @@ namespace 码垛机
                     arrayList.Add(k73);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
                     wdf.DrawOcupyArea3(0, 0, l, w);
@@ -3821,21 +3891,22 @@ namespace 码垛机
                     arrayList.Add(k74);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
                     if (rectangle11.length - l + edge2 < 550)
                     {
 
-                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteX1 = toBytes.intToBytes(horizontal3.x);
                         byte[] byteY1 = toBytes.intToBytes(horizontal3.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (rectangle11.length < l)
+                        if (rectangle11.length > l)
                         {
-                             byteX1 = toBytes.intToBytes(horizontal3.x);
-                             byteY1 = toBytes.intToBytes(horizontal3.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(1200 - l);
+                            byteY1 = toBytes.intToBytes(horizontal3.y);
+                            byteZ1 = toBytes.intToBytes(0);
+                            horizontal3.x = 1200 - l;
                         }                                             
                         string[] status1 = new string[] { "1", "0", "0", "1" };
                         string status21 = string.Join("", status1);
@@ -3922,17 +3993,24 @@ namespace 码垛机
                     arrayList.Add(k75);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
 
                     if (width3 - w + edge2 < 320)
                     {
-                        vertical3.y =3000 + 1000 - w;
+                        
                         byte[] byteX1 = toBytes.intToBytes(vertical3.x);
-                        byte[] byteY1 = toBytes.intToBytes(4000 - w);
+                        byte[] byteY1 = toBytes.intToBytes(vertical3.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
+                        if (width3 > w)
+                        {
+                            byteX1 = toBytes.intToBytes(vertical3.x);
+                            byteY1 = toBytes.intToBytes(3000 + 1000 - w);
+                            byteZ1 = toBytes.intToBytes(0);
+                            vertical3.y =4000 - w;
+                        }
                         string[] status1 = new string[] { "1", "0", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
@@ -4046,21 +4124,22 @@ namespace 码垛机
                     arrayList.Add(k76);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
                     if (rectangle12.length - l + edge2 < 550)
                     {
-                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteX1 = toBytes.intToBytes(horizontal3.x);
                         byte[] byteY1 = toBytes.intToBytes(horizontal3.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
 
-                        if (rectangle12.length < l)
+                        if (rectangle12.length > l)
                         {
-                            byteX1 = toBytes.intToBytes(horizontal3.x);
+                            byteX1 = toBytes.intToBytes(1200 - l);
                             byteY1 = toBytes.intToBytes(horizontal3.y);
                             byteZ1 = toBytes.intToBytes(0);
+                            horizontal3.x = 1200 - l;
                         }
                         string[] status1 = new string[] { "1", "0", "0", "1" };
                         string status21 = string.Join("", status1);
@@ -4140,7 +4219,7 @@ namespace 码垛机
                     arrayList.Add(k79);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -4151,7 +4230,7 @@ namespace 码垛机
                     //发坐标（包含挡板状态）
                     byte[] byteX = toBytes.intToBytes(0);
                     byte[] byteY = toBytes.intToBytes(3000);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(300);
                     string[] status = new string[] { "1", "0", "0", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -4217,21 +4296,22 @@ namespace 码垛机
                     arrayList.Add(k80);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
                     if ((rectangle32.length - l + edge2) < 550)
                     {
                         byte[] byteX1 = toBytes.intToBytes(vertical10.x);
-                        byte[] byteY1 = toBytes.intToBytes(4000 - l);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        byte[] byteY1 = toBytes.intToBytes(vertical10.y);
+                        byte[] byteZ1 = toBytes.intToBytes(300);
 
-                        if (rectangle32.length < l)
+                        if (rectangle32.length > l)
                         {
-                             byteX1 = toBytes.intToBytes(vertical10.x);
-                             byteY1 = toBytes.intToBytes(vertical10.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(vertical10.x);
+                            byteY1 = toBytes.intToBytes(3000 + 1000 - l);
+                            byteZ1 = toBytes.intToBytes(300);
+                            vertical10.y = 4000 - l;
                         }
 
                         string[] status1 = new string[] { "1", "0", "0", "0" };
@@ -4266,7 +4346,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(vertical10.x);
                     byte[] byteY = toBytes.intToBytes(vertical10.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(300);
                     string[] status = new string[] { "1", "0", "0", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -4328,21 +4408,22 @@ namespace 码垛机
                     arrayList.Add(k81);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
 
                     if ((length32 - w + edge2) < 320)
                     {
-                        byte[] byteX1 = toBytes.intToBytes(1200 - w);
+                        byte[] byteX1 = toBytes.intToBytes(horizontal10.x);
                         byte[] byteY1 = toBytes.intToBytes(horizontal10.y);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (length32 < w)
+                        byte[] byteZ1 = toBytes.intToBytes(300);
+                        if (length32 > w)
                         {
-                             byteX1 = toBytes.intToBytes(horizontal10.x);
-                             byteY1 = toBytes.intToBytes(horizontal10.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(1200 - w);
+                            byteY1 = toBytes.intToBytes(horizontal10.y);
+                            byteZ1 = toBytes.intToBytes(300);
+                            horizontal10.x = 1200 - w;
                         }
                        
                         string[] status1 = new string[] { "1", "0", "0", "0" };
@@ -4387,7 +4468,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(horizontal10.x);
                     byte[] byteY = toBytes.intToBytes(horizontal10.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(300);
                     string[] status = new string[] { "1", "0", "0", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -4457,20 +4538,21 @@ namespace 码垛机
                     arrayList.Add(k82);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
                     if ((rectangle33.length - l + edge2) < 550)
                     {
                         byte[] byteX1 = toBytes.intToBytes(vertical10.x);
-                        byte[] byteY1 = toBytes.intToBytes(4000 - l);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (rectangle33.length < l)
+                        byte[] byteY1 = toBytes.intToBytes(vertical10.y);
+                        byte[] byteZ1 = toBytes.intToBytes(300);
+                        if (rectangle33.length > l)
                         {
-                             byteX1 = toBytes.intToBytes(vertical10.x);
-                             byteY1 = toBytes.intToBytes(vertical10.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(vertical10.x);
+                            byteY1 = toBytes.intToBytes(3000 + 1000 - l);
+                            byteZ1 = toBytes.intToBytes(300);
+                            vertical10.y = 4000 - l;
                         }
                         string[] status1 = new string[] { "1", "0", "0", "0" };
                         string status21 = string.Join("", status1);
@@ -4505,7 +4587,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(vertical10.x);
                     byte[] byteY = toBytes.intToBytes(vertical10.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(300);
                     string[] status = new string[] { "1", "0", "0", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -4551,7 +4633,7 @@ namespace 码垛机
                     arrayList.Add(k87);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -4562,7 +4644,7 @@ namespace 码垛机
                     //发坐标（包含挡板状态）
                     byte[] byteX = toBytes.intToBytes(0);
                     byte[] byteY = toBytes.intToBytes(3000);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(600);
                     string[] status = new string[] { "1", "0", "0", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -4629,20 +4711,21 @@ namespace 码垛机
                     arrayList.Add(k88);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
                     if (rectangle35.length - l + edge2 < 550)
                     {
-                        byte[] byteX1 = toBytes.intToBytes(2800 + 1200 - l);
+                        byte[] byteX1 = toBytes.intToBytes(horizontal11.x);
                         byte[] byteY1 = toBytes.intToBytes(horizontal11.y);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (rectangle35.length < l)
+                        byte[] byteZ1 = toBytes.intToBytes(600);
+                        if (rectangle35.length > l)
                         {
-                             byteX1 = toBytes.intToBytes(horizontal11.x);
-                             byteY1 = toBytes.intToBytes(horizontal11.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(1200 - l);
+                            byteY1 = toBytes.intToBytes(horizontal11.y);
+                            byteZ1 = toBytes.intToBytes(600);
+                            horizontal11.x = 1200 - l;
                         }
                         string[] status1 = new string[] { "1", "0", "0", "1" };
                         string status21 = string.Join("", status1);
@@ -4676,7 +4759,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(horizontal11.x);
                     byte[] byteY = toBytes.intToBytes(horizontal11.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(600);
                     string[] status = new string[] { "1", "0", "0", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -4729,16 +4812,22 @@ namespace 码垛机
                     arrayList.Add(k89);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
                     if (width33 - w + edge < 320)
-                    {
-                        vertical11.y = 4000 - w;
+                    {                       
                         byte[] byteX1 = toBytes.intToBytes(vertical11.x);
-                        byte[] byteY1 = toBytes.intToBytes(4000 - w);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
+                        byte[] byteY1 = toBytes.intToBytes(vertical11.y);
+                        byte[] byteZ1 = toBytes.intToBytes(600);
+                        if (width33 > w)
+                        {
+                            byteX1 = toBytes.intToBytes(vertical11.x);
+                            byteY1 = toBytes.intToBytes(3000 + 1000 - w);
+                            byteZ1 = toBytes.intToBytes(600);
+                            vertical11.y = 4000 - w;
+                        }
                         string[] status1 = new string[] { "1", "0", "0", "1" };
                         string status21 = string.Join("", status1);
                         int a1 = Convert.ToInt32(status21, 2);
@@ -4781,7 +4870,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(vertical11.x);
                     byte[] byteY = toBytes.intToBytes(vertical11.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(600);
                     string[] status = new string[] { "1", "0", "0", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -4851,20 +4940,21 @@ namespace 码垛机
                     arrayList.Add(k90);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
                     if (rectangle36.length - l + edge < 550)
                     {
-                        byte[] byteX1 = toBytes.intToBytes(1200 - l);
+                        byte[] byteX1 = toBytes.intToBytes(horizontal11.x);
                         byte[] byteY1 = toBytes.intToBytes(horizontal11.y);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (rectangle36.length < l)
+                        byte[] byteZ1 = toBytes.intToBytes(600);
+                        if (rectangle36.length > l)
                         {
-                             byteX1 = toBytes.intToBytes(horizontal11.x);
-                             byteY1 = toBytes.intToBytes(horizontal11.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(1200 - l);
+                            byteY1 = toBytes.intToBytes(horizontal11.y);
+                            byteZ1 = toBytes.intToBytes(600);
+                            horizontal11.x = 1200 - l;
                         }
                         string[] status1 = new string[] { "1", "0", "0", "1" };
                         string status21 = string.Join("", status1);
@@ -4899,7 +4989,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(horizontal11.x);
                     byte[] byteY = toBytes.intToBytes(horizontal11.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(600);
                     string[] status = new string[] { "1", "0", "0", "1" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -4946,7 +5036,7 @@ namespace 码垛机
                     arrayList.Add(k93);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
@@ -4957,7 +5047,7 @@ namespace 码垛机
                     //发坐标（包含挡板状态）
                     byte[] byteX = toBytes.intToBytes(0);
                     byte[] byteY = toBytes.intToBytes(3000);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(900);
                     string[] status = new string[] { "1", "0", "0", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -5023,20 +5113,21 @@ namespace 码垛机
                     arrayList.Add(k94);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
                     if ((rectangle37.length - l + edge) < 550)
                     {
                         byte[] byteX1 = toBytes.intToBytes(vertical12.x);
-                        byte[] byteY1 = toBytes.intToBytes(4000 - l);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (rectangle37.length < l)
+                        byte[] byteY1 = toBytes.intToBytes(vertical12.y);
+                        byte[] byteZ1 = toBytes.intToBytes(900);
+                        if (rectangle37.length > l)
                         {
-                             byteX1 = toBytes.intToBytes(vertical12.x);
-                             byteY1 = toBytes.intToBytes(vertical12.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(vertical12.x);
+                            byteY1 = toBytes.intToBytes(3000 + 1000 - l);
+                            byteZ1 = toBytes.intToBytes(900);
+                            vertical12.y = 4000 - l;
                         }
                         string[] status1 = new string[] { "1", "0", "0", "0" };
                         string status21 = string.Join("", status1);
@@ -5070,7 +5161,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(horizontal12.x);
                     byte[] byteY = toBytes.intToBytes(horizontal12.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(900);
                     string[] status = new string[] { "1", "0", "0", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -5132,20 +5223,21 @@ namespace 码垛机
                     arrayList.Add(k95);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
                     if ((length34 - w + edge2) < 320)
                     {                       
-                        byte[] byteX1 = toBytes.intToBytes(1200 - w);
+                        byte[] byteX1 = toBytes.intToBytes(horizontal12.x);
                         byte[] byteY1 = toBytes.intToBytes(horizontal12.y);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (length34 < w)
+                        byte[] byteZ1 = toBytes.intToBytes(900);
+                        if (length34 > w)
                         {
-                             byteX1 = toBytes.intToBytes(horizontal12.x);
-                             byteY1 = toBytes.intToBytes(horizontal12.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(1200 - w);
+                            byteY1 = toBytes.intToBytes(horizontal12.y);
+                            byteZ1 = toBytes.intToBytes(900);
+                            horizontal12.x = 1200 - w;
                         }
                         string[] status1 = new string[] { "1", "0", "0", "0" };
                         string status21 = string.Join("", status1);
@@ -5191,7 +5283,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(horizontal12.x);
                     byte[] byteY = toBytes.intToBytes(horizontal12.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(900);
                     string[] status = new string[] { "1", "0", "0", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -5263,20 +5355,21 @@ namespace 码垛机
                     arrayList.Add(k96);
                     if (arrayList.Count == 2)
                     {
-                        CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
+                       // CalcCityDistance((Coordinate)arrayList[0], (Coordinate)arrayList[1]);
                         arrayList.RemoveAt(0);
                     }
 
                     if ((rectangle38.length - l + edge2) < 550)
                     {
                         byte[] byteX1 = toBytes.intToBytes(vertical12.x);
-                        byte[] byteY1 = toBytes.intToBytes(4000 - l);
-                        byte[] byteZ1 = toBytes.intToBytes(0);
-                        if (rectangle38.length < l)
+                        byte[] byteY1 = toBytes.intToBytes(vertical12.y);
+                        byte[] byteZ1 = toBytes.intToBytes(900);
+                        if (rectangle38.length > l)
                         {
-                             byteX1 = toBytes.intToBytes(vertical12.x);
-                             byteY1 = toBytes.intToBytes(vertical12.y);
-                             byteZ1 = toBytes.intToBytes(0);
+                            byteX1 = toBytes.intToBytes(vertical12.x);
+                            byteY1 = toBytes.intToBytes(3000 + 1000 - l);
+                            byteZ1 = toBytes.intToBytes(900);
+                            vertical12.y = 4000 - l;
                         }
                         string[] status1 = new string[] { "1", "0", "0", "0" };
                         string status21 = string.Join("", status1);
@@ -5315,7 +5408,7 @@ namespace 码垛机
 
                     byte[] byteX = toBytes.intToBytes(vertical12.x);
                     byte[] byteY = toBytes.intToBytes(vertical12.y);
-                    byte[] byteZ = toBytes.intToBytes(0);
+                    byte[] byteZ = toBytes.intToBytes(900);
                     string[] status = new string[] { "1", "0", "0", "0" };
                     string status2 = string.Join("", status);
                     int a = Convert.ToInt32(status2, 2);
@@ -5350,11 +5443,29 @@ namespace 码垛机
                 }
             }    
            
-        }       
+        }
+        
+
+        /// <summary>
+        /// 摆放到第4层，即将摆满的报警
+        /// </summary>
+        public static void nearfinish_1()
+        {
+
+        }
+        public static void nearfinish_2()
+        {
+
+        }
+        public static void nearfinish_3()
+        {
+
+        }
 
         /// <summary>
         /// 码盘摆满
         /// </summary>
+        /// 
         public static void finish_1()
         {
             BF.sendbuf[0] = 0xFA;
@@ -5394,7 +5505,44 @@ namespace 码垛机
             MessageBox.Show("码盘3码垛完成,请移走!", "警告");
         }
 
-
+        public static void WriteToUsbDisk(ArrayList array)
+        {
+            DateTime dt = DateTime.Now;
+            string[] headline = new string[] {"长","宽","高","数量" };
+            System.IO.StreamWriter sw = new System.IO.StreamWriter(dt.ToString("yyyy-MM-dd") + "info.txt", false, System.Text.Encoding.GetEncoding("gb2312"));
+            try
+            {
+                int len = 0;
+                string line = "";
+                string temp = "";
+                for (int i = 0; i < headline.Length; i++)
+                {
+                    temp = headline[i];
+                    len = 30 - Encoding.Default.GetByteCount(temp) + temp.Length; //考虑中英文的情况
+                    temp = temp.PadRight(len, ' ');
+                    line += temp;
+                }
+                sw.WriteLine(line);
+                line = "";
+                for (int k = 0;k < usbList.Count/4;k++)
+                {
+                    for (int j = 4 * k; j < 4 * (k + 1); j++)
+                    {
+                        temp = array[j].ToString();
+                        len = 30 - Encoding.Default.GetByteCount(temp) + temp.Length;
+                        temp = temp.PadRight(len, ' ');
+                        line += temp;
+                    }
+                    sw.WriteLine(line);
+                    line = "";
+                }
+                sw.Flush();
+            }
+            finally
+            {
+                if (sw != null) sw.Close();
+            }
+        }
         /// <summary>
         /// 开启一个线程，每隔一段时间请求坐标
         /// </summary>
@@ -5402,26 +5550,32 @@ namespace 码垛机
         {
             Thread thread = new Thread(new ThreadStart(GetCoordinate));
             thread.IsBackground = true;
-            thread.Priority = ThreadPriority.BelowNormal;
+            thread.Priority = ThreadPriority.Lowest;
             thread.Start();
         }
-
+        public static object locker = new object();
         public static void GetCoordinate()
         {
+            lock (locker)
+            {
             while (xinlei)
             {
                 //每隔1s请求一次坐标
-               // fight = false;
-                Thread.Sleep(1051);
+                completed = false;
+                Thread.Sleep(500);
                 BF.sendbuf[0] = 0xFA;
                 BF.sendbuf[1] = 0x02;
                 BF.sendbuf[2] = 0x0E;
                 BF.sendbuf[3] = 0x03;
                 BF.sendbuf[4] = 0xF5;
                 SendMenuCommand(BF.sendbuf, 5);
-                //fight = true;
-               // searchAlarmInfo();
+                BF.sendbuf = new byte[100];
+                xinlei = false;
+                completed = true;
+                confirmCompleted();
             }
+            }
+
         }
 
 
@@ -5437,20 +5591,25 @@ namespace 码垛机
         }
         public static void requestAlrInfo()
         {
-            while (fight)
+            lock (locker)
             {
-               // xinlei = false;
-                //发送指令查看报警历史
-                Thread.Sleep(1101);
-                BF.sendbuf[0] = 0xFA;
-                BF.sendbuf[1] = 0x02;
-                BF.sendbuf[2] = 0x0E;
-                BF.sendbuf[3] = 0x01;
-                BF.sendbuf[4] = 0xF5;
-                SendMenuCommand(BF.sendbuf, 5);
-                //xinlei = true;
-                //StartThread();
-            }
+                while (fight)
+                {
+                     xinlei = false;
+                    //发送指令查看报警历史
+                    Thread.Sleep(500);
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x02;
+                    BF.sendbuf[2] = 0x0E;
+                    BF.sendbuf[3] = 0x01;
+                    BF.sendbuf[4] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 5);
+                    BF.sendbuf = new byte[100];
+                    fight = false;
+                    xinlei = true;
+                    StartThread();
+                }
+            }         
         }
 
         /// <summary>
@@ -5465,21 +5624,80 @@ namespace 码垛机
         }
         public static void requestStatus()
         {
-            while (completed)
+            lock (locker)
             {
-                // xinlei = false;
-                //发送指令查看码垛是否完成
-                Thread.Sleep(1131);
-                BF.sendbuf[0] = 0xFA;
-                BF.sendbuf[1] = 0x02;
-                BF.sendbuf[2] = 0x0E;
-                BF.sendbuf[3] = 0x05;
-                BF.sendbuf[4] = 0xF5;
-                SendMenuCommand(BF.sendbuf, 5);
-                //xinlei = true;
-                //StartThread();
+                while (completed)
+                {
+                     fight = false;
+                    //发送指令查看码垛是否完成
+                    Thread.Sleep(500);
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x02;
+                    BF.sendbuf[2] = 0x0E;
+                    BF.sendbuf[3] = 0x05;
+                    BF.sendbuf[4] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 5);
+                    BF.sendbuf = new byte[100];
+                    completed = false;
+                    fight = true;
+                    searchAlarmInfo();
+                    //xinlei = true;
+                    //StartThread();
+                }
             }
         }
+        
+
+        /// <summary>
+        /// 接收扫码枪的数据
+        /// </summary>
+        public static void ScannerGun()
+        {
+            larrayList.Add(l);
+            xinlei = false;
+            fight = false;
+            completed = false;
+
+            if (xinlei == false && fight == false && completed == false)
+            {
+                SendMaduoInfo();
+                Thread.Sleep(100);
+            }
+
+            if (usbList.Count == 0)
+            {
+                usbList.Add(l);
+                usbList.Add(w);
+                usbList.Add(h);
+                usbList.Add(1);
+                WriteToUsbDisk(usbList);
+                return;
+            }
+            else
+            {
+                for (int i = 0; i < usbList.Count / 4; i++)
+                {
+                    if ((l == (int)usbList[4 * i]) && (w == (int)usbList[4 * i + 1]) && (h == (int)usbList[4 * i + 2]))
+                    {
+                        usbList[4 * i + 3] = (int)usbList[4 * i + 3] + 1;
+                        exist = true;
+                        WriteToUsbDisk(usbList);
+                        break;
+                    }
+                }
+                if (!exist)
+                {
+                    usbList.Add(l);
+                    usbList.Add(w);
+                    usbList.Add(h);
+                    usbList.Add(1);
+                    WriteToUsbDisk(usbList);
+                    return;
+                }
+            }
+        } 
+
+
 
 
         /**************************************************************************************************/
@@ -5493,6 +5711,36 @@ namespace 码垛机
             byte[] binary_data_1 = null;      
             List<byte> buffer = new List<byte>(4096);
             System.Threading.Thread.Sleep(100);
+
+            string str = sp2.ReadExisting();
+            if(str == string.Empty)
+            {
+
+            }
+            else
+            {
+                if (str.Equals("1907066814"))
+                {
+                    l = 460;
+                    w = 225;
+                    h = 280;
+                    ScannerGun();
+                }
+                if (str.Equals("1907065501"))
+                {
+                    l = 490;
+                    w = 240;
+                    h = 300;
+                    ScannerGun();
+                }
+                if (str.Equals("1907066524"))
+                {
+                    l = 650;
+                    w = 320;
+                    h = 300;
+                    ScannerGun();
+                }
+            }
             int n = sp.BytesToRead;           
             byte[] buf = new byte[n];//声明一个临时数组存储当前来的串口数据
             sp.Read(buf, 0, n);//读取缓冲数据
@@ -5661,26 +5909,97 @@ namespace 码垛机
                     l = x_value;
                     w = y_value;
                     h = z_value;
-
+                    larrayList.Add(l);
                     xinlei = false;
                     fight = false;
                     completed = false;
-                    SendMaduoInfo();                   
-                    xinlei = true;
-                    fight = true;
-                    completed = true;
+
+                    
+                    if (xinlei == false && fight == false && completed == false)
+                    {
+                        SendMaduoInfo();
+                        Thread.Sleep(100);
+                    }
+                        
+                    
+                                      
+                    if(usbList.Count == 0)
+                    {
+                        usbList.Add(l);
+                        usbList.Add(w);
+                        usbList.Add(h);
+                        usbList.Add(1);
+                        WriteToUsbDisk(usbList);
+                        return;
+                    }
+                    else
+                    {
+                        for (int i = 0;i < usbList.Count/4;i++)
+                        {
+                            if ((l == (int)usbList[4*i])&&(w == (int)usbList[4*i+1])&&(h == (int)usbList[4*i+2]))
+                            {
+                                usbList[4 * i + 3] = (int)usbList[4 * i + 3] + 1;
+                                exist = true;
+                                WriteToUsbDisk(usbList);
+                                break;
+                            }
+                        }
+                        if (!exist)
+                        {
+                            usbList.Add(l);
+                            usbList.Add(w);
+                            usbList.Add(h);
+                            usbList.Add(1);
+                            WriteToUsbDisk(usbList);
+                            return;
+                        }
+                    }
+                }
+
+
+                if (binary_data_1[1] == 0x02 && binary_data_1[2] == 0x0E && binary_data_1[3] == 0x01 )
+                {
+                    sendflag = false;
                 }
 
                 //码垛完成则收到数据
                 if ((binary_data_1[1] == 0x02) && (binary_data_1[2] == 0x0F))
                 {
-                    wdf.GetTotalNum(++totalNum);
+                    int a = Convert.ToInt32(Convert.ToString(binary_data_1[3], 16), 16);
+                    //第0位置1，表示码垛完成
+                    if ((a & 1) == 1)
+                    {
+                        wdf.GetTotalNum(++totalNum);
+                        DropTime();
+                        return;
+                    }
+                    //第一位置1,表示木箱
+                    if (((a & (1 << 1)) >> 1) == 1)
+                    {
+                        return;
+                    }
+                    //第二位置1
+                    if (((a & (1 << 2)) >> 2) == 1)
+                    {
+                        //是否扫到码(定时器2s,未扫到码则提示人工扫码)
+                        if (true)
+                        {
+                            MessageBox.Show("扫码失败，请人工重试！","警告");
+                        }
+
+                    }
+
                     return;
                 }
 
                 //接收扫码枪数据(若未检测到扫码信息则发送告警指令提醒人工扫码)
 
             }
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            this.SysTime.Text = "欢迎登陆！当前时间" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
         }
     }
 }

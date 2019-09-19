@@ -60,7 +60,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1218, 74);
             this.panel1.TabIndex = 0;
-            
             // 
             // 用户设置
             // 
@@ -71,7 +70,6 @@
             this.用户设置.Size = new System.Drawing.Size(106, 24);
             this.用户设置.TabIndex = 0;
             this.用户设置.Text = "用户设置";
-            
             // 
             // panel2
             // 
@@ -102,7 +100,6 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1108, 335);
             this.panel3.TabIndex = 0;
-            
             // 
             // textBox3
             // 
@@ -114,7 +111,6 @@
             this.textBox3.TabIndex = 12;
             this.textBox3.Text = "******";
             this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            
             // 
             // textBox2
             // 
@@ -126,7 +122,6 @@
             this.textBox2.TabIndex = 11;
             this.textBox2.Text = "******";
             this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            
             // 
             // textBox1
             // 
@@ -137,7 +132,6 @@
             this.textBox1.TabIndex = 10;
             this.textBox1.Text = "120秒";
             this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            
             // 
             // comboBox2
             // 
@@ -172,7 +166,6 @@
             this.comboBox1.Size = new System.Drawing.Size(179, 28);
             this.comboBox1.TabIndex = 6;
             this.comboBox1.Text = "管理员权限";
-            
             // 
             // label6
             // 
@@ -193,7 +186,6 @@
             this.label5.Size = new System.Drawing.Size(109, 20);
             this.label5.TabIndex = 4;
             this.label5.Text = "修改密码：";
-            
             // 
             // label4
             // 
@@ -204,7 +196,6 @@
             this.label4.Size = new System.Drawing.Size(109, 20);
             this.label4.TabIndex = 3;
             this.label4.Text = "背光时间：";
-            
             // 
             // label3
             // 
@@ -236,7 +227,6 @@
             this.label1.Size = new System.Drawing.Size(109, 20);
             this.label1.TabIndex = 0;
             this.label1.Text = "切换用户：";
-            
             // 
             // ret_btn3
             // 
@@ -264,7 +254,6 @@
             this.Name = "UserSettingForm";
             this.Text = "用户设置";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UserSettingForm_FormClosing);
-            
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
