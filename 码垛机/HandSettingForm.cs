@@ -14,7 +14,10 @@ namespace 码垛机
 {
     public partial class HandSettingForm : Form
     {
+        //回零标志位
         public static bool huilingflag = true;
+        //确认停止下发标志位
+        public static bool stoped = false;
         public HandSettingForm()
         {
             InitializeComponent();
@@ -998,15 +1001,24 @@ namespace 码垛机
 
         }
 
+        //X轴停止
         private void button1_Click(object sender, EventArgs e)
         {
-            BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x03;
-            BF.sendbuf[2] = 0x0A;
-            BF.sendbuf[3] = 0x05;
-            BF.sendbuf[4] = 0x03;
-            BF.sendbuf[5] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 6);
+            lock (locker)
+            {
+                while (!stoped)
+                {
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x03;
+                    BF.sendbuf[2] = 0x0A;
+                    BF.sendbuf[3] = 0x05;
+                    BF.sendbuf[4] = 0x03;
+                    BF.sendbuf[5] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 6);
+                    Thread.Sleep(300);
+                }
+            }
+            
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -1019,15 +1031,23 @@ namespace 码垛机
             SendMenuCommand(BF.sendbuf, 5);
         }
 
+        //O轴停止
         private void button3_Click(object sender, EventArgs e)
         {
-            BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x03;
-            BF.sendbuf[2] = 0x0A;
-            BF.sendbuf[3] = 0x05;
-            BF.sendbuf[4] = 0x04;
-            BF.sendbuf[5] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 6);
+            lock (locker)
+            {
+                while (!stoped)
+                {
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x03;
+                    BF.sendbuf[2] = 0x0A;
+                    BF.sendbuf[3] = 0x05;
+                    BF.sendbuf[4] = 0x03;
+                    BF.sendbuf[5] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 6);
+                    Thread.Sleep(300);
+                }
+            }
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -1041,15 +1061,23 @@ namespace 码垛机
             SendMenuCommand(BF.sendbuf, 6);
         }
 
+        //Y轴停止
         private void button45_Click(object sender, EventArgs e)
         {
-            BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x03;
-            BF.sendbuf[2] = 0x0A;
-            BF.sendbuf[3] = 0x05;
-            BF.sendbuf[4] = 0x03;
-            BF.sendbuf[5] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 6);
+            lock (locker)
+            {
+                while (!stoped)
+                {
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x03;
+                    BF.sendbuf[2] = 0x0A;
+                    BF.sendbuf[3] = 0x05;
+                    BF.sendbuf[4] = 0x03;
+                    BF.sendbuf[5] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 6);
+                    Thread.Sleep(300);
+                }
+            }
         }
 
         private void button46_Click(object sender, EventArgs e)
@@ -1063,15 +1091,23 @@ namespace 码垛机
             SendMenuCommand(BF.sendbuf, 6);
         }
 
+        //Z轴停止
         private void button47_Click(object sender, EventArgs e)
         {
-            BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x03;
-            BF.sendbuf[2] = 0x0A;
-            BF.sendbuf[3] = 0x05;
-            BF.sendbuf[4] = 0x03;
-            BF.sendbuf[5] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 6);
+            lock (locker)
+            {
+                while (!stoped)
+                {
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x03;
+                    BF.sendbuf[2] = 0x0A;
+                    BF.sendbuf[3] = 0x05;
+                    BF.sendbuf[4] = 0x03;
+                    BF.sendbuf[5] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 6);
+                    Thread.Sleep(300);
+                }
+            }
         }
 
         private void button48_Click(object sender, EventArgs e)

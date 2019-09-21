@@ -89,9 +89,6 @@
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.panelY = new System.Windows.Forms.Panel();
-            this.panel10 = new System.Windows.Forms.Panel();
-            this.button25 = new System.Windows.Forms.Button();
-            this.button26 = new System.Windows.Forms.Button();
             this.panel11 = new System.Windows.Forms.Panel();
             this.textBox9 = new System.Windows.Forms.TextBox();
             this.textBox10 = new System.Windows.Forms.TextBox();
@@ -115,6 +112,9 @@
             this.textBox12 = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
+            this.panel10 = new System.Windows.Forms.Panel();
+            this.button25 = new System.Windows.Forms.Button();
+            this.button26 = new System.Windows.Forms.Button();
             this.panelO = new System.Windows.Forms.Panel();
             this.panel14 = new System.Windows.Forms.Panel();
             this.button35 = new System.Windows.Forms.Button();
@@ -153,10 +153,10 @@
             this.panel8.SuspendLayout();
             this.panel9.SuspendLayout();
             this.panelY.SuspendLayout();
-            this.panel10.SuspendLayout();
             this.panel11.SuspendLayout();
             this.panel12.SuspendLayout();
             this.panel13.SuspendLayout();
+            this.panel10.SuspendLayout();
             this.panelO.SuspendLayout();
             this.panel14.SuspendLayout();
             this.panel15.SuspendLayout();
@@ -846,44 +846,6 @@
             this.panelY.Size = new System.Drawing.Size(1217, 439);
             this.panelY.TabIndex = 11;
             // 
-            // panel10
-            // 
-            this.panel10.BackColor = System.Drawing.SystemColors.HighlightText;
-            this.panel10.Controls.Add(this.button25);
-            this.panel10.Controls.Add(this.button26);
-            this.panel10.Location = new System.Drawing.Point(409, 305);
-            this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(808, 132);
-            this.panel10.TabIndex = 7;
-            // 
-            // button25
-            // 
-            this.button25.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button25.Image = ((System.Drawing.Image)(resources.GetObject("button25.Image")));
-            this.button25.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button25.Location = new System.Drawing.Point(507, 29);
-            this.button25.Name = "button25";
-            this.button25.Size = new System.Drawing.Size(136, 61);
-            this.button25.TabIndex = 8;
-            this.button25.Text = "坐标矫正";
-            this.button25.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button25.UseVisualStyleBackColor = true;
-            this.button25.Click += new System.EventHandler(this.button25_Click);
-            // 
-            // button26
-            // 
-            this.button26.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button26.Image = ((System.Drawing.Image)(resources.GetObject("button26.Image")));
-            this.button26.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button26.Location = new System.Drawing.Point(234, 29);
-            this.button26.Name = "button26";
-            this.button26.Size = new System.Drawing.Size(136, 61);
-            this.button26.TabIndex = 7;
-            this.button26.Text = "回零";
-            this.button26.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button26.UseVisualStyleBackColor = true;
-            this.button26.Click += new System.EventHandler(this.button26_Click);
-            // 
             // panel11
             // 
             this.panel11.BackColor = System.Drawing.SystemColors.InactiveBorder;
@@ -1135,6 +1097,44 @@
             this.label18.Size = new System.Drawing.Size(89, 20);
             this.label18.TabIndex = 0;
             this.label18.Text = "速 度(%)";
+            // 
+            // panel10
+            // 
+            this.panel10.BackColor = System.Drawing.SystemColors.HighlightText;
+            this.panel10.Controls.Add(this.button25);
+            this.panel10.Controls.Add(this.button26);
+            this.panel10.Location = new System.Drawing.Point(409, 305);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(808, 132);
+            this.panel10.TabIndex = 7;
+            // 
+            // button25
+            // 
+            this.button25.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.button25.Image = ((System.Drawing.Image)(resources.GetObject("button25.Image")));
+            this.button25.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button25.Location = new System.Drawing.Point(507, 29);
+            this.button25.Name = "button25";
+            this.button25.Size = new System.Drawing.Size(136, 61);
+            this.button25.TabIndex = 8;
+            this.button25.Text = "坐标矫正";
+            this.button25.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.button25.UseVisualStyleBackColor = true;
+            this.button25.Click += new System.EventHandler(this.button25_Click);
+            // 
+            // button26
+            // 
+            this.button26.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.button26.Image = ((System.Drawing.Image)(resources.GetObject("button26.Image")));
+            this.button26.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button26.Location = new System.Drawing.Point(234, 29);
+            this.button26.Name = "button26";
+            this.button26.Size = new System.Drawing.Size(136, 61);
+            this.button26.TabIndex = 7;
+            this.button26.Text = "回零";
+            this.button26.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.button26.UseVisualStyleBackColor = true;
+            this.button26.Click += new System.EventHandler(this.button26_Click);
             // 
             // panelO
             // 
@@ -1475,13 +1475,13 @@
             this.panel9.ResumeLayout(false);
             this.panel9.PerformLayout();
             this.panelY.ResumeLayout(false);
-            this.panel10.ResumeLayout(false);
             this.panel11.ResumeLayout(false);
             this.panel11.PerformLayout();
             this.panel12.ResumeLayout(false);
             this.panel12.PerformLayout();
             this.panel13.ResumeLayout(false);
             this.panel13.PerformLayout();
+            this.panel10.ResumeLayout(false);
             this.panelO.ResumeLayout(false);
             this.panel14.ResumeLayout(false);
             this.panel15.ResumeLayout(false);

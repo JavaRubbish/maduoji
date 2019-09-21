@@ -23,11 +23,14 @@ namespace 码垛机
         private void WorkingDetailForm_Load(object sender, EventArgs e)
         {
         }
-
+        //工作界面按钮指令下发接收确认标志位
         public static bool isReceived1 = false;
         public static bool isReceived2 = false;
         public static bool isReceived3 = false;
         public static bool isReceived4 = false;
+
+        //工作界面回零确认标志位
+        public static bool reset = false;
 
         public static ArrayList arrayList1 = new ArrayList();
         public static ArrayList arrayList2 = new ArrayList();
@@ -39,10 +42,10 @@ namespace 码垛机
         /// <param name="y"></param>
         public void DrawOcupyArea(int x, int y,int length,int width)
         {
-            int a =(int) (0.15 * x);
-            int b =(int) (0.15 * y);
-            int c = (int)(0.15 * length);
-            int d =(int) (0.15 * width);
+            int a =(int) (0.15 * x * HomeForm.change_w);
+            int b =(int) (0.15 * y * HomeForm.change_l);
+            int c =(int) (0.15 * length * HomeForm.change_w);
+            int d =(int) (0.15 * width * HomeForm.change_l);
             arrayList1.Add(a);
             arrayList1.Add(b);
             arrayList1.Add(c);
@@ -61,10 +64,10 @@ namespace 码垛机
         }
         public void DrawOcupyArea2(int x, int y, int length, int width)
         {
-            int a = (int)(0.15 * x);
-            int b = (int)(0.15 * y);
-            int c = (int)(0.15 * length);
-            int d = (int)(0.15 * width);
+            int a = (int)(0.15 * x * HomeForm.change_w);
+            int b = (int)(0.15 * y * HomeForm.change_l);
+            int c = (int)(0.15 * length * HomeForm.change_w);
+            int d = (int)(0.15 * width * HomeForm.change_l);
             arrayList2.Add(a);
             arrayList2.Add(b);
             arrayList2.Add(c);
@@ -82,10 +85,10 @@ namespace 码垛机
         }
         public void DrawOcupyArea3(int x, int y, int length, int width)
         {
-            int a = (int)(0.15 * x);
-            int b = (int)(0.15 * y);
-            int c = (int)(0.15 * length);
-            int d = (int)(0.15 * width);
+            int a = (int)(0.15 * x * HomeForm.change_w);
+            int b = (int)(0.15 * y * HomeForm.change_l);
+            int c = (int)(0.15 * length * HomeForm.change_w);
+            int d = (int)(0.15 * width * HomeForm.change_l);
             arrayList3.Add(a);
             arrayList3.Add(b);
             arrayList3.Add(c);
@@ -227,6 +230,17 @@ namespace 码垛机
                     Thread.Sleep(500);                 
                 }
                 isReceived3 = false;
+                while (!reset)
+                {
+                    BF.sendbuf[0] = 0xFA;
+                    BF.sendbuf[1] = 0x02;
+                    BF.sendbuf[2] = 0x0E;
+                    BF.sendbuf[3] = 0x04;
+                    BF.sendbuf[4] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 5);
+                    Thread.Sleep(500);
+                }
+                reset = false;
             }                   
         }
 

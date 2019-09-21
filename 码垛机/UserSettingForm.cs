@@ -44,7 +44,8 @@ namespace 码垛机
             foreach (Control control in ((Form)sender).Controls)
             {
                 control.Scale(new SizeF(width, heigth));
-
+                //control.Font = new Font(control.Font.FontFamily,12F * width,control.Font.Style);
+                // control.Font = new System.Drawing.Font("黑体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             }
         }
 

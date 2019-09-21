@@ -42,11 +42,18 @@ namespace 码垛机
             frm.SizeChanged += new EventHandler(frm_SizeChanged);
         }
 
+        //动态的长宽缩放比例
+        public static float change_l = 1;
+        public static float change_w = 1;
+
         static void frm_SizeChanged(object sender, EventArgs e)
         {
             string[] tmp = ((Form)sender).Tag.ToString().Split(',');
             float width = (float)((Form)sender).Width / (float)Convert.ToInt16(tmp[0]);
             float heigth = (float)((Form)sender).Height / (float)Convert.ToInt16(tmp[1]);
+
+            change_l = heigth;
+            change_w = width;
 
             ((Form)sender).Tag = ((Form)sender).Width.ToString() + "," + ((Form)sender).Height;
 
@@ -101,7 +108,7 @@ namespace 码垛机
             hsf.Hide();
             //默认使用端口3，波特率9600
             initCommPara(sp, "COM3", 9600);
-            initCommPara(sp2, "COM5", 9600);
+           // initCommPara2(sp2, "COM4", 9600);
 
             timer2.Interval = 1000;
             timer2.Start();
@@ -313,12 +320,31 @@ namespace 码垛机
             }
         }
 
+
         /// <summary>
         /// 接收扫码枪的数据
         /// </summary>
         /// <param name="sp"></param>
         /// <param name="comName"></param>
         /// <param name="baudRate"></param>
+        public static void initCommPara2(SerialPort sp, string comName, int baudRate)
+        {
+            try
+            {
+                //
+                sp.PortName = comName;
+                sp.BaudRate = baudRate;
+                sp.DataBits = 8;
+                sp.Parity = Parity.None;
+                sp.DataReceived += new SerialDataReceivedEventHandler(comm_DataReceived2);
+                sp.Open();
+
+            }
+            catch
+            {
+                //  MessageBox.Show(comName + "串口打开失败!", "系统提示");
+            }
+        }
 
         public struct Rectangle
         {
@@ -348,36 +374,7 @@ namespace 码垛机
         public void getZhixiangInfo(int length,int width,int height)
         {
 
-        }
-
-        
-
-
-        /// <summary>
-        /// 计算一次码垛要花的时间并下发(弃用)      
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        //public static void CalcCityDistance(Coordinate a,Coordinate b)
-        //{
-        //    Thread.CurrentThread.Priority = ThreadPriority.Highest;
-        //    int result =a.y + b.y + Math.Abs(a.x - b.x);
-        //    int sec = result / 500;
-
-        //    byte[] secbyte = toBytes.intToBytes(sec);
-        //    BF.sendbuf[0] = 0xFA;
-        //    BF.sendbuf[1] = 0x06;
-        //    BF.sendbuf[2] = 0x0E;
-        //    BF.sendbuf[3] = 0x06;
-        //    BF.sendbuf[4] = secbyte[3];
-        //    BF.sendbuf[5] = secbyte[2];
-        //    BF.sendbuf[6] = secbyte[1];
-        //    BF.sendbuf[7] = secbyte[0];
-        //    BF.sendbuf[8] = 0xF5;
-        //    SendMenuCommand(BF.sendbuf, 9);
-            
-        //}
+        }        
 
 
         //计算挡板下落时间        
@@ -410,8 +407,7 @@ namespace 码垛机
               Thread thread = new Thread(new ThreadStart(CalculateCoornidateAndSend));
               thread.IsBackground = true;
               thread.Priority = ThreadPriority.Highest;
-              thread.Start();           
-            
+              thread.Start();
         }
 
 
@@ -567,6 +563,10 @@ namespace 码垛机
         public static bool exist = false;
 
         public static bool sendflag = true;
+
+        //判断是否扫到码
+        public static bool saodao = false;
+        public static bool timeout = true;
         public static void CalculateCoornidateAndSend()
         {
 
@@ -5660,8 +5660,8 @@ namespace 码垛机
 
             if (xinlei == false && fight == false && completed == false)
             {
+                Thread.Sleep(300);
                 SendMaduoInfo();
-                Thread.Sleep(100);
             }
 
             if (usbList.Count == 0)
@@ -5695,10 +5695,46 @@ namespace 码垛机
                     return;
                 }
             }
-        } 
+        }
 
-
-
+        /// <summary>
+        /// 扫码器数据接收与解析
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        static void comm_DataReceived2(object sender, SerialDataReceivedEventArgs e)
+        {
+            string str = null;
+            str = sp2.ReadExisting();
+            if (str != null)
+            {
+                saodao = true;
+                if (str.Equals("1907066662\r\n"))
+                {
+                    l = 460;
+                    w = 225;
+                    h = 280;
+                    ScannerGun();
+                    str = null;
+                }
+                if (str.Equals("1907065501\r\n"))
+                {
+                    l = 490;
+                    w = 240;
+                    h = 300;
+                    ScannerGun();
+                    str = null;
+                }
+                if (str.Equals("1907066524\r\n"))
+                {
+                    l = 650;
+                    w = 320;
+                    h = 300;
+                    ScannerGun();
+                    str = null;
+                }
+            }
+        }
 
         /**************************************************************************************************/
         /// <summary>
@@ -5708,39 +5744,9 @@ namespace 码垛机
 
         static void  comm_DataReceived(object sender,SerialDataReceivedEventArgs e)
         {
-            byte[] binary_data_1 = null;      
+            byte[] binary_data_1 = null;
             List<byte> buffer = new List<byte>(4096);
             System.Threading.Thread.Sleep(100);
-
-            string str = sp2.ReadExisting();
-            if(str == string.Empty)
-            {
-
-            }
-            else
-            {
-                if (str.Equals("1907066814"))
-                {
-                    l = 460;
-                    w = 225;
-                    h = 280;
-                    ScannerGun();
-                }
-                if (str.Equals("1907065501"))
-                {
-                    l = 490;
-                    w = 240;
-                    h = 300;
-                    ScannerGun();
-                }
-                if (str.Equals("1907066524"))
-                {
-                    l = 650;
-                    w = 320;
-                    h = 300;
-                    ScannerGun();
-                }
-            }
             int n = sp.BytesToRead;           
             byte[] buf = new byte[n];//声明一个临时数组存储当前来的串口数据
             sp.Read(buf, 0, n);//读取缓冲数据
@@ -5870,7 +5876,15 @@ namespace 码垛机
                 //回零状态接收
                 if ((binary_data_1[1] == 0x02) && (binary_data_1[2] == 0x10))
                 {
-                    if(binary_data_1[3] == 0x01)
+                    int a = Convert.ToInt32(Convert.ToString(binary_data_1[3], 16), 16);
+                    //四轴回零查询
+                    if ((a & 1) == 1 && ((a & (1 << 1)) >> 1) == 1 && ((a & (1 << 2)) >> 2) == 1 && ((a & (1 << 3)) >> 3) == 1)
+                    {
+                        WorkingDetailForm.reset = true;
+                        MessageBox.Show("已经回零","提示");
+                    }
+                    //单轴回零查询
+                    if ((a & 1) == 1 || ((a & (1 << 1)) >> 1) == 1 || ((a & (1 << 2)) >> 2) == 1 || ((a & (1 << 3)) >> 3) == 1)
                     {
                         HandSettingForm.huilingflag = false;
                         MessageBox.Show("已经回零","提示");
@@ -5878,8 +5892,14 @@ namespace 码垛机
                     return;
                 }
 
-                //模拟收到的纸箱数据
-                if((binary_data_1[1] == 0x0D) && (binary_data_1[2] == 0XAA))
+                //确认下位机收到停止指令
+                if ((binary_data_1[2] == 0x0A) && (binary_data_1[3] == 0x03))
+                {
+                    HandSettingForm.stoped = true;
+                }
+
+                    //模拟收到的纸箱数据
+                    if ((binary_data_1[1] == 0x0D) && (binary_data_1[2] == 0XAA))
                 {
                     var myByteArray1 = new byte[4];
                     var myByteArray2 = new byte[4];
@@ -5917,8 +5937,9 @@ namespace 码垛机
                     
                     if (xinlei == false && fight == false && completed == false)
                     {
+                        Thread.Sleep(300);
                         SendMaduoInfo();
-                        Thread.Sleep(100);
+                            
                     }
                         
                     
@@ -5981,18 +6002,17 @@ namespace 码垛机
                     //第二位置1
                     if (((a & (1 << 2)) >> 2) == 1)
                     {
-                        //是否扫到码(定时器2s,未扫到码则提示人工扫码)
-                        if (true)
+                        //是否扫到码(定时器2s,未扫到码则提示人工扫码)需要等待2秒才判断
+                        Thread.Sleep(2000);
+                        if (!saodao)
                         {
                             MessageBox.Show("扫码失败，请人工重试！","警告");
+                            return;
                         }
-
+                        saodao = false;
                     }
-
                     return;
                 }
-
-                //接收扫码枪数据(若未检测到扫码信息则发送告警指令提醒人工扫码)
 
             }
         }
@@ -6000,6 +6020,23 @@ namespace 码垛机
         private void timer2_Tick(object sender, EventArgs e)
         {
             this.SysTime.Text = "欢迎登陆！当前时间" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+        }
+
+        int n = 0;
+        private void timer3_Tick(object sender, EventArgs e)
+        {
+            if (n == 2)
+            {
+                timer3.Enabled = false;
+            }
+            if (saodao)
+            {
+                timeout = false;
+                n = 2;
+                return;
+            }
+            timeout = true;
+            n++;
         }
     }
 }
