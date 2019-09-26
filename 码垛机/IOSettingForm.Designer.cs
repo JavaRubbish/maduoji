@@ -234,11 +234,10 @@
             // label30
             // 
             this.label30.AutoSize = true;
-            this.label30.Font = new System.Drawing.Font("宋体", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label30.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label30.Location = new System.Drawing.Point(25, 115);
+            this.label30.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label30.Location = new System.Drawing.Point(8, 111);
             this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(120, 19);
+            this.label30.Size = new System.Drawing.Size(119, 26);
             this.label30.TabIndex = 2;
             this.label30.Text = "2号码盘报警";
             // 
@@ -266,11 +265,10 @@
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Font = new System.Drawing.Font("宋体", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label20.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label20.Location = new System.Drawing.Point(40, 116);
+            this.label20.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label20.Location = new System.Drawing.Point(21, 110);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(80, 19);
+            this.label20.Size = new System.Drawing.Size(81, 26);
             this.label20.TabIndex = 2;
             this.label20.Text = "1号挡板";
             // 
@@ -300,11 +298,10 @@
             // label25
             // 
             this.label25.AutoSize = true;
-            this.label25.Font = new System.Drawing.Font("宋体", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label25.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label25.Location = new System.Drawing.Point(45, 118);
+            this.label25.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label25.Location = new System.Drawing.Point(21, 111);
             this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(80, 19);
+            this.label25.Size = new System.Drawing.Size(81, 26);
             this.label25.TabIndex = 2;
             this.label25.Text = "机械手2";
             // 
@@ -332,11 +329,10 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Font = new System.Drawing.Font("宋体", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label21.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label21.Location = new System.Drawing.Point(48, 114);
+            this.label21.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label21.Location = new System.Drawing.Point(23, 111);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(80, 19);
+            this.label21.Size = new System.Drawing.Size(81, 26);
             this.label21.TabIndex = 2;
             this.label21.Text = "2号挡板";
             // 
@@ -365,11 +361,10 @@
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Font = new System.Drawing.Font("宋体", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label22.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label22.Location = new System.Drawing.Point(51, 112);
+            this.label22.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label22.Location = new System.Drawing.Point(23, 111);
             this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(80, 19);
+            this.label22.Size = new System.Drawing.Size(81, 26);
             this.label22.TabIndex = 2;
             this.label22.Text = "3号挡板";
             // 
@@ -397,11 +392,10 @@
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Font = new System.Drawing.Font("宋体", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label23.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label23.Location = new System.Drawing.Point(9, 112);
+            this.label23.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label23.Location = new System.Drawing.Point(7, 111);
             this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(149, 19);
+            this.label23.Size = new System.Drawing.Size(145, 26);
             this.label23.TabIndex = 2;
             this.label23.Text = "机械手夹板夹紧";
             // 
@@ -429,11 +423,10 @@
             // label24
             // 
             this.label24.AutoSize = true;
-            this.label24.Font = new System.Drawing.Font("宋体", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label24.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label24.Location = new System.Drawing.Point(47, 112);
+            this.label24.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label24.Location = new System.Drawing.Point(27, 111);
             this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(80, 19);
+            this.label24.Size = new System.Drawing.Size(81, 26);
             this.label24.TabIndex = 2;
             this.label24.Text = "机械手1";
             // 
@@ -461,11 +454,10 @@
             // label26
             // 
             this.label26.AutoSize = true;
-            this.label26.Font = new System.Drawing.Font("宋体", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label26.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label26.Location = new System.Drawing.Point(33, 112);
+            this.label26.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label26.Location = new System.Drawing.Point(27, 111);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(109, 19);
+            this.label26.Size = new System.Drawing.Size(107, 26);
             this.label26.TabIndex = 2;
             this.label26.Text = "第二处挡板";
             // 
@@ -493,11 +485,10 @@
             // label27
             // 
             this.label27.AutoSize = true;
-            this.label27.Font = new System.Drawing.Font("宋体", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label27.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label27.Location = new System.Drawing.Point(35, 114);
+            this.label27.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label27.Location = new System.Drawing.Point(20, 111);
             this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(109, 19);
+            this.label27.Size = new System.Drawing.Size(107, 26);
             this.label27.TabIndex = 2;
             this.label27.Text = "第一处抬板";
             // 
@@ -525,11 +516,10 @@
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Font = new System.Drawing.Font("宋体", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label28.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label28.Location = new System.Drawing.Point(19, 112);
+            this.label28.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label28.Location = new System.Drawing.Point(16, 111);
             this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(129, 19);
+            this.label28.Size = new System.Drawing.Size(126, 26);
             this.label28.TabIndex = 2;
             this.label28.Text = "木箱码垛气缸";
             // 
@@ -557,11 +547,10 @@
             // label29
             // 
             this.label29.AutoSize = true;
-            this.label29.Font = new System.Drawing.Font("宋体", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label29.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label29.Location = new System.Drawing.Point(27, 112);
+            this.label29.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label29.Location = new System.Drawing.Point(15, 111);
             this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(120, 19);
+            this.label29.Size = new System.Drawing.Size(119, 26);
             this.label29.TabIndex = 2;
             this.label29.Text = "1号码盘报警";
             // 
@@ -589,11 +578,10 @@
             // label31
             // 
             this.label31.AutoSize = true;
-            this.label31.Font = new System.Drawing.Font("宋体", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label31.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label31.Location = new System.Drawing.Point(27, 112);
+            this.label31.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label31.Location = new System.Drawing.Point(21, 111);
             this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(120, 19);
+            this.label31.Size = new System.Drawing.Size(119, 26);
             this.label31.TabIndex = 2;
             this.label31.Text = "3号码盘报警";
             // 
@@ -621,11 +609,10 @@
             // label32
             // 
             this.label32.AutoSize = true;
-            this.label32.Font = new System.Drawing.Font("宋体", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label32.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label32.Location = new System.Drawing.Point(35, 114);
+            this.label32.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label32.Location = new System.Drawing.Point(19, 111);
             this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(109, 19);
+            this.label32.Size = new System.Drawing.Size(107, 26);
             this.label32.TabIndex = 2;
             this.label32.Text = "码垛处抬板";
             // 
@@ -653,11 +640,10 @@
             // label33
             // 
             this.label33.AutoSize = true;
-            this.label33.Font = new System.Drawing.Font("宋体", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label33.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label33.Location = new System.Drawing.Point(2, 114);
+            this.label33.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label33.Location = new System.Drawing.Point(2, 111);
             this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(169, 19);
+            this.label33.Size = new System.Drawing.Size(164, 26);
             this.label33.TabIndex = 2;
             this.label33.Text = "码垛队伍过长抬板";
             // 
@@ -685,11 +671,10 @@
             // label34
             // 
             this.label34.AutoSize = true;
-            this.label34.Font = new System.Drawing.Font("宋体", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label34.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label34.Location = new System.Drawing.Point(61, 112);
+            this.label34.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label34.Location = new System.Drawing.Point(32, 110);
             this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(60, 19);
+            this.label34.Size = new System.Drawing.Size(62, 26);
             this.label34.TabIndex = 2;
             this.label34.Text = "预留2";
             // 
@@ -720,6 +705,7 @@
             // panelOUT
             // 
             this.panelOUT.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panelOUT.BackgroundImage")));
+            this.panelOUT.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.panelOUT.Controls.Add(this.panel17);
             this.panelOUT.Controls.Add(this.panel16);
             this.panelOUT.Controls.Add(this.panel15);

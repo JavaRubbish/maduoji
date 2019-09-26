@@ -29,22 +29,27 @@ namespace 码垛机
 
         public static DateTime dt = DateTime.Now;
         string destPath = null;
-        string sourcePath = "C:\\Users\\John\\source\\repos\\码垛机\\码垛机\\bin\\Debug\\";
+        //string sourcePath = "C:\\Users\\John\\source\\repos\\码垛机\\码垛机\\bin\\Debug\\";
+        string sourcePath = "C:\\码垛机\\码垛机\\bin\\Debug\\";
         string fileName = dt.ToString("yyyy-MM-dd") + "info.txt";
         public USBForm()
         {
+            SetStyle(
+            ControlStyles.AllPaintingInWmPaint |    //不闪烁
+            ControlStyles.OptimizedDoubleBuffer    //支持双缓存
+            , true);
             InitializeComponent();
             AutoScale(this);
         }
 
 
-        public static void AutoScale(Form frm)
+        public void AutoScale(Form frm)
         {
             frm.Tag = frm.Width.ToString() + "," + frm.Height.ToString();
             frm.SizeChanged += new EventHandler(frm_SizeChanged);
         }
 
-        static void frm_SizeChanged(object sender, EventArgs e)
+        void frm_SizeChanged(object sender, EventArgs e)
         {
             string[] tmp = ((Form)sender).Tag.ToString().Split(',');
             float width = (float)((Form)sender).Width / (float)Convert.ToInt16(tmp[0]);
@@ -52,10 +57,26 @@ namespace 码垛机
 
             ((Form)sender).Tag = ((Form)sender).Width.ToString() + "," + ((Form)sender).Height;
 
+            this.usblabel.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.usbbutton.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.button1.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+
             foreach (Control control in ((Form)sender).Controls)
             {
                 control.Scale(new SizeF(width, heigth));
 
+            }
+        }
+        /// <summary>
+        /// 启用双缓存减少界面闪烁
+        /// </summary>
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;
+                return cp;
             }
         }
         protected override void WndProc(ref Message m)
@@ -142,7 +163,7 @@ namespace 码垛机
 
         private void USBForm_Load(object sender, EventArgs e)
         {
-
+            this.WindowState = FormWindowState.Maximized;
         }
 
         private void USBForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -154,6 +175,16 @@ namespace 码垛机
         {
             this.Close();
             this.DialogResult = DialogResult.OK;
+        }
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

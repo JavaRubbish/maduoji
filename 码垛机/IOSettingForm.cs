@@ -19,6 +19,11 @@ namespace 码垛机
         public static bool ioflag = true;
         public IOSettingForm()
         {
+            SetStyle(
+            ControlStyles.AllPaintingInWmPaint |    //不闪烁
+            ControlStyles.OptimizedDoubleBuffer    //支持双缓存
+            , true);
+
             InitializeComponent();
             
             AutoScale(this);
@@ -26,13 +31,13 @@ namespace 码垛机
             getStatus();
         }
 
-        public static void AutoScale(Form frm)
+        public void AutoScale(Form frm)
         {
             frm.Tag = frm.Width.ToString() + "," + frm.Height.ToString();
             frm.SizeChanged += new EventHandler(frm_SizeChanged);
         }
 
-        static void frm_SizeChanged(object sender, EventArgs e)
+        void frm_SizeChanged(object sender, EventArgs e)
         {
             string[] tmp = ((Form)sender).Tag.ToString().Split(',');
             float width = (float)((Form)sender).Width / (float)Convert.ToInt16(tmp[0]);
@@ -40,16 +45,32 @@ namespace 码垛机
 
             ((Form)sender).Tag = ((Form)sender).Width.ToString() + "," + ((Form)sender).Height;
 
+            this.ret_btn1.Font = new System.Drawing.Font("宋体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.IN_btn.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.OUT_btn.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             foreach (Control control in ((Form)sender).Controls)
             {
                 control.Scale(new SizeF(width, heigth));
 
             }
         }
+        /// <summary>
+        /// 启用双缓存减少界面闪烁
+        /// </summary>
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;
+                return cp;
+            }
+        }
 
         private void IOSettingForm_Load(object sender, EventArgs e)
         {
             huayuan();
+            this.WindowState = FormWindowState.Maximized;
         }
 
         /// <summary>

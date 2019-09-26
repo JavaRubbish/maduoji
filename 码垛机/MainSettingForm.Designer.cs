@@ -131,6 +131,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "MainSettingForm";
             this.Text = "MainSettingForm";
+            this.Load += new System.EventHandler(this.MainSettingForm_Load);
             this.ResumeLayout(false);
 
         }

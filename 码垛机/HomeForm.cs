@@ -28,15 +28,19 @@ namespace 码垛机
 
         public HomeForm()
         {
+            SetStyle(
+            ControlStyles.AllPaintingInWmPaint |    //不闪烁
+            ControlStyles.OptimizedDoubleBuffer    //支持双缓存
+            , true);
             InitializeComponent();
             AutoScale(this);
-          //  StartThread();
-            searchAlarmInfo();
-            confirmCompleted();
+           //  StartThread();
+           // searchAlarmInfo();
+           // confirmCompleted();
             initialIOSetting();
         }
 
-        public static void AutoScale(Form frm)
+        public void AutoScale(Form frm)
         {
             frm.Tag = frm.Width.ToString() + "," + frm.Height.ToString();
             frm.SizeChanged += new EventHandler(frm_SizeChanged);
@@ -46,7 +50,7 @@ namespace 码垛机
         public static float change_l = 1;
         public static float change_w = 1;
 
-        static void frm_SizeChanged(object sender, EventArgs e)
+        void frm_SizeChanged(object sender, EventArgs e)
         {
             string[] tmp = ((Form)sender).Tag.ToString().Split(',');
             float width = (float)((Form)sender).Width / (float)Convert.ToInt16(tmp[0]);
@@ -57,13 +61,29 @@ namespace 码垛机
 
             ((Form)sender).Tag = ((Form)sender).Width.ToString() + "," + ((Form)sender).Height;
 
+            this.work_btn.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.historydata_btn.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.setting_btn.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.alarmhistory_btn.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.SysTime.Font = new System.Drawing.Font("黑体", 10.5F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             foreach (Control control in ((Form)sender).Controls)
             {
                 control.Scale(new SizeF(width, heigth));
                 //control.Font = new Font(control.Font.FontFamily,12 * width,control.Font.Style);
             }
         }
-
+        /// <summary>
+        /// 启用双缓存减少界面闪烁
+        /// </summary>
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;
+                return cp;
+            }
+        }
         private void initialIOSetting()
         {
             INIhelp.SetValue(GlobalV.sts3, "0");
@@ -85,6 +105,7 @@ namespace 码垛机
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.WindowState = FormWindowState.Maximized;
             //初始化加载工作界面
             work_btn.BackColor = Color.FromArgb(65, 105, 225);
             wdf = new WorkingDetailForm();
@@ -370,11 +391,6 @@ namespace 码垛机
         
         
         public static ArrayList usbList = new ArrayList();
-
-        public void getZhixiangInfo(int length,int width,int height)
-        {
-
-        }        
 
 
         //计算挡板下落时间        
@@ -5551,7 +5567,7 @@ namespace 码垛机
             Thread thread = new Thread(new ThreadStart(GetCoordinate));
             thread.IsBackground = true;
             thread.Priority = ThreadPriority.Lowest;
-            thread.Start();
+            //thread.Start();
         }
         public static object locker = new object();
         public static void GetCoordinate()
@@ -5793,10 +5809,6 @@ namespace 码垛机
                     {
                         WorkingDetailForm.isReceived3 = true;
                     }
-                    if (binary_data_1[3] == 0x04)
-                    {
-                        WorkingDetailForm.isReceived4 = true;
-                    }
                 }
 
 
@@ -5810,15 +5822,15 @@ namespace 码垛机
                     //将16进制字符串转为10进制整型数
                     data2 =Convert.ToInt32(binary_data_1[3].ToString("X2"),16);
                     if(data2 == 1){
-                         desc = "电机故障";
+                         desc = "电机故障（请尝试检查X、Y、Z电机）";
                     }
                     else if(data2 == 2)
                     {
-                         desc = "硬限位故障";
+                         desc = "硬限位故障（请检查硬限位）";
                     }
                     else
                     {
-                        desc = "软限位故障"; 
+                        desc = "软限位故障（请检查软限位）"; 
                     }
                     if(!ahf.IsDisposed)
                     {
@@ -5933,17 +5945,18 @@ namespace 码垛机
                     xinlei = false;
                     fight = false;
                     completed = false;
-
-                    
+             
                     if (xinlei == false && fight == false && completed == false)
                     {
-                        Thread.Sleep(300);
-                        SendMaduoInfo();
-                            
+                        lock (locker)
+                        {
+                             Thread.Sleep(200);
+                             BF.sendbuf = new byte[100];
+                             SendMaduoInfo();
+                             BF.sendbuf = new byte[100];
+                        }
                     }
-                        
-                    
-                                      
+                                                              
                     if(usbList.Count == 0)
                     {
                         usbList.Add(l);
@@ -5964,6 +5977,7 @@ namespace 码垛机
                                 WriteToUsbDisk(usbList);
                                 break;
                             }
+                            exist = false;
                         }
                         if (!exist)
                         {
@@ -6022,21 +6036,9 @@ namespace 码垛机
             this.SysTime.Text = "欢迎登陆！当前时间" + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
         }
 
-        int n = 0;
-        private void timer3_Tick(object sender, EventArgs e)
+        private void panel1_Paint(object sender, PaintEventArgs e)
         {
-            if (n == 2)
-            {
-                timer3.Enabled = false;
-            }
-            if (saodao)
-            {
-                timeout = false;
-                n = 2;
-                return;
-            }
-            timeout = true;
-            n++;
+
         }
     }
 }

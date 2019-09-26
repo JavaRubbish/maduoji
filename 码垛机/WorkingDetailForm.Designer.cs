@@ -86,7 +86,7 @@
             // 
             // panel6
             // 
-            this.panel6.BackColor = System.Drawing.Color.Snow;
+            this.panel6.BackColor = System.Drawing.Color.Honeydew;
             this.panel6.Location = new System.Drawing.Point(64, 21);
             this.panel6.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel6.Name = "panel6";
@@ -118,7 +118,7 @@
             // 
             // panel7
             // 
-            this.panel7.BackColor = System.Drawing.Color.Snow;
+            this.panel7.BackColor = System.Drawing.Color.Honeydew;
             this.panel7.Location = new System.Drawing.Point(65, 20);
             this.panel7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel7.Name = "panel7";
@@ -150,7 +150,7 @@
             // 
             // panel8
             // 
-            this.panel8.BackColor = System.Drawing.Color.Snow;
+            this.panel8.BackColor = System.Drawing.Color.Honeydew;
             this.panel8.Location = new System.Drawing.Point(67, 22);
             this.panel8.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel8.Name = "panel8";
@@ -247,6 +247,7 @@
             this.label14.Size = new System.Drawing.Size(23, 25);
             this.label14.TabIndex = 3;
             this.label14.Text = "0";
+            this.label14.Click += new System.EventHandler(this.label14_Click);
             // 
             // label13
             // 
@@ -338,9 +339,9 @@
             this.label22.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label22.Location = new System.Drawing.Point(188, 18);
             this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(23, 25);
+            this.label22.Size = new System.Drawing.Size(45, 25);
             this.label22.TabIndex = 4;
-            this.label22.Text = "0";
+            this.label22.Text = "666";
             this.label22.Click += new System.EventHandler(this.label22_Click);
             // 
             // label21

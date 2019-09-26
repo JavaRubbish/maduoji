@@ -254,6 +254,7 @@
             this.Name = "UserSettingForm";
             this.Text = "用户设置";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UserSettingForm_FormClosing);
+            this.Load += new System.EventHandler(this.UserSettingForm_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);

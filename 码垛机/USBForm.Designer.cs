@@ -30,9 +30,9 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(USBForm));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.usbbutton = new System.Windows.Forms.Button();
             this.usblabel = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -43,17 +43,32 @@
             this.panel1.Controls.Add(this.usbbutton);
             this.panel1.Controls.Add(this.usblabel);
             this.panel1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.panel1.Location = new System.Drawing.Point(12, 12);
+            this.panel1.Location = new System.Drawing.Point(9, 10);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1219, 647);
+            this.panel1.Size = new System.Drawing.Size(914, 518);
             this.panel1.TabIndex = 0;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.Color.LightSalmon;
+            this.button1.Location = new System.Drawing.Point(226, 388);
+            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(111, 50);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "返回";
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // usbbutton
             // 
-            this.usbbutton.BackColor = System.Drawing.Color.Snow;
-            this.usbbutton.Location = new System.Drawing.Point(466, 291);
+            this.usbbutton.BackColor = System.Drawing.Color.LightCyan;
+            this.usbbutton.Location = new System.Drawing.Point(207, 221);
+            this.usbbutton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.usbbutton.Name = "usbbutton";
-            this.usbbutton.Size = new System.Drawing.Size(197, 75);
+            this.usbbutton.Size = new System.Drawing.Size(148, 60);
             this.usbbutton.TabIndex = 1;
             this.usbbutton.Text = "拷贝今日数据";
             this.usbbutton.UseVisualStyleBackColor = false;
@@ -62,32 +77,24 @@
             // usblabel
             // 
             this.usblabel.AutoSize = true;
+            this.usblabel.BackColor = System.Drawing.Color.Transparent;
             this.usblabel.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.usblabel.Location = new System.Drawing.Point(522, 196);
+            this.usblabel.Location = new System.Drawing.Point(223, 128);
+            this.usblabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.usblabel.Name = "usblabel";
-            this.usblabel.Size = new System.Drawing.Size(104, 20);
+            this.usblabel.Size = new System.Drawing.Size(205, 16);
             this.usblabel.TabIndex = 0;
-            this.usblabel.Text = "请插入U盘";
+            this.usblabel.Text = "请插入U盘(请勿提前插入)";
             this.usblabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.usblabel.Click += new System.EventHandler(this.usblabel_Click);
             // 
-            // button1
-            // 
-            this.button1.BackColor = System.Drawing.Color.AliceBlue;
-            this.button1.Location = new System.Drawing.Point(502, 527);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(148, 62);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "返回";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // USBForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1243, 671);
+            this.ClientSize = new System.Drawing.Size(932, 537);
             this.Controls.Add(this.panel1);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "USBForm";
             this.Text = "USBForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.USBForm_FormClosing);
