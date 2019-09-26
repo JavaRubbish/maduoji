@@ -87,6 +87,8 @@
             // panel6
             // 
             this.panel6.BackColor = System.Drawing.Color.Honeydew;
+            this.panel6.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel6.BackgroundImage")));
+            this.panel6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.panel6.Location = new System.Drawing.Point(64, 21);
             this.panel6.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel6.Name = "panel6";
@@ -119,6 +121,8 @@
             // panel7
             // 
             this.panel7.BackColor = System.Drawing.Color.Honeydew;
+            this.panel7.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel7.BackgroundImage")));
+            this.panel7.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.panel7.Location = new System.Drawing.Point(65, 20);
             this.panel7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel7.Name = "panel7";
@@ -151,6 +155,8 @@
             // panel8
             // 
             this.panel8.BackColor = System.Drawing.Color.Honeydew;
+            this.panel8.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel8.BackgroundImage")));
+            this.panel8.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.panel8.Location = new System.Drawing.Point(67, 22);
             this.panel8.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel8.Name = "panel8";
@@ -237,6 +243,7 @@
             this.label15.Size = new System.Drawing.Size(43, 25);
             this.label15.TabIndex = 4;
             this.label15.Text = "Z轴";
+            this.label15.Click += new System.EventHandler(this.label15_Click);
             // 
             // label14
             // 

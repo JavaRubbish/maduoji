@@ -50,6 +50,14 @@ namespace 码垛机
             this.label12.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             this.label21.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             this.label22.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.label13.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.label14.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.label15.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.label16.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.label17.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.label18.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.label19.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.label20.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
 
 
 
@@ -347,6 +355,11 @@ namespace 码垛机
         }
 
         private void label14_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label15_Click(object sender, EventArgs e)
         {
 
         }
