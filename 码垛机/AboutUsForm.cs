@@ -36,7 +36,7 @@ namespace 码垛机
 
             ((Form)sender).Tag = ((Form)sender).Width.ToString() + "," + ((Form)sender).Height;
 
-            this.textBox1.Font = new System.Drawing.Font("隶书", 17F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.textBox1.Font = new System.Drawing.Font("宋体", 17F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             this.ret_btn4.Font = new System.Drawing.Font("宋体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             foreach (Control control in ((Form)sender).Controls)
             {

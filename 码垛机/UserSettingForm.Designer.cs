@@ -251,6 +251,8 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "UserSettingForm";
             this.Text = "用户设置";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UserSettingForm_FormClosing);

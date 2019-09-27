@@ -350,7 +350,7 @@
             this.ret_btn2.BackColor = System.Drawing.Color.Orange;
             this.ret_btn2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.ret_btn2.ForeColor = System.Drawing.Color.Cornsilk;
-            this.ret_btn2.Location = new System.Drawing.Point(681, 604);
+            this.ret_btn2.Location = new System.Drawing.Point(681, 599);
             this.ret_btn2.Name = "ret_btn2";
             this.ret_btn2.Size = new System.Drawing.Size(144, 55);
             this.ret_btn2.TabIndex = 5;
@@ -363,7 +363,7 @@
             this.button1.BackColor = System.Drawing.Color.Orange;
             this.button1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.button1.ForeColor = System.Drawing.Color.Cornsilk;
-            this.button1.Location = new System.Drawing.Point(444, 604);
+            this.button1.Location = new System.Drawing.Point(444, 600);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(144, 55);
             this.button1.TabIndex = 6;
@@ -382,6 +382,8 @@
             this.Controls.Add(this.ret_btn2);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "RuanxianweiForm";
             this.Text = "软限位设定";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RuanxianweiForm_FormClosing);

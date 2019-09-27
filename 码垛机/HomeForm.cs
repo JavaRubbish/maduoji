@@ -583,6 +583,7 @@ namespace 码垛机
         //判断是否扫到码
         public static bool saodao = false;
         public static bool timeout = true;
+
         public static void CalculateCoornidateAndSend()
         {
 
@@ -593,6 +594,7 @@ namespace 码垛机
             if (h == 280){             
                 if (count == 0)
                 {
+                    wdf.changeText1("第一层");
                     Coordinate k1 = new Coordinate();
                     k1.x = 0;
                     k1.y = 0;
@@ -2152,6 +2154,7 @@ namespace 码垛机
                         {
                             finish_1();
                             isLastRowOrCol = false;
+                            WorkingDetailForm.arrayList1.RemoveRange(0, WorkingDetailForm.arrayList1.Count);
                         }
                         return;
                     }
@@ -2200,6 +2203,7 @@ namespace 码垛机
             {             
                 if (count2 == 0)
                 {
+                    wdf.changeText2("第一层");
                     Coordinate k37 = new Coordinate();
                     k37.x = 0;
                     k37.y = 1500;
@@ -3778,6 +3782,7 @@ namespace 码垛机
                         {
                             finish_2();
                             isLastRowOrCol = false;
+                            WorkingDetailForm.arrayList2.RemoveRange(0, WorkingDetailForm.arrayList2.Count);
                         }
                         return;
                     }
@@ -3826,6 +3831,7 @@ namespace 码垛机
             {
                 if (count3 == 0)
                 {
+                    wdf.changeText3("第一层");
                     Coordinate k73 = new Coordinate();
                     k73.x = 0;
                     k73.y = 3000;
@@ -5418,6 +5424,7 @@ namespace 码垛机
                         if (isLastRowOrCol)
                         {
                             finish_3();
+                            WorkingDetailForm.arrayList3.RemoveRange(0, WorkingDetailForm.arrayList3.Count);
                         }
                         return;
                     }
@@ -5492,7 +5499,10 @@ namespace 码垛机
             BF.sendbuf[5] = 0x01;
             BF.sendbuf[6] = 0xF5;
             SendMenuCommand(BF.sendbuf, 7);
-            MessageBox.Show("码盘1码垛完成,请移走!", "警告");
+            MessageBox.Show("码盘1码垛完成,请移走!", "警告");           
+            count = count12 = count13 = count14 = 0;
+            width1 = width12 = width13 = width14 = 1000;
+            length1 = length12 = length13 = length14 = 1200;
         }
 
         public static void finish_2()
@@ -5506,6 +5516,9 @@ namespace 码垛机
             BF.sendbuf[6] = 0xF5;
             SendMenuCommand(BF.sendbuf, 7);
             MessageBox.Show("码盘2码垛完成,请移走!", "警告");
+            count2 = count22 = count23 = count24 = 0;
+            width2 = width22 = width23 = width24 = 1000;
+            length2 = length22 = length23 = length24 = 1200;           
         }
 
         public static void finish_3()
@@ -5519,6 +5532,9 @@ namespace 码垛机
             BF.sendbuf[6] = 0xF5;
             SendMenuCommand(BF.sendbuf, 7);
             MessageBox.Show("码盘3码垛完成,请移走!", "警告");
+            count3 = count32 = count33 = count34 = 0;
+            width3 = width32 = width33 = width34 = 1000;
+            length3 = length32 = length33 = length34 = 1200;
         }
 
         public static void WriteToUsbDisk(ArrayList array)

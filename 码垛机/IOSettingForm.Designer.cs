@@ -693,7 +693,7 @@
             this.ret_btn1.BackColor = System.Drawing.Color.DarkOrange;
             this.ret_btn1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.ret_btn1.ForeColor = System.Drawing.Color.Cornsilk;
-            this.ret_btn1.Location = new System.Drawing.Point(544, 604);
+            this.ret_btn1.Location = new System.Drawing.Point(544, 601);
             this.ret_btn1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.ret_btn1.Name = "ret_btn1";
             this.ret_btn1.Size = new System.Drawing.Size(144, 55);
@@ -1554,6 +1554,8 @@
             this.Controls.Add(this.panelOUT);
             this.Controls.Add(this.panelIN);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "IOSettingForm";
             this.Text = "IO调试";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.IOSettingForm_FormClosing);

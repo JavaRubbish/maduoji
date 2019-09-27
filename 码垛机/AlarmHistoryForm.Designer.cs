@@ -121,6 +121,7 @@
             this.columnHeader2,
             this.columnHeader3,
             this.columnHeader4});
+            this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(34, 54);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(1149, 434);
@@ -166,6 +167,8 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "AlarmHistoryForm";
             this.Text = "AlarmHistoryForm";
             this.Load += new System.EventHandler(this.AlarmHistoryForm_Load);

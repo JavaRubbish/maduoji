@@ -1454,6 +1454,8 @@
             this.Controls.Add(this.panelO);
             this.Controls.Add(this.panelY);
             this.Controls.Add(this.panelZ);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "HandSettingForm";
             this.Text = "手动调试";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.HandSettingForm_FormClosing);

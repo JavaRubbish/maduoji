@@ -35,8 +35,9 @@
             // 
             // textBox1
             // 
-            this.textBox1.BackColor = System.Drawing.Color.SeaShell;
-            this.textBox1.Font = new System.Drawing.Font("隶书", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.textBox1.BackColor = System.Drawing.SystemColors.InfoText;
+            this.textBox1.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.textBox1.ForeColor = System.Drawing.SystemColors.MenuBar;
             this.textBox1.Location = new System.Drawing.Point(22, 59);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
@@ -64,10 +65,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1242, 671);
             this.Controls.Add(this.ret_btn4);
             this.Controls.Add(this.textBox1);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "AboutUsForm";
             this.Text = "关于我们";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AboutUsForm_FormClosing);

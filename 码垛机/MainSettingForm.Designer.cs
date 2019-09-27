@@ -129,6 +129,8 @@
             this.Controls.Add(this.ruanxianweiset_btn);
             this.Controls.Add(this.userset_btn);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "MainSettingForm";
             this.Text = "MainSettingForm";
             this.Load += new System.EventHandler(this.MainSettingForm_Load);

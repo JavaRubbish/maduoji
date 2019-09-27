@@ -115,7 +115,6 @@ namespace 码垛机
             {
                 gp.Clear(panel6.BackColor);
             }
-            
             System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
             //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
             gp.FillRectangle(Brushes.Khaki, rect); //填充
@@ -164,6 +163,7 @@ namespace 码垛机
             gp.Flush();
 
         }
+
         /// <summary>
         /// 改变码盘旁边的标签提示当前码垛到哪一层
         /// </summary>
@@ -310,7 +310,7 @@ namespace 码垛机
                 Graphics gp = panel6.CreateGraphics();
                 System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point((int)arrayList1[4*i], (int)arrayList1[4*i+1]), new Size((int)arrayList1[4*i+2], (int)arrayList1[4*i+3]));
                 //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
-                gp.FillRectangle(Brushes.Blue, rect); //填充
+                gp.FillRectangle(Brushes.Khaki, rect); //填充
                 gp.Flush();
             }
         }
@@ -322,7 +322,7 @@ namespace 码垛机
                 Graphics gp = panel7.CreateGraphics();
                 System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point((int)arrayList2[4 * i], (int)arrayList2[4 * i + 1]), new Size((int)arrayList2[4 * i + 2], (int)arrayList2[4 * i + 3]));
                 //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
-                gp.FillRectangle(Brushes.Blue, rect); //填充
+                gp.FillRectangle(Brushes.Khaki, rect); //填充
                 gp.Flush();
             }
         }
@@ -334,7 +334,7 @@ namespace 码垛机
                 Graphics gp = panel8.CreateGraphics();
                 System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point((int)arrayList3[4 * i], (int)arrayList3[4 * i + 1]), new Size((int)arrayList3[4 * i + 2], (int)arrayList3[4 * i + 3]));
                 //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
-                gp.FillRectangle(Brushes.Blue, rect); //填充
+                gp.FillRectangle(Brushes.Khaki, rect); //填充
                 gp.Flush();
             }
         }
@@ -360,6 +360,11 @@ namespace 码垛机
         }
 
         private void label15_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
         {
 
         }
