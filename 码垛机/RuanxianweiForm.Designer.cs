@@ -33,9 +33,6 @@
             this.软限位设定 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.comboBox4 = new System.Windows.Forms.ComboBox();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.textBox9 = new System.Windows.Forms.TextBox();
             this.textBox8 = new System.Windows.Forms.TextBox();
             this.textBox7 = new System.Windows.Forms.TextBox();
@@ -46,8 +43,6 @@
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -91,9 +86,6 @@
             // panel3
             // 
             this.panel3.BackColor = System.Drawing.SystemColors.HighlightText;
-            this.panel3.Controls.Add(this.comboBox4);
-            this.panel3.Controls.Add(this.comboBox3);
-            this.panel3.Controls.Add(this.comboBox1);
             this.panel3.Controls.Add(this.textBox9);
             this.panel3.Controls.Add(this.textBox8);
             this.panel3.Controls.Add(this.textBox7);
@@ -104,8 +96,6 @@
             this.panel3.Controls.Add(this.textBox4);
             this.panel3.Controls.Add(this.label7);
             this.panel3.Controls.Add(this.textBox1);
-            this.panel3.Controls.Add(this.comboBox2);
-            this.panel3.Controls.Add(this.label5);
             this.panel3.Controls.Add(this.label4);
             this.panel3.Controls.Add(this.label3);
             this.panel3.Controls.Add(this.label2);
@@ -115,58 +105,12 @@
             this.panel3.Size = new System.Drawing.Size(1108, 335);
             this.panel3.TabIndex = 0;
             // 
-            // comboBox4
-            // 
-            this.comboBox4.BackColor = System.Drawing.SystemColors.MenuHighlight;
-            this.comboBox4.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.comboBox4.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.Items.AddRange(new object[] {
-            "开",
-            "关"});
-            this.comboBox4.Location = new System.Drawing.Point(842, 276);
-            this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(75, 28);
-            this.comboBox4.TabIndex = 24;
-            this.comboBox4.Text = "开";
-            // 
-            // comboBox3
-            // 
-            this.comboBox3.BackColor = System.Drawing.SystemColors.MenuHighlight;
-            this.comboBox3.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.comboBox3.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Items.AddRange(new object[] {
-            "开",
-            "关"});
-            this.comboBox3.Location = new System.Drawing.Point(842, 219);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(75, 28);
-            this.comboBox3.TabIndex = 23;
-            this.comboBox3.Text = "开";
-            this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.BackColor = System.Drawing.SystemColors.MenuHighlight;
-            this.comboBox1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.comboBox1.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "开",
-            "关"});
-            this.comboBox1.Location = new System.Drawing.Point(842, 154);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(75, 28);
-            this.comboBox1.TabIndex = 22;
-            this.comboBox1.Text = "开";
-            // 
             // textBox9
             // 
             this.textBox9.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.textBox9.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.textBox9.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.textBox9.Location = new System.Drawing.Point(541, 276);
+            this.textBox9.Location = new System.Drawing.Point(638, 276);
             this.textBox9.Name = "textBox9";
             this.textBox9.Size = new System.Drawing.Size(169, 30);
             this.textBox9.TabIndex = 21;
@@ -178,7 +122,7 @@
             this.textBox8.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.textBox8.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.textBox8.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.textBox8.Location = new System.Drawing.Point(541, 219);
+            this.textBox8.Location = new System.Drawing.Point(637, 219);
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(169, 30);
             this.textBox8.TabIndex = 20;
@@ -190,7 +134,7 @@
             this.textBox7.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.textBox7.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.textBox7.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.textBox7.Location = new System.Drawing.Point(247, 276);
+            this.textBox7.Location = new System.Drawing.Point(258, 276);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(169, 30);
             this.textBox7.TabIndex = 19;
@@ -202,7 +146,7 @@
             this.textBox6.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.textBox6.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.textBox6.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.textBox6.Location = new System.Drawing.Point(247, 219);
+            this.textBox6.Location = new System.Drawing.Point(259, 219);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(169, 30);
             this.textBox6.TabIndex = 18;
@@ -214,7 +158,7 @@
             this.textBox2.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.textBox2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.textBox2.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.textBox2.Location = new System.Drawing.Point(541, 154);
+            this.textBox2.Location = new System.Drawing.Point(638, 154);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(169, 30);
             this.textBox2.TabIndex = 17;
@@ -226,7 +170,7 @@
             this.textBox5.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.textBox5.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.textBox5.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.textBox5.Location = new System.Drawing.Point(247, 154);
+            this.textBox5.Location = new System.Drawing.Point(260, 154);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(169, 30);
             this.textBox5.TabIndex = 16;
@@ -237,7 +181,7 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label8.Location = new System.Drawing.Point(588, 40);
+            this.label8.Location = new System.Drawing.Point(690, 40);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(79, 20);
             this.label8.TabIndex = 15;
@@ -248,13 +192,12 @@
             this.textBox4.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.textBox4.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.textBox4.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.textBox4.Location = new System.Drawing.Point(247, 91);
+            this.textBox4.Location = new System.Drawing.Point(261, 91);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(169, 30);
             this.textBox4.TabIndex = 14;
             this.textBox4.Text = "0";
             this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox4.TextChanged += new System.EventHandler(this.textBox4_TextChanged);
             // 
             // label7
             // 
@@ -271,44 +214,18 @@
             this.textBox1.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.textBox1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.textBox1.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.textBox1.Location = new System.Drawing.Point(541, 91);
+            this.textBox1.Location = new System.Drawing.Point(638, 91);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(169, 30);
             this.textBox1.TabIndex = 10;
             this.textBox1.Text = "1000000";
             this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            // 
-            // comboBox2
-            // 
-            this.comboBox2.BackColor = System.Drawing.SystemColors.MenuHighlight;
-            this.comboBox2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.comboBox2.ForeColor = System.Drawing.SystemColors.HighlightText;
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
-            "开",
-            "关"});
-            this.comboBox2.Location = new System.Drawing.Point(842, 91);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(75, 28);
-            this.comboBox2.TabIndex = 9;
-            this.comboBox2.Text = "开";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label5.Location = new System.Drawing.Point(854, 40);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(49, 20);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "启用";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label4.Location = new System.Drawing.Point(290, 40);
+            this.label4.Location = new System.Drawing.Point(305, 40);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(79, 20);
             this.label4.TabIndex = 3;
@@ -324,6 +241,7 @@
             this.label3.TabIndex = 2;
             this.label3.Text = "O轴";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // label2
             // 
@@ -404,8 +322,6 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
@@ -419,9 +335,6 @@
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.TextBox textBox9;
-        private System.Windows.Forms.ComboBox comboBox4;
-        private System.Windows.Forms.ComboBox comboBox3;
-        private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button ret_btn2;
     }

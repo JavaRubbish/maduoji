@@ -30,7 +30,7 @@ namespace 码垛机
         public static DateTime dt = DateTime.Now;
         string destPath = null;
         //string sourcePath = "C:\\Users\\John\\source\\repos\\码垛机\\码垛机\\bin\\Debug\\";
-        string sourcePath = "C:\\码垛机\\码垛机\\bin\\Debug\\";
+        string sourcePath = "C:\\码垛机\\码垛机\\bin\\Debug\\todayUSBdata\\";
         string fileName = dt.ToString("yyyy-MM-dd") + "info.txt";
         public USBForm()
         {

@@ -58,7 +58,8 @@ namespace 码垛机
             this.label18.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             this.label19.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             this.label20.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
-
+            this.label4.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.textBox1.Font = new System.Drawing.Font("微软雅黑", 10.8F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
 
 
             foreach (Control control in ((Form)sender).Controls)
@@ -229,9 +230,6 @@ namespace 码垛机
                 while (!isReceived1)
                 {
                     Thread.Sleep(500);
-                    //HomeForm.xinlei = false;
-                    //HomeForm.fight = false;
-                    //HomeForm.completed = false;
                     BF.sendbuf[0] = 0xFA;
                     BF.sendbuf[1] = 0x02;
                     BF.sendbuf[2] = 0x0D;
@@ -239,9 +237,6 @@ namespace 码垛机
                     BF.sendbuf[4] = 0xF5;
                     SendMenuCommand(BF.sendbuf, 5);
                     Thread.Sleep(500);
-                    //HomeForm.xinlei = true;
-                    //HomeForm.fight = true;
-                    //HomeForm.completed = true;
                 }
                 isReceived1 = false;
             }

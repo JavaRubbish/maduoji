@@ -25,16 +25,16 @@ namespace 码垛机
             //加载软限位设置(读上次保存)
             textBox1.Text = INIhelp.GetValue("X轴上限位");
             textBox4.Text = INIhelp.GetValue("X轴下限位");
-            comboBox2.Text = INIhelp.GetValue("X轴开关");
+            
             textBox2.Text = INIhelp.GetValue("Z轴上限位");
             textBox5.Text = INIhelp.GetValue("Z轴下限位");
-            comboBox1.Text = INIhelp.GetValue("Z轴开关");
+            
             textBox8.Text = INIhelp.GetValue("Y轴上限位");
             textBox6.Text = INIhelp.GetValue("Y轴下限位");
-            comboBox3.Text = INIhelp.GetValue("Y轴开关");
+            
             textBox9.Text = INIhelp.GetValue("O轴上限位");
             textBox7.Text = INIhelp.GetValue("O轴下限位");
-            comboBox4.Text = INIhelp.GetValue("O轴开关");
+            
         }
 
         public void AutoScale(Form frm)
@@ -59,7 +59,6 @@ namespace 码垛机
             this.label2.Font = new System.Drawing.Font("宋体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             this.label3.Font = new System.Drawing.Font("宋体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             this.label4.Font = new System.Drawing.Font("宋体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
-            this.label5.Font = new System.Drawing.Font("宋体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             this.label7.Font = new System.Drawing.Font("宋体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             this.label8.Font = new System.Drawing.Font("宋体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
 
@@ -72,10 +71,7 @@ namespace 码垛机
             this.textBox8.Font = new System.Drawing.Font("宋体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             this.textBox9.Font = new System.Drawing.Font("宋体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
 
-            this.comboBox1.Font = new System.Drawing.Font("宋体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
-            this.comboBox2.Font = new System.Drawing.Font("宋体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
-            this.comboBox3.Font = new System.Drawing.Font("宋体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
-            this.comboBox4.Font = new System.Drawing.Font("宋体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+           
             foreach (Control control in ((Form)sender).Controls)
             {
                 control.Scale(new SizeF(width, heigth));
@@ -181,53 +177,53 @@ namespace 码垛机
 
             
 
-            //将四轴的开关状态写进一个字节发送出去
-            string[] status = new string[4];
-            try
-            {
-                if (comboBox2.Text.Equals("开"))
-                {
-                    status[0] = "1";
-                }
-                if (comboBox2.Text.Equals("关"))
-                {
-                    status[0] = "0";
-                }
-                if (comboBox1.Text.Equals("开"))
-                {
-                    status[1] = "1";
-                }
-                if (comboBox1.Text.Equals("关"))
-                {
-                    status[1] = "0";
-                }
-                if (comboBox3.Text.Equals("开"))
-                {
-                    status[2] = "1";
-                }
-                if (comboBox3.Text.Equals("关"))
-                {
-                    status[2] = "0";
-                }
-                if (comboBox4.Text.Equals("开"))
-                {
-                    status[3] = "1";
-                }
-                if (comboBox4.Text.Equals("关"))
-                {
-                    status[3] = "0";
-                }
-            }
-            catch
-            {
+            ////将四轴的开关状态写进一个字节发送出去
+            //string[] status = new string[4];
+            //try
+            //{
+            //    if (comboBox2.Text.Equals("开"))
+            //    {
+            //        status[0] = "1";
+            //    }
+            //    if (comboBox2.Text.Equals("关"))
+            //    {
+            //        status[0] = "0";
+            //    }
+            //    if (comboBox1.Text.Equals("开"))
+            //    {
+            //        status[1] = "1";
+            //    }
+            //    if (comboBox1.Text.Equals("关"))
+            //    {
+            //        status[1] = "0";
+            //    }
+            //    if (comboBox3.Text.Equals("开"))
+            //    {
+            //        status[2] = "1";
+            //    }
+            //    if (comboBox3.Text.Equals("关"))
+            //    {
+            //        status[2] = "0";
+            //    }
+            //    if (comboBox4.Text.Equals("开"))
+            //    {
+            //        status[3] = "1";
+            //    }
+            //    if (comboBox4.Text.Equals("关"))
+            //    {
+            //        status[3] = "0";
+            //    }
+            //}
+            //catch
+            //{
 
-            }
-            string status2 = string.Join("",status);
-            int a = Convert.ToInt32(status2, 2);
-            byte[] b = toBytes.intToBytes(a);
+            //}
+            //string status2 = string.Join("",status);
+            //int a = Convert.ToInt32(status2, 2);
+            //byte[] b = toBytes.intToBytes(a);
 
             BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x07;
+            BF.sendbuf[1] = 0x21;
             BF.sendbuf[2] = 0x0B;
             BF.sendbuf[3] = iByte1[3];
             BF.sendbuf[4] = iByte1[2];
@@ -261,23 +257,22 @@ namespace 码垛机
             BF.sendbuf[32] = iByte8[2];
             BF.sendbuf[33] = iByte8[1];
             BF.sendbuf[34] = iByte8[0];
-            BF.sendbuf[35] = b[0];
-            BF.sendbuf[36] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 37);
+            BF.sendbuf[35] = 0xF5;
+            SendMenuCommand(BF.sendbuf, 36);
 
             //更新到配置文件里
             INIhelp.SetValue("X轴上限位",textBox1.Text);
             INIhelp.SetValue("X轴下限位", textBox4.Text);
-            INIhelp.SetValue("X轴开关", comboBox2.Text);
+            
             INIhelp.SetValue("Z轴上限位", textBox2.Text);
             INIhelp.SetValue("Z轴下限位", textBox5.Text);
-            INIhelp.SetValue("Z轴开关", comboBox1.Text);
+            
             INIhelp.SetValue("Y轴上限位", textBox8.Text);
             INIhelp.SetValue("Y轴下限位", textBox6.Text);
-            INIhelp.SetValue("Y轴开关", comboBox3.Text);
+            
             INIhelp.SetValue("O轴上限位", textBox9.Text);
             INIhelp.SetValue("O轴下限位", textBox7.Text);
-            INIhelp.SetValue("O轴开关", comboBox4.Text);
+            
 
         }
 
@@ -292,24 +287,14 @@ namespace 码垛机
             this.DialogResult = DialogResult.OK;
         }
 
-        private void textBox4_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void RuanxianweiForm_Load(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Maximized;
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
