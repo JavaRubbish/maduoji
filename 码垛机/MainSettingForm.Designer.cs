@@ -107,6 +107,7 @@
             this.userset_btn.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("userset_btn.BackgroundImage")));
             this.userset_btn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.userset_btn.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.userset_btn.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.userset_btn.Location = new System.Drawing.Point(159, 88);
             this.userset_btn.Name = "userset_btn";
             this.userset_btn.Size = new System.Drawing.Size(181, 69);

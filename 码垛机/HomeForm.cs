@@ -169,6 +169,12 @@ namespace 码垛机
         {
             this.Text = "历史数据";
             hf.Show();
+            HistoryDataForm.dec = -1;
+            HistoryDataForm.inc = 1;
+            DateTime dt = DateTime.Now;
+            string fname = "D:\\C#Project\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
+            hf.ReadFromFile(fname);
+
 
             work_btn.BackColor = Color.FromArgb(220, 220, 220);
             historydata_btn.BackColor = Color.FromArgb(65, 105, 225);
@@ -228,7 +234,6 @@ namespace 码垛机
         private void alarmhistory_btn_Click(object sender, EventArgs e)
         {
             this.Text = "报警历史";
-
             ahf.Show();
 
             work_btn.BackColor = Color.FromArgb(220, 220, 220);
@@ -318,7 +323,7 @@ namespace 码垛机
             }
             catch (System.Exception ex)
             {
-              //  MessageBox.Show("串口无法打开");
+                MessageBox.Show("串口无法打开");
             }
         }
 
@@ -341,7 +346,7 @@ namespace 码垛机
 
             } catch
             {
-              //  MessageBox.Show(comName + "串口打开失败!", "系统提示");
+                MessageBox.Show(comName + "串口打开失败!", "系统提示");
             }
         }
 
@@ -1820,6 +1825,7 @@ namespace 码垛机
 
                     rectangle21.length = length14 - l;
                     width14 -= (w + gap);
+                    nearfinish();
                     return;
                 }
                 //第一列第二个及以上
@@ -2115,7 +2121,7 @@ namespace 码垛机
                             count14++;
                             cdarrayList4[3 * i + 2] = (int)cdarrayList4[3 * i + 2] - l;
                             isJudged = false;
-                            if (i== (cdarrayList.Count/3-1))
+                            if (i== (cdarrayList4.Count/3-1))
                             {
                                 finish_1();
                                 //isLastRowOrCol = false;
@@ -3411,6 +3417,7 @@ namespace 码垛机
 
                     rectangle30.length = length24 - l;
                     width24 -= (w + gap);
+                    nearfinish();
                     return;
                 }
                 //第一行第二个及以上
@@ -3708,10 +3715,9 @@ namespace 码垛机
                             count24++;
                             cdarrayList8[3 * i + 2] = (int)cdarrayList8[3 * i + 2] - l;
                             isJudged = false;
-                            if (isLastRowOrCol)
+                            if (i == (cdarrayList8.Count/3 - 1))
                             {
                                 finish_2();
-                                isLastRowOrCol = false;
                                 WorkingDetailForm.arrayList2.RemoveRange(0, WorkingDetailForm.arrayList2.Count);
                             }
                             return;
@@ -3752,8 +3758,9 @@ namespace 码垛机
                         cdarrayList8[3 * i + 2] = (int)cdarrayList8[3 * i + 2] - l;
                         return;
                     }
-                }                
-                                                              
+                }
+                finish_2();
+                WorkingDetailForm.arrayList2.RemoveRange(0, WorkingDetailForm.arrayList2.Count);
             }
 
             /**********************************************************************************************/
@@ -5002,6 +5009,7 @@ namespace 码垛机
 
                     rectangle37.length = width34 - l;
                     length34 -= (w + gap);
+                    nearfinish();
                     return;
                 }
                 //第一列第二个及以上
@@ -5310,7 +5318,7 @@ namespace 码垛机
                             count34++;
                             cdarrayList12[3 * i + 2] = (int)cdarrayList12[3 * i + 2] - l;
                             isJudged = false;
-                            if (isLastRowOrCol)
+                            if (i == (cdarrayList12.Count/3 -1))
                             {
                                 finish_3();
                                 WorkingDetailForm.arrayList3.RemoveRange(0, WorkingDetailForm.arrayList3.Count);
@@ -5354,7 +5362,8 @@ namespace 码垛机
                         return;
                     }
                 }
-                
+                finish_3();
+                WorkingDetailForm.arrayList3.RemoveRange(0, WorkingDetailForm.arrayList3.Count);
             }    
            
         }
@@ -5363,15 +5372,7 @@ namespace 码垛机
         /// <summary>
         /// 摆放到第4层，即将摆满的报警
         /// </summary>
-        public static void nearfinish_1()
-        {
-
-        }
-        public static void nearfinish_2()
-        {
-
-        }
-        public static void nearfinish_3()
+        public static void nearfinish()
         {
 
         }
@@ -5390,7 +5391,7 @@ namespace 码垛机
             BF.sendbuf[5] = 0x01;
             BF.sendbuf[6] = 0xF5;
             SendMenuCommand(BF.sendbuf, 7);
-            MessageBox.Show("码盘1码垛完成,请移走!", "警告");           
+            MessageBox.Show("码盘1码垛完成,请更换码盘!", "警告",MessageBoxButtons.OK,MessageBoxIcon.Information);           
             count = count12 = count13 = count14 = 0;
             width1 = width12 = width13 = width14 = 1000;
             length1 = length12 = length13 = length14 = 1200;
@@ -5406,7 +5407,7 @@ namespace 码垛机
             BF.sendbuf[5] = 0x01;
             BF.sendbuf[6] = 0xF5;
             SendMenuCommand(BF.sendbuf, 7);
-            MessageBox.Show("码盘2码垛完成,请移走!", "警告");
+            MessageBox.Show("码盘2码垛完成,请更换码盘!", "警告",MessageBoxButtons.OK,MessageBoxIcon.Information);
             count2 = count22 = count23 = count24 = 0;
             width2 = width22 = width23 = width24 = 1000;
             length2 = length22 = length23 = length24 = 1200;           
@@ -5422,7 +5423,7 @@ namespace 码垛机
             BF.sendbuf[5] = 0x01;
             BF.sendbuf[6] = 0xF5;
             SendMenuCommand(BF.sendbuf, 7);
-            MessageBox.Show("码盘3码垛完成,请移走!", "警告");
+            MessageBox.Show("码盘3码垛完成,请更换码盘!", "警告",MessageBoxButtons.OK,MessageBoxIcon.Information);
             count3 = count32 = count33 = count34 = 0;
             width3 = width32 = width33 = width34 = 1000;
             length3 = length32 = length33 = length34 = 1200;

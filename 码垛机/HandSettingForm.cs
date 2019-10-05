@@ -839,7 +839,7 @@ namespace 码垛机
                 return;
             }
             int n = Convert.ToInt32(textBox3.Text);
-            if(n > 0)
+            if(n >= 1)
             {
                 textBox3.Text = (n - 1).ToString();
             }            
@@ -865,7 +865,7 @@ namespace 码垛机
                 return;
             }
             int n = Convert.ToInt32(textBox4.Text);
-            if (n > 0)
+            if (n >= 1)
             {
                 textBox4.Text = (n - 1).ToString();
             }
@@ -891,7 +891,7 @@ namespace 码垛机
                 return;
             }
             int n = Convert.ToInt32(textBox16.Text);
-            if (n > 0)
+            if (n >= 1)
             {
                 textBox16.Text = (n - 1).ToString();
             }
@@ -917,7 +917,7 @@ namespace 码垛机
                 return;
             }
             int n = Convert.ToInt32(textBox15.Text);
-            if (n > 0)
+            if (n >= 1)
             {
                 textBox15.Text = (n - 1).ToString();
             }
@@ -1101,7 +1101,16 @@ namespace 码垛机
 
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
-
+            if (textBox3.Text == "")
+            {
+                return;
+            }
+            int n = Convert.ToInt32(textBox3.Text);
+            if (n > 100)
+            {
+                MessageBox.Show("请输入100以内的数","警告",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                textBox3.Text = "";
+            }
         }
 
         private void textBox6_TextChanged(object sender, EventArgs e)
@@ -1232,6 +1241,48 @@ namespace 码垛机
             BF.sendbuf[4] = 0x04;
             BF.sendbuf[5] = 0xF5;
             SendMenuCommand(BF.sendbuf, 6);
+        }
+
+        private void textBox16_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox16.Text == "")
+            {
+                return;
+            }
+            int n = Convert.ToInt32(textBox16.Text);
+            if (n > 100)
+            {
+                MessageBox.Show("请输入100以内的数", "警告",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                textBox16.Text = "";
+            }
+        }
+
+        private void textBox12_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox12.Text == "")
+            {
+                return;
+            }
+            int n = Convert.ToInt32(textBox12.Text);
+            if (n > 100)
+            {
+                MessageBox.Show("请输入100以内的数", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                textBox12.Text = "";
+            }
+        }
+
+        private void textBox8_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox8.Text == "")
+            {
+                return;
+            }
+            int n = Convert.ToInt32(textBox8.Text);
+            if (n > 100)
+            {
+                MessageBox.Show("请输入100以内的数", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                textBox8.Text = "";
+            }
         }
     }
 }

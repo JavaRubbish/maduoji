@@ -34,7 +34,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.clr_btn = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -82,34 +81,24 @@
             this.label4.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label4.Location = new System.Drawing.Point(555, 3);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(514, 45);
+            this.label4.Size = new System.Drawing.Size(628, 45);
             this.label4.TabIndex = 3;
             this.label4.Text = "描述";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // clr_btn
             // 
             this.clr_btn.BackColor = System.Drawing.Color.CornflowerBlue;
             this.clr_btn.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.clr_btn.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.clr_btn.Location = new System.Drawing.Point(970, 6);
+            this.clr_btn.Location = new System.Drawing.Point(1101, 6);
             this.clr_btn.Name = "clr_btn";
             this.clr_btn.Size = new System.Drawing.Size(75, 36);
             this.clr_btn.TabIndex = 4;
             this.clr_btn.Text = "清除";
             this.clr_btn.UseVisualStyleBackColor = false;
             this.clr_btn.Click += new System.EventHandler(this.clr_btn_Click);
-            // 
-            // button1
-            // 
-            this.button1.BackColor = System.Drawing.Color.CornflowerBlue;
-            this.button1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.button1.Location = new System.Drawing.Point(1097, 2);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(86, 45);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "◀ 上一页";
-            this.button1.UseVisualStyleBackColor = false;
             // 
             // listView1
             // 
@@ -121,6 +110,7 @@
             this.columnHeader2,
             this.columnHeader3,
             this.columnHeader4});
+            this.listView1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(34, 54);
             this.listView1.Name = "listView1";
@@ -138,13 +128,13 @@
             // 
             this.columnHeader2.Text = "Time";
             this.columnHeader2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.columnHeader2.Width = 147;
+            this.columnHeader2.Width = 246;
             // 
             // columnHeader3
             // 
             this.columnHeader3.Text = "CurrentValue";
             this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.columnHeader3.Width = 157;
+            this.columnHeader3.Width = 276;
             // 
             // columnHeader4
             // 
@@ -160,7 +150,6 @@
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1218, 500);
             this.Controls.Add(this.listView1);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.clr_btn);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -183,7 +172,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button clr_btn;
-        private System.Windows.Forms.Button button1;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader columnHeader1;

@@ -502,7 +502,7 @@
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(136, 61);
             this.button14.TabIndex = 7;
-            this.button14.Text = "回 零";
+            this.button14.Text = "回  零";
             this.button14.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.button14.UseVisualStyleBackColor = true;
             this.button14.Click += new System.EventHandler(this.button14_Click);
@@ -814,6 +814,7 @@
             this.textBox8.TabIndex = 5;
             this.textBox8.Text = "8";
             this.textBox8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox8.TextChanged += new System.EventHandler(this.textBox8_TextChanged);
             // 
             // label11
             // 
@@ -1077,6 +1078,7 @@
             this.textBox12.TabIndex = 5;
             this.textBox12.Text = "15";
             this.textBox12.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox12.TextChanged += new System.EventHandler(this.textBox12_TextChanged);
             // 
             // label17
             // 
@@ -1313,6 +1315,7 @@
             this.textBox16.TabIndex = 5;
             this.textBox16.Text = "20";
             this.textBox16.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox16.TextChanged += new System.EventHandler(this.textBox16_TextChanged);
             // 
             // label23
             // 

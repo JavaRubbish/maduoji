@@ -39,7 +39,7 @@ namespace 码垛机
 
             ((Form)sender).Tag = ((Form)sender).Width.ToString() + "," + ((Form)sender).Height;
 
-            // this.label1.Font = new System.Drawing.Font("黑体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.listView1.Font = new System.Drawing.Font("黑体", 9F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             foreach (Control control in ((Form)sender).Controls)
             {
                 control.Scale(new SizeF(width, heigth));
@@ -74,7 +74,7 @@ namespace 码垛机
             lvi.SubItems.Add(desc);
             listView1.Items.Add(lvi);
 
-            MessageBox.Show(desc,"警告");
+            MessageBox.Show(desc,"错误",MessageBoxButtons.OK,MessageBoxIcon.Error);
 
             WriteToTxt();
 
@@ -98,7 +98,7 @@ namespace 码垛机
             
             CheckForIllegalCrossThreadCalls = false;            
 
-            MessageBox.Show(desc,"警告");
+            MessageBox.Show(desc,"错误",MessageBoxButtons.OK,MessageBoxIcon.Error);
 
             WriteToTxt2(datalist);
 
@@ -183,10 +183,10 @@ namespace 码垛机
         /// <summary>
         /// 从txt文件读历史报警信息
         /// </summary>
-        private void ReadFromTxt()
+        public void ReadFromTxt()
         {
             //string fname = "C:\\Users\\John\\source\\repos\\码垛机\\码垛机\\bin\\Debug\\alarmhis.txt";
-            string fname = "C:\\码垛机\\码垛机\\bin\\Debug\\alarmhis.txt";
+            string fname = "D:\\C#Project\\码垛机2.0\\码垛机\\bin\\Debug\\alarmhis.txt";
             if (!System.IO.File.Exists(fname))
             {
                 return;
@@ -217,6 +217,11 @@ namespace 码垛机
         private void AlarmHistoryForm_Load(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Maximized;
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

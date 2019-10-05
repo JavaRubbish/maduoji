@@ -13,6 +13,8 @@ namespace 码垛机
 {
     public partial class HistoryDataForm : Form
     {
+        public static int dec = -1;
+        public static int inc = 1;
         public HistoryDataForm()
         {
             SetStyle(
@@ -38,7 +40,16 @@ namespace 码垛机
 
             ((Form)sender).Tag = ((Form)sender).Width.ToString() + "," + ((Form)sender).Height;
 
-            // this.label1.Font = new System.Drawing.Font("黑体", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.day_btn.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.mon_btn.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.year_btn.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.total_btn.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.dateTimePicker1.Font = new System.Drawing.Font("微软雅黑", 9F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.label2.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.label3.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.label4.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.lastpg_btn.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.nextpg_btn.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             foreach (Control control in ((Form)sender).Controls)
             {
                 control.Scale(new SizeF(width, heigth));
@@ -135,6 +146,8 @@ namespace 码垛机
         /// </summary>
         public void ReadFromFile(string filepath)
         {
+            //先清空每一行数据，否则多个日期的数据都会写到一个表里
+            dataGridView1.Rows.Clear();
             //string fname = "C:\\Users\\John\\source\\repos\\码垛机\\码垛机\\bin\\Debug\\alarmhis.txt";
             if (!System.IO.File.Exists(filepath))
             {
@@ -158,7 +171,7 @@ namespace 码垛机
                     dataGridView1.Rows[index].Cells[2].Value = vitems[4 * i + 2];
                     dataGridView1.Rows[index].Cells[3].Value = vitems[4 * i + 3];
                 }
-
+                label4.Text = totalNum().ToString();
             }
             sr.Close();//读完一定要关闭流，否则会和上面的写进程冲突
 
@@ -176,6 +189,66 @@ namespace 码垛机
                 sum += int.Parse((string)dataGridView1.Rows[i].Cells[3].Value);
             }
             return sum;
+        }
+
+        private void day_btn_Click(object sender, EventArgs e)
+        {
+            this.day_btn.BackColor = Color.Yellow;
+            this.mon_btn.BackColor = Color.Cornsilk;
+            this.year_btn.BackColor = Color.Cornsilk;
+        }
+
+        private void mon_btn_Click(object sender, EventArgs e)
+        {
+            this.day_btn.BackColor = Color.Cornsilk;
+            this.mon_btn.BackColor = Color.Yellow;
+            this.year_btn.BackColor = Color.Cornsilk;
+        }
+
+        private void year_btn_Click(object sender, EventArgs e)
+        {
+            this.day_btn.BackColor = Color.Cornsilk;
+            this.mon_btn.BackColor = Color.Cornsilk;
+            this.year_btn.BackColor = Color.Yellow;
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void lastpg_btn_Click(object sender, EventArgs e)
+        {
+            
+            DateTime dt = DateTime.Now.AddDays(dec).Date;
+            if (dec == 0)
+            {
+                dt = DateTime.Now;
+            }
+            string fname = "D:\\C#Project\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
+            ReadFromFile(fname);
+            dec--;
+            inc--;
+        }
+
+        private void nextpg_btn_Click(object sender, EventArgs e)
+        {
+            DateTime dt = DateTime.Now.AddDays(inc).Date;
+            if (inc == 0)
+            {
+                dt = DateTime.Now;
+            }
+            string fname = "D:\\C#Project\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
+            ReadFromFile(fname);
+            inc++;
+            dec++;
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            DateTime dt = dateTimePicker1.Value;
+            string fname = "D:\\C#Project\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
+            ReadFromFile(fname);
         }
     }
 }

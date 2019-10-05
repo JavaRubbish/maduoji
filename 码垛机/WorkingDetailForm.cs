@@ -225,17 +225,28 @@ namespace 码垛机
         /// <param name="e"></param>
         private void str_btn_Click(object sender, EventArgs e)
         {
+            string str = textBox1.Text;
+            if (str == "")
+            {
+                return;
+            }
+            int id = Convert.ToInt32(str);
+            byte[] iByte = toBytes.intToBytes(id);//4位
             lock (locker)
             {
                 while (!isReceived1)
                 {
                     Thread.Sleep(500);
                     BF.sendbuf[0] = 0xFA;
-                    BF.sendbuf[1] = 0x02;
+                    BF.sendbuf[1] = 0x06;
                     BF.sendbuf[2] = 0x0D;
                     BF.sendbuf[3] = 0x01;
-                    BF.sendbuf[4] = 0xF5;
-                    SendMenuCommand(BF.sendbuf, 5);
+                    BF.sendbuf[4] = iByte[3];
+                    BF.sendbuf[5] = iByte[2];
+                    BF.sendbuf[6] = iByte[1];
+                    BF.sendbuf[7] = iByte[0];
+                    BF.sendbuf[8] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 9);
                     Thread.Sleep(500);
                 }
                 isReceived1 = false;

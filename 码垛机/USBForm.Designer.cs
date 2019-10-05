@@ -43,10 +43,10 @@
             this.panel1.Controls.Add(this.usbbutton);
             this.panel1.Controls.Add(this.usblabel);
             this.panel1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.panel1.Location = new System.Drawing.Point(12, 12);
+            this.panel1.Location = new System.Drawing.Point(17, 2);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1219, 648);
+            this.panel1.Size = new System.Drawing.Size(1219, 659);
             this.panel1.TabIndex = 0;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
@@ -65,12 +65,15 @@
             // usbbutton
             // 
             this.usbbutton.BackColor = System.Drawing.Color.LightCyan;
+            this.usbbutton.Image = ((System.Drawing.Image)(resources.GetObject("usbbutton.Image")));
+            this.usbbutton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.usbbutton.Location = new System.Drawing.Point(276, 276);
             this.usbbutton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.usbbutton.Name = "usbbutton";
             this.usbbutton.Size = new System.Drawing.Size(197, 75);
             this.usbbutton.TabIndex = 1;
             this.usbbutton.Text = "拷贝今日数据";
+            this.usbbutton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.usbbutton.UseVisualStyleBackColor = false;
             this.usbbutton.Click += new System.EventHandler(this.usbbutton_Click);
             // 
