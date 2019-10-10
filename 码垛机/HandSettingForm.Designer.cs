@@ -530,7 +530,6 @@
             this.panelX.Name = "panelX";
             this.panelX.Size = new System.Drawing.Size(1217, 439);
             this.panelX.TabIndex = 9;
-            this.panelX.Paint += new System.Windows.Forms.PaintEventHandler(this.panelX_Paint);
             // 
             // panelZ
             // 
@@ -542,7 +541,6 @@
             this.panelZ.Name = "panelZ";
             this.panelZ.Size = new System.Drawing.Size(1217, 439);
             this.panelZ.TabIndex = 10;
-            this.panelZ.Paint += new System.Windows.Forms.PaintEventHandler(this.panelZ_Paint);
             // 
             // panel6
             // 
@@ -577,7 +575,7 @@
             this.button16.Name = "button16";
             this.button16.Size = new System.Drawing.Size(136, 61);
             this.button16.TabIndex = 7;
-            this.button16.Text = "回零";
+            this.button16.Text = "回  零";
             this.button16.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.button16.UseVisualStyleBackColor = true;
             this.button16.Click += new System.EventHandler(this.button16_Click);
@@ -611,7 +609,6 @@
             this.textBox6.TabIndex = 4;
             this.textBox6.Text = "500";
             this.textBox6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox6.TextChanged += new System.EventHandler(this.textBox6_TextChanged);
             // 
             // label7
             // 
@@ -1133,7 +1130,7 @@
             this.button26.Name = "button26";
             this.button26.Size = new System.Drawing.Size(136, 61);
             this.button26.TabIndex = 7;
-            this.button26.Text = "回零";
+            this.button26.Text = "回  零";
             this.button26.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.button26.UseVisualStyleBackColor = true;
             this.button26.Click += new System.EventHandler(this.button26_Click);
@@ -1148,7 +1145,6 @@
             this.panelO.Name = "panelO";
             this.panelO.Size = new System.Drawing.Size(1217, 439);
             this.panelO.TabIndex = 12;
-            this.panelO.Paint += new System.Windows.Forms.PaintEventHandler(this.panelO_Paint);
             // 
             // panel14
             // 
@@ -1183,7 +1179,7 @@
             this.button36.Name = "button36";
             this.button36.Size = new System.Drawing.Size(136, 61);
             this.button36.TabIndex = 7;
-            this.button36.Text = "回零";
+            this.button36.Text = "回  零";
             this.button36.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.button36.UseVisualStyleBackColor = true;
             this.button36.Click += new System.EventHandler(this.button36_Click);

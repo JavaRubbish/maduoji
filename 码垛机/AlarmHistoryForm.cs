@@ -186,7 +186,7 @@ namespace 码垛机
         public void ReadFromTxt()
         {
             //string fname = "C:\\Users\\John\\source\\repos\\码垛机\\码垛机\\bin\\Debug\\alarmhis.txt";
-            string fname = "D:\\C#Project\\码垛机2.0\\码垛机\\bin\\Debug\\alarmhis.txt";
+            string fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\alarmhis.txt";
             if (!System.IO.File.Exists(fname))
             {
                 return;

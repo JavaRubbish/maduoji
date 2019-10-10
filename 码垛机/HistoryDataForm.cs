@@ -77,12 +77,20 @@ namespace 码垛机
         public void InsertIntoTable(string str1,string str2,string str3)
         {
             CheckForIllegalCrossThreadCalls = false;
+            DateTime dt = DateTime.Now;
+            //写进日文件夹
+            string fname1 = "historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
+            //写进月文件夹
+            string fname2 = "historydata\\month\\" + dt.ToString("yyyy-MM") + "his.txt";
+            //写进年文件夹
+            string fname3 = "historydata\\year\\" + dt.ToString("yyyy") + "his.txt";
             int temp = int.Parse(label4.Text);
             temp++;
             label4.Text = temp.ToString();
             int row = this.dataGridView1.Rows.Count;
             for (int i = 0; i < row; i++)
             {
+                
                 if ((string)this.dataGridView1.Rows[i].Cells[0].Value == str1 &&
                    (string)this.dataGridView1.Rows[i].Cells[2].Value == str3)
                 {
@@ -90,7 +98,11 @@ namespace 码垛机
                     int a = int.Parse(num);
                     a++;
                     this.dataGridView1.Rows[i].Cells[3].Value = a.ToString();
-                    WriteToDisk();
+                    
+                    
+                    WriteToDisk(fname1);
+                    WriteToDisk(fname2);
+                    WriteToDisk(fname3);
                     return;
                 }
             }
@@ -99,14 +111,17 @@ namespace 码垛机
             this.dataGridView1.Rows[index].Cells[1].Value = str2;
             this.dataGridView1.Rows[index].Cells[2].Value = str3;
             this.dataGridView1.Rows[index].Cells[3].Value = "1";
-            WriteToDisk();
+            WriteToDisk(fname1);
+            WriteToDisk(fname2);
+            WriteToDisk(fname3);
+
         }
 
         //把数据写进项目文件夹
-        public void WriteToDisk()
+        public void WriteToDisk(string fname)
         {
-            DateTime dt = DateTime.Now;
-            System.IO.StreamWriter sw = new System.IO.StreamWriter("historydata\\day\\" + dt.ToString("yyyy-MM-dd") +"his.txt", false, System.Text.Encoding.GetEncoding("gb2312"));
+            
+            System.IO.StreamWriter sw = new System.IO.StreamWriter(fname, false, System.Text.Encoding.GetEncoding("gb2312"));
             try
             {
                 int len = 0;
@@ -193,6 +208,12 @@ namespace 码垛机
 
         private void day_btn_Click(object sender, EventArgs e)
         {
+            //上下页按钮计数复位
+            dec = -1;
+            inc = 1;
+            DateTime dt = DateTime.Now;
+            string fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
+            ReadFromFile(fname);
             this.day_btn.BackColor = Color.Yellow;
             this.mon_btn.BackColor = Color.Cornsilk;
             this.year_btn.BackColor = Color.Cornsilk;
@@ -200,6 +221,11 @@ namespace 码垛机
 
         private void mon_btn_Click(object sender, EventArgs e)
         {
+            dec = -1;
+            inc = 1;
+            DateTime dt = DateTime.Now;
+            string fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\month\\" + dt.ToString("yyyy-MM") + "his.txt";
+            ReadFromFile(fname);
             this.day_btn.BackColor = Color.Cornsilk;
             this.mon_btn.BackColor = Color.Yellow;
             this.year_btn.BackColor = Color.Cornsilk;
@@ -207,6 +233,11 @@ namespace 码垛机
 
         private void year_btn_Click(object sender, EventArgs e)
         {
+            dec = -1;
+            inc = 1;
+            DateTime dt = DateTime.Now;
+            string fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\year\\" + dt.ToString("yyyy") + "his.txt";
+            ReadFromFile(fname);
             this.day_btn.BackColor = Color.Cornsilk;
             this.mon_btn.BackColor = Color.Cornsilk;
             this.year_btn.BackColor = Color.Yellow;
@@ -219,13 +250,34 @@ namespace 码垛机
 
         private void lastpg_btn_Click(object sender, EventArgs e)
         {
-            
-            DateTime dt = DateTime.Now.AddDays(dec).Date;
-            if (dec == 0)
+            string fname = null;
+            if (this.day_btn.BackColor == Color.Yellow)
             {
-                dt = DateTime.Now;
+                DateTime dt = DateTime.Now.AddDays(dec).Date;
+                if (dec == 0)
+                {
+                    dt = DateTime.Now;
+                }
+                fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
             }
-            string fname = "D:\\C#Project\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
+            if (this.mon_btn.BackColor == Color.Yellow)
+            {
+                DateTime dt = DateTime.Now.AddMonths(dec).Date;
+                if (dec == 0)
+                {
+                    dt = DateTime.Now;
+                }
+                fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\month\\" + dt.ToString("yyyy-MM") + "his.txt";
+            }
+            if (this.year_btn.BackColor == Color.Yellow)
+            {
+                DateTime dt = DateTime.Now.AddYears(dec).Date;
+                if (dec == 0)
+                {
+                    dt = DateTime.Now;
+                }
+                fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\year\\" + dt.ToString("yyyy") + "his.txt";
+            }
             ReadFromFile(fname);
             dec--;
             inc--;
@@ -233,12 +285,34 @@ namespace 码垛机
 
         private void nextpg_btn_Click(object sender, EventArgs e)
         {
-            DateTime dt = DateTime.Now.AddDays(inc).Date;
-            if (inc == 0)
+            string fname = null;
+            if (this.day_btn.BackColor == Color.Yellow)
             {
-                dt = DateTime.Now;
+                DateTime dt = DateTime.Now.AddDays(inc).Date;
+                if (inc == 0)
+                {
+                    dt = DateTime.Now;
+                }
+                fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
             }
-            string fname = "D:\\C#Project\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
+            if (this.mon_btn.BackColor == Color.Yellow)
+            {
+                DateTime dt = DateTime.Now.AddMonths(inc).Date;
+                if (inc == 0)
+                {
+                    dt = DateTime.Now;
+                }
+                fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\month\\" + dt.ToString("yyyy-MM") + "his.txt";
+            }
+            if (this.year_btn.BackColor == Color.Yellow)
+            {
+                DateTime dt = DateTime.Now.AddYears(inc).Date;
+                if (inc == 0)
+                {
+                    dt = DateTime.Now;
+                }
+                fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\year\\" + dt.ToString("yyyy") + "his.txt";
+            }
             ReadFromFile(fname);
             inc++;
             dec++;
@@ -247,7 +321,7 @@ namespace 码垛机
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
             DateTime dt = dateTimePicker1.Value;
-            string fname = "D:\\C#Project\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
+            string fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
             ReadFromFile(fname);
         }
     }

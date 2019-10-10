@@ -225,39 +225,45 @@ namespace 码垛机
         /// <param name="e"></param>
         private void str_btn_Click(object sender, EventArgs e)
         {
-            string str = textBox1.Text;
+            string str = textBox1.Text;            
             if (str == "")
             {
-                return;
+                str = "64";
             }
             int id = Convert.ToInt32(str);
-            byte[] iByte = toBytes.intToBytes(id);//4位
+            byte strNum = (byte)id;
+            //计数，发三遍指令就不卡页面了,否则卡死
+            int a = 0;
             lock (locker)
             {
-                while (!isReceived1)
+                while ((!isReceived1)&& a < 3)
                 {
                     Thread.Sleep(500);
                     BF.sendbuf[0] = 0xFA;
-                    BF.sendbuf[1] = 0x06;
+                    BF.sendbuf[1] = 0x03;
                     BF.sendbuf[2] = 0x0D;
                     BF.sendbuf[3] = 0x01;
-                    BF.sendbuf[4] = iByte[3];
-                    BF.sendbuf[5] = iByte[2];
-                    BF.sendbuf[6] = iByte[1];
-                    BF.sendbuf[7] = iByte[0];
-                    BF.sendbuf[8] = 0xF5;
-                    SendMenuCommand(BF.sendbuf, 9);
+                    BF.sendbuf[4] = strNum;
+                    BF.sendbuf[5] = 0xF5;
+                    SendMenuCommand(BF.sendbuf, 6);
                     Thread.Sleep(500);
+                    a++;
                 }
                 isReceived1 = false;
             }
         }
             
+        /// <summary>
+        /// 暂停
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void pause_btn_Click(object sender, EventArgs e)
         {
+            int a = 0;
             lock (locker)
             {
-                while (!isReceived2)
+                while ((!isReceived2) && a < 3)
                 {                                       
                     BF.sendbuf[0] = 0xFA;
                     BF.sendbuf[1] = 0x02;
@@ -265,7 +271,8 @@ namespace 码垛机
                     BF.sendbuf[3] = 0x02;
                     BF.sendbuf[4] = 0xF5;
                     SendMenuCommand(BF.sendbuf, 5);
-                    Thread.Sleep(500);               
+                    Thread.Sleep(500);
+                    a++;
                 }
                 isReceived2 = false;
             }
@@ -277,9 +284,11 @@ namespace 码垛机
         /// <param name="e"></param>
         private void button6_Click(object sender, EventArgs e)
         {
+            int a = 0;
+            int b = 0;
             lock (locker)
             {
-                while (!isReceived3)
+                while ((!isReceived3) && a < 3)
                 {                   
                     BF.sendbuf[0] = 0xFA;
                     BF.sendbuf[1] = 0x02;
@@ -287,10 +296,11 @@ namespace 码垛机
                     BF.sendbuf[3] = 0x03;
                     BF.sendbuf[4] = 0xF5;
                     SendMenuCommand(BF.sendbuf, 5);
-                    Thread.Sleep(500);                 
+                    Thread.Sleep(500);
+                    a++;
                 }
                 isReceived3 = false;
-                while (!reset)
+                while ((!reset) && b < 3)
                 {
                     BF.sendbuf[0] = 0xFA;
                     BF.sendbuf[1] = 0x02;
@@ -299,14 +309,10 @@ namespace 码垛机
                     BF.sendbuf[4] = 0xF5;
                     SendMenuCommand(BF.sendbuf, 5);
                     Thread.Sleep(500);
+                    b++;
                 }
                 reset = false;
             }                   
-        }
-
-        private void label18_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void panel6_Paint(object sender, PaintEventArgs e)
@@ -345,34 +351,18 @@ namespace 码垛机
             }
         }
 
-        private void label13_Click(object sender, EventArgs e)
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
-
-        }
-
-        private void label22_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panel5_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void label14_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label15_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
+            if (textBox1.Text.Equals(""))
+            {
+                return;
+            }
+            int a = int.Parse(textBox1.Text);
+            if (a > 100)
+            {
+                MessageBox.Show("请输入0-100的整数", "警告",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+            }
         }
     }
 }

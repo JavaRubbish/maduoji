@@ -53,6 +53,8 @@
             // button1
             // 
             this.button1.BackColor = System.Drawing.Color.LightSalmon;
+            this.button1.FlatAppearance.BorderSize = 0;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Location = new System.Drawing.Point(301, 485);
             this.button1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button1.Name = "button1";
@@ -65,6 +67,8 @@
             // usbbutton
             // 
             this.usbbutton.BackColor = System.Drawing.Color.LightCyan;
+            this.usbbutton.FlatAppearance.BorderSize = 0;
+            this.usbbutton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.usbbutton.Image = ((System.Drawing.Image)(resources.GetObject("usbbutton.Image")));
             this.usbbutton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.usbbutton.Location = new System.Drawing.Point(276, 276);
@@ -82,7 +86,7 @@
             this.usblabel.AutoSize = true;
             this.usblabel.BackColor = System.Drawing.Color.Transparent;
             this.usblabel.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.usblabel.Location = new System.Drawing.Point(297, 160);
+            this.usblabel.Location = new System.Drawing.Point(277, 149);
             this.usblabel.Name = "usblabel";
             this.usblabel.Size = new System.Drawing.Size(252, 20);
             this.usblabel.TabIndex = 0;

@@ -69,7 +69,6 @@ namespace 码垛机
             foreach (Control control in ((Form)sender).Controls)
             {
                 control.Scale(new SizeF(width, heigth));
-                //control.Font = new Font(control.Font.FontFamily,12 * width,control.Font.Style);
             }
         }
         /// <summary>
@@ -121,7 +120,7 @@ namespace 码垛机
             hf.TopLevel = false;
             panel1.Controls.Add(hf);
             DateTime dt = DateTime.Now;
-            string fname = "D:\\C#Project\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
+            string fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
             hf.ReadFromFile(fname);
 
 
@@ -132,7 +131,7 @@ namespace 码垛机
             hsf = new HandSettingForm();
             hsf.Hide();
             //默认使用端口3，波特率9600
-            initCommPara(sp, "COM3", 9600);
+            initCommPara(sp, "COM7", 9600);
            // initCommPara2(sp2, "COM4", 9600);
 
             timer2.Interval = 1000;
@@ -172,7 +171,7 @@ namespace 码垛机
             HistoryDataForm.dec = -1;
             HistoryDataForm.inc = 1;
             DateTime dt = DateTime.Now;
-            string fname = "D:\\C#Project\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
+            string fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
             hf.ReadFromFile(fname);
 
 
@@ -317,7 +316,7 @@ namespace 码垛机
             {
                 if (!sp.IsOpen)
                 {
-                    initCommPara(sp, "COM3", 9600);
+                    initCommPara(sp, "COM7", 9600);
                 }
                 sp.Write(command, 0, len);
             }
@@ -402,24 +401,24 @@ namespace 码垛机
         public static ArrayList usbList = new ArrayList();
 
 
-        //计算挡板下落时间        
-        public static void DropTime()
-        {
-            Thread.CurrentThread.Priority = ThreadPriority.Normal;
-            int sec = (int)larrayList[0] * 100 / 500;
-            byte[] secbyte = toBytes.intToBytes(sec);
-            BF.sendbuf[0] = 0xFA;
-            BF.sendbuf[1] = 0x06;
-            BF.sendbuf[2] = 0x0E;
-            BF.sendbuf[3] = 0x06;
-            BF.sendbuf[4] = secbyte[3];
-            BF.sendbuf[5] = secbyte[2];
-            BF.sendbuf[6] = secbyte[1];
-            BF.sendbuf[7] = secbyte[0];
-            BF.sendbuf[8] = 0xF5;
-            SendMenuCommand(BF.sendbuf, 9);
-            larrayList.RemoveAt(0);
-        }
+        ////计算挡板下落时间        
+        //public static void DropTime()
+        //{
+        //    Thread.CurrentThread.Priority = ThreadPriority.Normal;
+        //    //int sec = (int)larrayList[0] * 100 / 500;
+        //    byte[] secbyte = toBytes.intToBytes(100);//有问题
+        //    BF.sendbuf[0] = 0xFA;
+        //    BF.sendbuf[1] = 0x06;
+        //    BF.sendbuf[2] = 0x0E;
+        //    BF.sendbuf[3] = 0x06;
+        //    BF.sendbuf[4] = secbyte[3];
+        //    BF.sendbuf[5] = secbyte[2];
+        //    BF.sendbuf[6] = secbyte[1];
+        //    BF.sendbuf[7] = secbyte[0];
+        //    BF.sendbuf[8] = 0xF5;
+        //    SendMenuCommand(BF.sendbuf, 9);
+        //    larrayList.RemoveAt(0);
+        //}
 
 
 
@@ -485,6 +484,8 @@ namespace 码垛机
         public static ArrayList arrayList = new ArrayList();
         //存放扫码得到的纸箱长度，以计算挡板下放时间
         public static ArrayList larrayList = new ArrayList();
+        //缓存扫到的条码信息
+        public static ArrayList bufarrayList = new ArrayList();
         //定义用于存放坐标的数组
         public static ArrayList cdarrayList = new ArrayList();
         public static ArrayList cdarrayList2 = new ArrayList();
@@ -5475,7 +5476,7 @@ namespace 码垛机
             Thread thread = new Thread(new ThreadStart(GetCoordinate));
             thread.IsBackground = true;
             thread.Priority = ThreadPriority.Lowest;
-            //thread.Start();
+            thread.Start();
         }
         public static object locker = new object();
         public static void GetCoordinate()
@@ -5631,8 +5632,8 @@ namespace 码垛机
             string str = null;
             str = sp2.ReadExisting();
             if (str != null)
-            {   
-                
+            {
+
                 ////sap通讯获取条码详细信息
                 //PackageInfo packageInfo = new PackageInfo();
                 //packageInfo = WebServiceRq.GetPackinfoFromWeb(str);
@@ -5644,6 +5645,9 @@ namespace 码垛机
                 //l = int.Parse(packageInfo.Laeng);
                 //w = int.Parse(packageInfo.Breit);
                 //h = int.Parse(packageInfo.Hoehe);
+                //bufarrayList.Add(l);
+                //bufarrayList.Add(w);
+                //bufarrayList.Add(h);
                 //ScannerGun();
                 //str = null;
 
@@ -5716,6 +5720,21 @@ namespace 码垛机
                 int z_value;
                 int y_value;
                 int o_value;
+
+                //收到指令则从缓存中依此读数据下发
+                if (binary_data_1[2] == 0xBB)
+                {
+                    if (bufarrayList.Count != 0)
+                    {
+                        l = (int)bufarrayList[0];
+                        w = (int)bufarrayList[1];
+                        h = (int)bufarrayList[2];
+                        ScannerGun();
+                        bufarrayList.RemoveRange(0, 3);
+                    }
+                    return;
+                }
+
 
                 //下发指令的应答
                 if (binary_data_1[2] == 0x0D)
@@ -5812,15 +5831,10 @@ namespace 码垛机
                 if ((binary_data_1[1] == 0x02) && (binary_data_1[2] == 0x10))
                 {
                     int a = Convert.ToInt32(Convert.ToString(binary_data_1[3], 16), 16);
-                    //四轴回零查询
-                    if ((a & 1) == 1 && ((a & (1 << 1)) >> 1) == 1 && ((a & (1 << 2)) >> 2) == 1 && ((a & (1 << 3)) >> 3) == 1)
-                    {
-                        WorkingDetailForm.reset = true;
-                        MessageBox.Show("已经回零","提示");
-                    }
-                    //单轴回零查询
+                    //回零查询
                     if ((a & 1) == 1 || ((a & (1 << 1)) >> 1) == 1 || ((a & (1 << 2)) >> 2) == 1 || ((a & (1 << 3)) >> 3) == 1)
                     {
+                        WorkingDetailForm.reset = true;
                         HandSettingForm.huilingflag = false;
                         MessageBox.Show("已经回零","提示");
                     }
@@ -5828,13 +5842,13 @@ namespace 码垛机
                 }
 
                 //确认下位机收到停止指令
-                if ((binary_data_1[2] == 0x0A) && (binary_data_1[3] == 0x03))
+                if ((binary_data_1[2] == 0x0A) && (binary_data_1[3] == 0x05))
                 {
                     HandSettingForm.stoped = true;
                 }
 
-                    //模拟收到的纸箱数据
-                    if ((binary_data_1[1] == 0x0D) && (binary_data_1[2] == 0XAA))
+                //模拟收到的纸箱数据
+                if ((binary_data_1[1] == 0x0D) && (binary_data_1[2] == 0XAA))
                 {
                     var myByteArray1 = new byte[4];
                     var myByteArray2 = new byte[4];
@@ -5865,7 +5879,7 @@ namespace 码垛机
                     w = y_value;
                     h = z_value;
 
-                    hf.InsertIntoTable("89757","聚乙烯/本名纳","0A001");
+                    hf.InsertIntoTable("89757","CBA/NCAA","0A002");
 
                     larrayList.Add(l);
                     xinlei = false;
@@ -5931,7 +5945,7 @@ namespace 码垛机
                     if ((a & 1) == 1)
                     {
                         wdf.GetTotalNum(++totalNum);
-                        DropTime();
+                       // DropTime();
                         return;
                     }
                     //第一位置1,表示木箱
@@ -5965,6 +5979,14 @@ namespace 码垛机
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void HomeForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (sp.IsOpen)
+            {
+                sp.Close();
+            }            
         }
     }
 }

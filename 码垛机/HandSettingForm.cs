@@ -430,10 +430,6 @@ namespace 码垛机
             SendMenuCommand(BF.sendbuf, 11);
         }
 
-        private void panelX_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
         /// <summary>
         /// O轴连动左移
         /// </summary>
@@ -531,10 +527,6 @@ namespace 码垛机
             SendMenuCommand(BF.sendbuf, 11);
         }
 
-        private void panelO_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
         /// <summary>
         /// Y轴连动左移
         /// </summary>
@@ -1113,22 +1105,14 @@ namespace 码垛机
             }
         }
 
-        private void textBox6_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panelZ_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
 
         //X轴停止
         private void button1_Click(object sender, EventArgs e)
         {
+            int a = 0;
             lock (locker)
             {
-                while (!stoped)
+                while ((!stoped) && a < 3)
                 {
                     BF.sendbuf[0] = 0xFA;
                     BF.sendbuf[1] = 0x03;
@@ -1138,7 +1122,9 @@ namespace 码垛机
                     BF.sendbuf[5] = 0xF5;
                     SendMenuCommand(BF.sendbuf, 6);
                     Thread.Sleep(300);
+                    a++;
                 }
+                stoped = false;
             }
             
         }
@@ -1156,9 +1142,10 @@ namespace 码垛机
         //O轴停止
         private void button3_Click(object sender, EventArgs e)
         {
+            int a = 0;
             lock (locker)
             {
-                while (!stoped)
+                while ((!stoped) && a < 3)
                 {
                     BF.sendbuf[0] = 0xFA;
                     BF.sendbuf[1] = 0x03;
@@ -1168,7 +1155,9 @@ namespace 码垛机
                     BF.sendbuf[5] = 0xF5;
                     SendMenuCommand(BF.sendbuf, 6);
                     Thread.Sleep(300);
+                    a++;
                 }
+                stoped = false;
             }
         }
 
@@ -1186,9 +1175,10 @@ namespace 码垛机
         //Y轴停止
         private void button45_Click(object sender, EventArgs e)
         {
+            int a = 0;
             lock (locker)
             {
-                while (!stoped)
+                while ((!stoped) && a < 3)
                 {
                     BF.sendbuf[0] = 0xFA;
                     BF.sendbuf[1] = 0x03;
@@ -1198,7 +1188,9 @@ namespace 码垛机
                     BF.sendbuf[5] = 0xF5;
                     SendMenuCommand(BF.sendbuf, 6);
                     Thread.Sleep(300);
+                    a++;
                 }
+                stoped = false;
             }
         }
 
@@ -1216,9 +1208,10 @@ namespace 码垛机
         //Z轴停止
         private void button47_Click(object sender, EventArgs e)
         {
+            int a = 0;
             lock (locker)
             {
-                while (!stoped)
+                while ((!stoped) && a < 3)
                 {
                     BF.sendbuf[0] = 0xFA;
                     BF.sendbuf[1] = 0x03;
@@ -1228,7 +1221,9 @@ namespace 码垛机
                     BF.sendbuf[5] = 0xF5;
                     SendMenuCommand(BF.sendbuf, 6);
                     Thread.Sleep(300);
+                    a++;
                 }
+                stoped = false;
             }
         }
 

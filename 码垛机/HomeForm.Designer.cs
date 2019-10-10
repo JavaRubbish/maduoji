@@ -189,6 +189,7 @@
             this.MinimumSize = new System.Drawing.Size(1259, 716);
             this.Name = "HomeForm";
             this.Text = "工作界面";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.HomeForm_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();

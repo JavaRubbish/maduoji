@@ -29,8 +29,7 @@ namespace 码垛机
 
         public static DateTime dt = DateTime.Now;
         string destPath = null;
-        //string sourcePath = "C:\\Users\\John\\source\\repos\\码垛机\\码垛机\\bin\\Debug\\";
-        string sourcePath = "C:\\码垛机\\码垛机\\bin\\Debug\\todayUSBdata\\";
+        string sourcePath = "D:\\C#Project\\码垛机2.0\\码垛机\\bin\\Debug\\todayUSBdata\\";
         string fileName = dt.ToString("yyyy-MM-dd") + "info.txt";
         public USBForm()
         {
@@ -146,6 +145,11 @@ namespace 码垛机
         {
             try
             {
+                if (destPath == null)
+                {
+                    MessageBox.Show("未识别到U盘，请重新插入!","错误");
+                    return;
+                }
                 File.Copy(System.IO.Path.Combine(sourcePath, fileName), System.IO.Path.Combine(destPath, fileName));
                 MessageBox.Show("文件写入成功！");
             }

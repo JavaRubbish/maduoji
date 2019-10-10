@@ -74,6 +74,7 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(528, 238);
             this.panel1.TabIndex = 0;
+           
             // 
             // label1
             // 
@@ -142,6 +143,7 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(592, 238);
             this.panel3.TabIndex = 2;
+           
             // 
             // label3
             // 
@@ -214,13 +216,13 @@
             this.label18.Size = new System.Drawing.Size(23, 25);
             this.label18.TabIndex = 7;
             this.label18.Text = "0";
-            this.label18.Click += new System.EventHandler(this.label18_Click);
+           
             // 
             // label17
             // 
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label17.Location = new System.Drawing.Point(61, 186);
+            this.label17.Location = new System.Drawing.Point(60, 186);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(46, 25);
             this.label17.TabIndex = 6;
@@ -245,7 +247,6 @@
             this.label15.Size = new System.Drawing.Size(43, 25);
             this.label15.TabIndex = 4;
             this.label15.Text = "Z轴";
-            this.label15.Click += new System.EventHandler(this.label15_Click);
             // 
             // label14
             // 
@@ -256,7 +257,6 @@
             this.label14.Size = new System.Drawing.Size(23, 25);
             this.label14.TabIndex = 3;
             this.label14.Text = "0";
-            this.label14.Click += new System.EventHandler(this.label14_Click);
             // 
             // label13
             // 
@@ -267,7 +267,6 @@
             this.label13.Size = new System.Drawing.Size(43, 25);
             this.label13.TabIndex = 2;
             this.label13.Text = "X轴";
-            this.label13.Click += new System.EventHandler(this.label13_Click);
             // 
             // label12
             // 
@@ -294,7 +293,6 @@
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(357, 238);
             this.panel5.TabIndex = 0;
-            this.panel5.Paint += new System.Windows.Forms.PaintEventHandler(this.panel5_Paint);
             // 
             // label4
             // 
@@ -305,7 +303,6 @@
             this.label4.Size = new System.Drawing.Size(117, 25);
             this.label4.TabIndex = 32;
             this.label4.Text = "启动速度(%)";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // textBox1
             // 
@@ -313,6 +310,8 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(91, 25);
             this.textBox1.TabIndex = 31;
+            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // clr_btn4
             // 
@@ -375,7 +374,6 @@
             this.label22.Size = new System.Drawing.Size(45, 25);
             this.label22.TabIndex = 4;
             this.label22.Text = "666";
-            this.label22.Click += new System.EventHandler(this.label22_Click);
             // 
             // label21
             // 
@@ -383,9 +381,9 @@
             this.label21.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label21.Location = new System.Drawing.Point(58, 18);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(80, 25);
+            this.label21.Size = new System.Drawing.Size(88, 25);
             this.label21.TabIndex = 3;
-            this.label21.Text = "总     计";
+            this.label21.Text = "今日总计";
             // 
             // WorkingDetailForm
             // 
