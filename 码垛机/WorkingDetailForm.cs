@@ -277,19 +277,22 @@ namespace 码垛机
                 isReceived2 = false;
             }
         }
-        /// <summary>
-        /// 回零
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button6_Click(object sender, EventArgs e)
+
+        public static void ResetThread()
+        {
+            Thread thread = new Thread(new ThreadStart(ResetPos));
+            thread.IsBackground = true;
+            thread.Priority = ThreadPriority.Lowest;
+            thread.Start();
+        }
+
+        public static void ResetPos()
         {
             int a = 0;
-            int b = 0;
             lock (locker)
             {
                 while ((!isReceived3) && a < 3)
-                {                   
+                {
                     BF.sendbuf[0] = 0xFA;
                     BF.sendbuf[1] = 0x02;
                     BF.sendbuf[2] = 0x0D;
@@ -300,19 +303,59 @@ namespace 码垛机
                     a++;
                 }
                 isReceived3 = false;
-                while ((!reset) && b < 3)
+                while ((!reset))
                 {
                     BF.sendbuf[0] = 0xFA;
                     BF.sendbuf[1] = 0x02;
                     BF.sendbuf[2] = 0x0E;
                     BF.sendbuf[3] = 0x04;
-                    BF.sendbuf[4] = 0xF5;
+                    BF.sendbuf[4] = 0xf5;
                     SendMenuCommand(BF.sendbuf, 5);
-                    Thread.Sleep(500);
-                    b++;
+                    Thread.Sleep(1000);
                 }
                 reset = false;
-            }                   
+            }
+        }
+
+
+        /// <summary>
+        /// 回零
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button6_Click(object sender, EventArgs e)
+        {
+            ResetThread();
+
+            //int a = 0;
+            //int b = 0;
+            //lock (locker)
+            //{
+            //    while ((!isReceived3) && a < 3)
+            //    {                   
+            //        BF.sendbuf[0] = 0xFA;
+            //        BF.sendbuf[1] = 0x02;
+            //        BF.sendbuf[2] = 0x0D;
+            //        BF.sendbuf[3] = 0x03;
+            //        BF.sendbuf[4] = 0xF5;
+            //        SendMenuCommand(BF.sendbuf, 5);
+            //        Thread.Sleep(500);
+            //        a++;
+            //    }
+            //    isReceived3 = false;
+            //    while ((!reset))
+            //    {
+            //    BF.sendbuf[0] = 0xFA;
+            //    BF.sendbuf[1] = 0x02;
+            //    BF.sendbuf[2] = 0x0E;
+            //    BF.sendbuf[3] = 0x04;
+            //    BF.sendbuf[4] = 0xf5;
+            //    SendMenuCommand(BF.sendbuf, 5);
+            //    Thread.Sleep(1000);
+            //   // b++;
+            //    }
+            //    reset = false;
+            //}                   
         }
 
         private void panel6_Paint(object sender, PaintEventArgs e)

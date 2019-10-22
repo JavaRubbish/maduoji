@@ -13,6 +13,7 @@ namespace 码垛机
     {
         private static readonly string WebServiceurl = "http://erpprd2.cnppump.com:8000/sap/bc/srt/rfc/sap/zws_zqm_stm/800/zws_zqm_stm/zqm_stm";
 
+        public static int a = 0;
         /// <summary>
         ///  从WebService接口中读取 包裹的信息
         /// </summary>
@@ -24,6 +25,7 @@ namespace 码垛机
                 return null;
 
             string strId = string.Empty;
+            // pid = "1909073152";
             // strId = "1909073152"; // debug
             string strtemp1 = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:urn=\"urn:sap-com:document:sap:soap:functions:mc-style\">" +
                               "<soapenv:Header/> " +
@@ -73,12 +75,12 @@ namespace 码垛机
             {
                 return null;
             }
-            return GetPackinfoFromWeb(res);
+            return getPackInfoFromXML(res);
         }
 
 
 
-        private PackageInfo getPackInfoFromXML(string xml)
+        static PackageInfo getPackInfoFromXML(string xml)
         {
             PackageInfo pi = new PackageInfo();
             try
