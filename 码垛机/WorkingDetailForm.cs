@@ -92,7 +92,7 @@ namespace 码垛机
 
         //工作界面回零确认标志位
         public static bool reset = false;
-
+        //3个盘的视图数组
         public static ArrayList arrayList1 = new ArrayList();
         public static ArrayList arrayList2 = new ArrayList();
         public static ArrayList arrayList3 = new ArrayList();
@@ -406,6 +406,11 @@ namespace 码垛机
             {
                 MessageBox.Show("请输入0-100的整数", "警告",MessageBoxButtons.OK,MessageBoxIcon.Warning);
             }
+        }
+
+        private void label22_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
