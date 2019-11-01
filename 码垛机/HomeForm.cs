@@ -165,7 +165,7 @@ namespace 码垛机
         public static int edge = 0;
         public static int edge2 = 0;
         //纸箱间的缝隙
-        public static int gap = 35;
+        public static int gap = 37;
         //纵向间隙
         public static int dst = 20;
         //2号码盘偏移距离
@@ -587,6 +587,7 @@ namespace 码垛机
         public static bool timeout = true;
 
         //判断是否重复扫码
+        public static ArrayList bufList = new ArrayList();
 
         public static Coordinate ZARA = new Coordinate();
         public static void CalculateCoornidateAndSend()
@@ -615,8 +616,8 @@ namespace 码垛机
                     wdf.DrawOcupyArea(0, 0, l, w);
                     //第一个箱子直接放在原点(0,0,0) 
                     //发坐标（包含挡板状态）
-                    byte[] byteX = toBytes.intToBytes(0 + (int)(l * 0.5));
-                    byte[] byteY = toBytes.intToBytes(1000 - (0 + (int)(w * 0.5)));
+                    byte[] byteX = toBytes.intToBytes(0);
+                    byte[] byteY = toBytes.intToBytes(1000);
                     byte[] byteZ = toBytes.intToBytes(0);
                     string[] status = new string[] { "0", "0", "1", "1" };
                     string status2 = string.Join("", status);
@@ -685,13 +686,13 @@ namespace 码垛机
                     if (rectangle14.length - l + edge < 360)
                     {
                         int mix = (rectangle14.length - l) / 3;
-                        byte[] byteX1 = toBytes.intToBytes(1200 - l - mix + (int)(l * 0.5));
-                        byte[] byteY1 = toBytes.intToBytes(1000 - (horizontal4.y + (int)(w * 0.5)));
+                        byte[] byteX1 = toBytes.intToBytes(1200 - l - mix);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - horizontal4.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
                         if (rectangle14.length < l)
                         {
-                            byteX1 = toBytes.intToBytes(horizontal4.x + (int)(l * 0.5));
-                            byteY1 = toBytes.intToBytes(1000 - (horizontal4.y + (int)(w * 0.5)));
+                            byteX1 = toBytes.intToBytes(horizontal4.x);
+                            byteY1 = toBytes.intToBytes(1000 - horizontal4.y);
                             byteZ1 = toBytes.intToBytes(0);
                         }
                         string[] status1 = new string[] { "0", "0", "1", "1" };
@@ -726,8 +727,8 @@ namespace 码垛机
                         return;
                     }
 
-                    byte[] byteX = toBytes.intToBytes(horizontal4.x + (int)(l * 0.5));
-                    byte[] byteY = toBytes.intToBytes(1000 - (horizontal4.y + (int)(w * 0.5)));
+                    byte[] byteX = toBytes.intToBytes(horizontal4.x);
+                    byte[] byteY = toBytes.intToBytes(1000 - horizontal4.y);
                     byte[] byteZ = toBytes.intToBytes(0);
                     string[] status = new string[] { "0", "0", "1", "1" };
                     string status2 = string.Join("", status);
@@ -764,10 +765,10 @@ namespace 码垛机
                     return;
                 }
                 //第二行第一个
-                if ((width12 + /*edge*/ 15 >= w))
+                if ((width12 + /*edge*/ 21 >= w))
                 {
                     Coordinate k13 = new Coordinate();
-                    if (width12 - w + /*edge*/ 15 < 225)
+                    if (width12 - w + /*edge*/ 21 < 225)
                     {
                         if (width12 < w)
                         {
@@ -789,16 +790,16 @@ namespace 码垛机
                         wdf.DrawOcupyArea(vertical4.x, vertical4.y, l, w);
                     }
 
-                    if (width12 - w + /*edge*/ 15 < 225)
+                    if (width12 - w + /*edge*/ 21 < 225)
                     {
                         int mix = (width12 - w) / 3;
-                        byte[] byteX1 = toBytes.intToBytes(vertical4.x + (int)(l * 0.5));
-                        byte[] byteY1 = toBytes.intToBytes(1000 - (vertical4.y + (int)(w * 0.5)));
+                        byte[] byteX1 = toBytes.intToBytes(vertical4.x);
+                        byte[] byteY1 = toBytes.intToBytes(1000 - vertical4.y);
                         byte[] byteZ1 = toBytes.intToBytes(0);
                         if (width12 > w)
                         {
-                            byteX1 = toBytes.intToBytes(vertical4.x + (int)(l * 0.5));
-                            byteY1 = toBytes.intToBytes(1000 - (1000 - w - mix + (int)(w * 0.5)));
+                            byteX1 = toBytes.intToBytes(vertical4.x);
+                            byteY1 = toBytes.intToBytes(1000 - (1000 - w - mix));
                             byteZ1 = toBytes.intToBytes(0);
                             vertical4.y = 1000 - w;
                         }
@@ -845,8 +846,8 @@ namespace 码垛机
                         return;
                     }
 
-                    byte[] byteX = toBytes.intToBytes(vertical4.x + (int)(l * 0.5));
-                    byte[] byteY = toBytes.intToBytes(1000 - (vertical4.y + (int)(w * 0.5)));
+                    byte[] byteX = toBytes.intToBytes(vertical4.x);
+                    byte[] byteY = toBytes.intToBytes(1000 - vertical4.y);
                     byte[] byteZ = toBytes.intToBytes(0);
                     string[] status = new string[] { "0", "0", "1", "1" };
                     string status2 = string.Join("", status);
@@ -899,7 +900,10 @@ namespace 码垛机
                     {
                         if((int)cdarrayList2[3*i+2] > (int)cdarrayList2[3*(i+1) + 2])
                         {
-                            continue;
+                            int sub = (int)cdarrayList2[3 * i + 2] - (int)cdarrayList2[3 * (i + 1) + 2];
+                            cdarrayList2[3 * i] = (int)cdarrayList2[3 * i] + sub;
+                            cdarrayList2[3 * i + 2] = (int)cdarrayList2[3 * i + 2] - sub;
+                            //continue;
                         }
                     }
                     if ((int)cdarrayList2[3 * i + 2] + edge >= l)
@@ -930,13 +934,13 @@ namespace 码垛机
                         if ((int)cdarrayList2[3 * i + 2] - l + edge < 360)
                         {
                             int mix = ((int)cdarrayList2[3 * i + 2] - l)/3;//修补参数，将箱子往里推进一点
-                            byte[] byteX1 = toBytes.intToBytes(1200 - l - mix + (int)(l * 0.5));
-                            byte[] byteY1 = toBytes.intToBytes(1000 - ((int)cdarrayList2[3 * i + 1] + (int)(w * 0.5)));
+                            byte[] byteX1 = toBytes.intToBytes(1200 - l - mix);
+                            byte[] byteY1 = toBytes.intToBytes(1000 - (int)cdarrayList2[3 * i + 1]);
                             byte[] byteZ1 = toBytes.intToBytes(0);
                             if ((int)cdarrayList2[3 * i + 2] < l)
                             {
-                                byteX1 = toBytes.intToBytes((int)cdarrayList2[3 * i] + (int)(l * 0.5));
-                                byteY1 = toBytes.intToBytes(1000 - ((int)cdarrayList2[3 * i + 1] + (int)(w * 0.5)));
+                                byteX1 = toBytes.intToBytes((int)cdarrayList2[3 * i]);
+                                byteY1 = toBytes.intToBytes(1000 - ((int)cdarrayList2[3 * i + 1]));
                                 byteZ1 = toBytes.intToBytes(0);
                             }
                             string[] status1 = new string[] { "0", "0", "1", "1" };
@@ -972,8 +976,8 @@ namespace 码垛机
                             return;
                         }
 
-                        byte[] byteX = toBytes.intToBytes((int)cdarrayList2[3 * i] + (int)(l * 0.5));
-                        byte[] byteY = toBytes.intToBytes(1000 - ((int)cdarrayList2[3 * i + 1] + (int)(w * 0.5)));
+                        byte[] byteX = toBytes.intToBytes((int)cdarrayList2[3 * i]);
+                        byte[] byteY = toBytes.intToBytes(1000 - ((int)cdarrayList2[3 * i + 1]));
                         byte[] byteZ = toBytes.intToBytes(0);
                         string[] status = new string[] { "0", "0", "1", "1" };
                         string status2 = string.Join("", status);
@@ -1026,8 +1030,8 @@ namespace 码垛机
 
                     //第一个箱子直接放在原点(0,0,0)
                     //发坐标（包含挡板状态）
-                    byte[] byteX = toBytes.intToBytes(0 + (int)(w * 0.5));
-                    byte[] byteY = toBytes.intToBytes(0 + (int)(l * 0.5));
+                    byte[] byteX = toBytes.intToBytes(0);
+                    byte[] byteY = toBytes.intToBytes(0);
                     byte[] byteZ = toBytes.intToBytes(280);
                     //4位分别表示挡板3、2、1状态和O轴是否旋转
                     string[] status = new string[] { "0", "0", "1", "0" };
@@ -1098,14 +1102,14 @@ namespace 码垛机
                     if ((rectangle1.length - l + edge) < 360 )
                     {
                         int mix = (rectangle1.length - l)/3;//修补距离,不完全将箱子贴边处理
-                        byte[] byteX1 = toBytes.intToBytes(vertical.x + (int)(w * 0.5));
-                        byte[] byteY1 = toBytes.intToBytes(1000 - l - mix + (int)(l * 0.5));
+                        byte[] byteX1 = toBytes.intToBytes(vertical.x );
+                        byte[] byteY1 = toBytes.intToBytes(1000 - l - mix );
                         byte[] byteZ1 = toBytes.intToBytes(280);
                         if (rectangle1.length < l)
                         {
                                
-                             byteX1 = toBytes.intToBytes(vertical.x + (int)(w * 0.5));
-                             byteY1 = toBytes.intToBytes(vertical.y + (int)(l * 0.5));
+                             byteX1 = toBytes.intToBytes(vertical.x);
+                             byteY1 = toBytes.intToBytes(vertical.y);
                              byteZ1 = toBytes.intToBytes(280);
                         }
                         string[] status1 = new string[] { "0", "0", "1", "0" };
@@ -1140,8 +1144,8 @@ namespace 码垛机
                         return;
                     }
 
-                    byte[] byteX = toBytes.intToBytes(vertical.x + (int)(w * 0.5));
-                    byte[] byteY = toBytes.intToBytes(vertical.y + (int)(l * 0.5));
+                    byte[] byteX = toBytes.intToBytes(vertical.x);
+                    byte[] byteY = toBytes.intToBytes(vertical.y);
                     byte[] byteZ = toBytes.intToBytes(280);
                     string[] status = new string[] { "0", "0", "1", "0" };
                     string status2 = string.Join("", status);
@@ -1206,13 +1210,13 @@ namespace 码垛机
                     if (length1 - w + edge < 225)
                     {
                         int mix = (length1 - w) / 3;
-                        byte[] byteX1 = toBytes.intToBytes(horizontal.x + (int)(w * 0.5));
-                        byte[] byteY1 = toBytes.intToBytes(horizontal.y + (int)(l * 0.5));
+                        byte[] byteX1 = toBytes.intToBytes(horizontal.x);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal.y);
                         byte[] byteZ1 = toBytes.intToBytes(280);
                         if (length1 > w)
                         {
-                            byteX1 = toBytes.intToBytes(1200 - w - mix + (int)(w * 0.5));
-                            byteY1 = toBytes.intToBytes(horizontal.y + (int)(l * 0.5));
+                            byteX1 = toBytes.intToBytes(1200 - w - mix);
+                            byteY1 = toBytes.intToBytes(horizontal.y);
                             byteZ1 = toBytes.intToBytes(280);
                             //让这一列上面的元素与其对齐
                             horizontal.x = 1200 - w;
@@ -1260,8 +1264,8 @@ namespace 码垛机
                         return;
                     }
 
-                    byte[] byteX = toBytes.intToBytes(horizontal.x + (int)(w * 0.5));
-                    byte[] byteY = toBytes.intToBytes(horizontal.y + (int)(l * 0.5));
+                    byte[] byteX = toBytes.intToBytes(horizontal.x );
+                    byte[] byteY = toBytes.intToBytes(horizontal.y );
                     byte[] byteZ = toBytes.intToBytes(280);
                     string[] status = new string[] { "0", "0", "1", "0" };
                     string status2 = string.Join("", status);
@@ -1338,13 +1342,13 @@ namespace 码垛机
                         if (((int)cdarrayList[3 * i + 2] - l + edge) < 360)
                         {
                             int mix = ((int)cdarrayList[3 * i + 2] - l) / 3;
-                            byte[] byteX1 = toBytes.intToBytes((int)cdarrayList[3 * i] + (int)(w * 0.5));
-                            byte[] byteY1 = toBytes.intToBytes(1000 - l - mix + (int)(l * 0.5));
+                            byte[] byteX1 = toBytes.intToBytes((int)cdarrayList[3 * i]);
+                            byte[] byteY1 = toBytes.intToBytes(1000 - l - mix);
                             byte[] byteZ1 = toBytes.intToBytes(280);
                             if ((int)cdarrayList[3 * i + 2] < l)
                             {
-                                byteX1 = toBytes.intToBytes((int)cdarrayList[3 * i] + (int)(w * 0.5));
-                                byteY1 = toBytes.intToBytes((int)cdarrayList[3 * i + 1] + (int)(l * 0.5));
+                                byteX1 = toBytes.intToBytes((int)cdarrayList[3 * i]);
+                                byteY1 = toBytes.intToBytes((int)cdarrayList[3 * i + 1]);
                                 byteZ1 = toBytes.intToBytes(280);
                             }
                             string[] status1 = new string[] { "0", "0", "1", "0" };
@@ -1380,8 +1384,8 @@ namespace 码垛机
                             return;
                         }
 
-                        byte[] byteX = toBytes.intToBytes((int)cdarrayList[3 * i] + (int)(w * 0.5));
-                        byte[] byteY = toBytes.intToBytes((int)cdarrayList[3 * i + 1] + (int)(l * 0.5));
+                        byte[] byteX = toBytes.intToBytes((int)cdarrayList[3 * i]);
+                        byte[] byteY = toBytes.intToBytes((int)cdarrayList[3 * i + 1]);
                         byte[] byteZ = toBytes.intToBytes(280);
                         string[] status = new string[] { "0", "0", "1", "0" };
                         string status2 = string.Join("", status);
@@ -1434,8 +1438,8 @@ namespace 码垛机
 
                     //第一个箱子直接放在原点(0,0,0)
                     //发坐标（包含挡板状态）
-                    byte[] byteX = toBytes.intToBytes(0 + (int)(l * 0.5));
-                    byte[] byteY = toBytes.intToBytes(0 + (int)(w * 0.5));
+                    byte[] byteX = toBytes.intToBytes(0);
+                    byte[] byteY = toBytes.intToBytes(0);
                     byte[] byteZ = toBytes.intToBytes(560);
                     string[] status = new string[] { "0", "0", "1", "1" };
                     string status2 = string.Join("", status);
@@ -1505,13 +1509,13 @@ namespace 码垛机
                     if (rectangle21.length - l + edge < 360)
                     {
                         int mix = (rectangle21.length - l) / 3; 
-                        byte[] byteX1 = toBytes.intToBytes(1200 - l - mix + (int)(l * 0.5));
-                        byte[] byteY1 = toBytes.intToBytes(horizontal6.y + (int)(w * 0.5));
+                        byte[] byteX1 = toBytes.intToBytes(1200 - l - mix);
+                        byte[] byteY1 = toBytes.intToBytes(horizontal6.y);
                         byte[] byteZ1 = toBytes.intToBytes(560);
                         if (rectangle21.length < l)
                         {
-                            byteX1 = toBytes.intToBytes(horizontal6.x + (int)(l * 0.5));
-                            byteY1 = toBytes.intToBytes(horizontal6.y + (int)(w * 0.5));
+                            byteX1 = toBytes.intToBytes(horizontal6.x );
+                            byteY1 = toBytes.intToBytes(horizontal6.y );
                             byteZ1 = toBytes.intToBytes(560);
                         }
                         string[] status1 = new string[] { "0", "0", "1", "1" };
@@ -1546,8 +1550,8 @@ namespace 码垛机
                         return;
                     }
 
-                    byte[] byteX = toBytes.intToBytes(horizontal6.x + (int)(l * 0.5));
-                    byte[] byteY = toBytes.intToBytes(horizontal6.y + (int)(w * 0.5));
+                    byte[] byteX = toBytes.intToBytes(horizontal6.x );
+                    byte[] byteY = toBytes.intToBytes(horizontal6.y );
                     byte[] byteZ = toBytes.intToBytes(560);
                     string[] status = new string[] { "0", "0", "1", "1" };
                     string status2 = string.Join("", status);
@@ -1612,13 +1616,13 @@ namespace 码垛机
                     if (width14 - w + edge < 225)
                     {
                         int mix = (width14 - w) / 3;
-                        byte[] byteX1 = toBytes.intToBytes(vertical6.x + (int)(l * 0.5));
-                        byte[] byteY1 = toBytes.intToBytes(vertical6.y + (int)(w * 0.5));
+                        byte[] byteX1 = toBytes.intToBytes(vertical6.x );
+                        byte[] byteY1 = toBytes.intToBytes(vertical6.y );
                         byte[] byteZ1 = toBytes.intToBytes(560);
                         if (width14 > w)
                         {
-                            byteX1 = toBytes.intToBytes(vertical6.x + (int)(l * 0.5));
-                            byteY1 = toBytes.intToBytes(1000 - w - mix + (int)(w * 0.5));
+                            byteX1 = toBytes.intToBytes(vertical6.x);
+                            byteY1 = toBytes.intToBytes(1000 - w - mix);
                             byteZ1 = toBytes.intToBytes(560);
                             vertical6.y = 1000 - w;
                         }
@@ -1666,8 +1670,8 @@ namespace 码垛机
                         return;
                     }
 
-                    byte[] byteX = toBytes.intToBytes(vertical6.x + (int)(l * 0.5));
-                    byte[] byteY = toBytes.intToBytes(vertical6.y + (int)(w * 0.5));
+                    byte[] byteX = toBytes.intToBytes(vertical6.x);
+                    byte[] byteY = toBytes.intToBytes(vertical6.y);
                     byte[] byteZ = toBytes.intToBytes(560);
                     string[] status = new string[] { "0", "0", "1", "1" };
                     string status2 = string.Join("", status);
@@ -1743,13 +1747,13 @@ namespace 码垛机
                         if ((int)cdarrayList4[3 * i + 2] - l + edge < 360)
                         {
                             int mix = ((int)cdarrayList4[3 * i + 2] - l) / 3;
-                            byte[] byteX1 = toBytes.intToBytes(1200 - l - mix + (int)(l * 0.5));
-                            byte[] byteY1 = toBytes.intToBytes((int)cdarrayList4[3 * i + 1] + (int)(w * 0.5));
+                            byte[] byteX1 = toBytes.intToBytes(1200 - l - mix);
+                            byte[] byteY1 = toBytes.intToBytes((int)cdarrayList4[3 * i + 1]);
                             byte[] byteZ1 = toBytes.intToBytes(560);
                             if ((int)cdarrayList4[3 * i + 2] < l)
                             {
-                                byteX1 = toBytes.intToBytes((int)cdarrayList4[3 * i] + (int)(l * 0.5));
-                                byteY1 = toBytes.intToBytes((int)cdarrayList4[3 * i + 1] + (int)(w * 0.5));
+                                byteX1 = toBytes.intToBytes((int)cdarrayList4[3 * i]);
+                                byteY1 = toBytes.intToBytes((int)cdarrayList4[3 * i + 1]);
                                 byteZ1 = toBytes.intToBytes(560);
                             }
                             string[] status1 = new string[] { "0", "0", "1", "1" };
@@ -1785,8 +1789,8 @@ namespace 码垛机
                             return;
                         }
 
-                        byte[] byteX = toBytes.intToBytes((int)cdarrayList4[3 * i] + (int)(l * 0.5));
-                        byte[] byteY = toBytes.intToBytes((int)cdarrayList4[3 * i + 1] + (int)(w * 0.5));
+                        byte[] byteX = toBytes.intToBytes((int)cdarrayList4[3 * i]);
+                        byte[] byteY = toBytes.intToBytes((int)cdarrayList4[3 * i + 1]);
                         byte[] byteZ = toBytes.intToBytes(560);
                         string[] status = new string[] { "0", "0", "1", "1" };
                         string status2 = string.Join("", status);
@@ -5829,6 +5833,19 @@ namespace 码垛机
             str = sp2.ReadExisting();
             if (str != null)
             {
+                if(bufList.Count != 0)
+                {
+                    if(str == (string)bufList[0])
+                    {
+                        return;
+                    }
+                    bufList.RemoveAt(0);
+                    bufList.Add(str);
+                }
+                if (bufList.Count == 0)
+                {
+                    bufList.Add(str);
+                }
                 string result1 = str.Replace("\r","");
                 string result2 = result1.Replace("\n", "");
                 
