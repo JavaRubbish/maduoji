@@ -29,8 +29,8 @@ namespace 码垛机
 
         public static DateTime dt = DateTime.Now;
         string destPath = null;
-        string sourcePath = "D:\\C#Project\\码垛机2.0\\码垛机\\bin\\Debug\\todayUSBdata\\";
-        string fileName = dt.ToString("yyyy-MM-dd") + "info.txt";
+        string sourcePath = "D:\\C#Project\\码垛机2.1.1\\码垛机\\bin\\Debug\\historydata\\day\\";
+        string fileName = dt.ToString("yyyy-MM-dd") + "his.txt";
         public USBForm()
         {
             SetStyle(

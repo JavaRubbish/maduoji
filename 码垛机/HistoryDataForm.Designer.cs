@@ -180,6 +180,7 @@
             this.label4.Size = new System.Drawing.Size(49, 20);
             this.label4.TabIndex = 12;
             this.label4.Text = "3333";
+            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // groupBox1
             // 
@@ -253,7 +254,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1218, 500);
             this.Controls.Add(this.day_btn);
             this.Controls.Add(this.mon_btn);

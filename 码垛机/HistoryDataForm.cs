@@ -166,6 +166,7 @@ namespace 码垛机
             //string fname = "C:\\Users\\John\\source\\repos\\码垛机\\码垛机\\bin\\Debug\\alarmhis.txt";
             if (!System.IO.File.Exists(filepath))
             {
+                label4.Text = totalNum().ToString();
                 return;
             }
             StreamReader sr = new StreamReader(filepath, Encoding.Default);
@@ -212,7 +213,7 @@ namespace 码垛机
             dec = -1;
             inc = 1;
             DateTime dt = DateTime.Now;
-            string fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
+            string fname = "D:\\C#Project\\码垛机2.1.1\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
             ReadFromFile(fname);
             this.day_btn.BackColor = Color.Yellow;
             this.mon_btn.BackColor = Color.Cornsilk;
@@ -224,7 +225,7 @@ namespace 码垛机
             dec = -1;
             inc = 1;
             DateTime dt = DateTime.Now;
-            string fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\month\\" + dt.ToString("yyyy-MM") + "his.txt";
+            string fname = "D:\\C#Project\\码垛机2.1.1\\码垛机\\bin\\Debug\\historydata\\month\\" + dt.ToString("yyyy-MM") + "his.txt";
             ReadFromFile(fname);
             this.day_btn.BackColor = Color.Cornsilk;
             this.mon_btn.BackColor = Color.Yellow;
@@ -236,7 +237,7 @@ namespace 码垛机
             dec = -1;
             inc = 1;
             DateTime dt = DateTime.Now;
-            string fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\year\\" + dt.ToString("yyyy") + "his.txt";
+            string fname = "D:\\C#Project\\码垛机2.1.1\\码垛机\\bin\\Debug\\historydata\\year\\" + dt.ToString("yyyy") + "his.txt";
             ReadFromFile(fname);
             this.day_btn.BackColor = Color.Cornsilk;
             this.mon_btn.BackColor = Color.Cornsilk;
@@ -258,7 +259,7 @@ namespace 码垛机
                 {
                     dt = DateTime.Now;
                 }
-                fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
+                fname = "D:\\C#Project\\码垛机2.1.1\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
             }
             if (this.mon_btn.BackColor == Color.Yellow)
             {
@@ -267,7 +268,7 @@ namespace 码垛机
                 {
                     dt = DateTime.Now;
                 }
-                fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\month\\" + dt.ToString("yyyy-MM") + "his.txt";
+                fname = "D:\\C#Project\\码垛机2.1.1\\码垛机\\bin\\Debug\\historydata\\month\\" + dt.ToString("yyyy-MM") + "his.txt";
             }
             if (this.year_btn.BackColor == Color.Yellow)
             {
@@ -276,7 +277,7 @@ namespace 码垛机
                 {
                     dt = DateTime.Now;
                 }
-                fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\year\\" + dt.ToString("yyyy") + "his.txt";
+                fname = "D:\\C#Project\\码垛机2.1.1\\码垛机\\bin\\Debug\\historydata\\year\\" + dt.ToString("yyyy") + "his.txt";
             }
             ReadFromFile(fname);
             dec--;
@@ -293,7 +294,7 @@ namespace 码垛机
                 {
                     dt = DateTime.Now;
                 }
-                fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
+                fname = "D:\\C#Project\\码垛机2.1.1\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
             }
             if (this.mon_btn.BackColor == Color.Yellow)
             {
@@ -302,7 +303,7 @@ namespace 码垛机
                 {
                     dt = DateTime.Now;
                 }
-                fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\month\\" + dt.ToString("yyyy-MM") + "his.txt";
+                fname = "D:\\C#Project\\码垛机2.1.1\\码垛机\\bin\\Debug\\historydata\\month\\" + dt.ToString("yyyy-MM") + "his.txt";
             }
             if (this.year_btn.BackColor == Color.Yellow)
             {
@@ -311,7 +312,7 @@ namespace 码垛机
                 {
                     dt = DateTime.Now;
                 }
-                fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\year\\" + dt.ToString("yyyy") + "his.txt";
+                fname = "D:\\C#Project\\码垛机2.1.1\\码垛机\\bin\\Debug\\historydata\\year\\" + dt.ToString("yyyy") + "his.txt";
             }
             ReadFromFile(fname);
             inc++;
@@ -321,8 +322,13 @@ namespace 码垛机
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
             DateTime dt = dateTimePicker1.Value;
-            string fname = "C:\\码垛机2.0\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
+            string fname = "D:\\C#Project\\码垛机2.1.1\\码垛机\\bin\\Debug\\historydata\\day\\" + dt.ToString("yyyy-MM-dd") + "his.txt";
             ReadFromFile(fname);
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
