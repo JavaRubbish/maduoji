@@ -94,7 +94,7 @@
             this.panel6.Location = new System.Drawing.Point(64, 21);
             this.panel6.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(240, 188);
+            this.panel6.Size = new System.Drawing.Size(200, 188);
             this.panel6.TabIndex = 27;
             this.panel6.Paint += new System.Windows.Forms.PaintEventHandler(this.panel6_Paint);
             // 
@@ -128,7 +128,7 @@
             this.panel7.Location = new System.Drawing.Point(65, 20);
             this.panel7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(240, 188);
+            this.panel7.Size = new System.Drawing.Size(200, 188);
             this.panel7.TabIndex = 28;
             this.panel7.Paint += new System.Windows.Forms.PaintEventHandler(this.panel7_Paint);
             // 
@@ -162,7 +162,7 @@
             this.panel8.Location = new System.Drawing.Point(67, 22);
             this.panel8.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(240, 188);
+            this.panel8.Size = new System.Drawing.Size(200, 188);
             this.panel8.TabIndex = 29;
             this.panel8.Paint += new System.Windows.Forms.PaintEventHandler(this.panel8_Paint);
             // 

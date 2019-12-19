@@ -1207,5 +1207,10 @@ namespace 码垛机
         {
 
         }
+
+        private void button23_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -118,7 +118,7 @@ namespace 码垛机
             }
             System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
             //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
-            gp.FillRectangle(Brushes.Khaki, rect); //填充
+            gp.FillRectangle(Brushes.Olive, rect); //填充
             gp.Flush();
 
         }
@@ -139,7 +139,7 @@ namespace 码垛机
             }
             System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
             //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
-            gp.FillRectangle(Brushes.Khaki, rect); //填充
+            gp.FillRectangle(Brushes.Olive, rect); //填充
             gp.Flush();
 
         }
@@ -160,7 +160,7 @@ namespace 码垛机
             }
             System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point(a, b), new Size(c, d));
             //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
-            gp.FillRectangle(Brushes.Khaki, rect); //填充
+            gp.FillRectangle(Brushes.Olive, rect); //填充
             gp.Flush();
 
         }
@@ -325,37 +325,7 @@ namespace 码垛机
         /// <param name="e"></param>
         private void button6_Click(object sender, EventArgs e)
         {
-            ResetThread();
-
-            //int a = 0;
-            //int b = 0;
-            //lock (locker)
-            //{
-            //    while ((!isReceived3) && a < 3)
-            //    {                   
-            //        BF.sendbuf[0] = 0xFA;
-            //        BF.sendbuf[1] = 0x02;
-            //        BF.sendbuf[2] = 0x0D;
-            //        BF.sendbuf[3] = 0x03;
-            //        BF.sendbuf[4] = 0xF5;
-            //        SendMenuCommand(BF.sendbuf, 5);
-            //        Thread.Sleep(500);
-            //        a++;
-            //    }
-            //    isReceived3 = false;
-            //    while ((!reset))
-            //    {
-            //    BF.sendbuf[0] = 0xFA;
-            //    BF.sendbuf[1] = 0x02;
-            //    BF.sendbuf[2] = 0x0E;
-            //    BF.sendbuf[3] = 0x04;
-            //    BF.sendbuf[4] = 0xf5;
-            //    SendMenuCommand(BF.sendbuf, 5);
-            //    Thread.Sleep(1000);
-            //   // b++;
-            //    }
-            //    reset = false;
-            //}                   
+            ResetThread();                   
         }
 
         private void panel6_Paint(object sender, PaintEventArgs e)
@@ -364,7 +334,6 @@ namespace 码垛机
             {
                 Graphics gp = panel6.CreateGraphics();
                 System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point((int)arrayList1[4*i], (int)arrayList1[4*i+1]), new Size((int)arrayList1[4*i+2], (int)arrayList1[4*i+3]));
-                //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
                 gp.FillRectangle(Brushes.Khaki, rect); //填充
                 gp.Flush();
             }
@@ -376,7 +345,6 @@ namespace 码垛机
             {
                 Graphics gp = panel7.CreateGraphics();
                 System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point((int)arrayList2[4 * i], (int)arrayList2[4 * i + 1]), new Size((int)arrayList2[4 * i + 2], (int)arrayList2[4 * i + 3]));
-                //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
                 gp.FillRectangle(Brushes.Khaki, rect); //填充
                 gp.Flush();
             }
@@ -388,7 +356,6 @@ namespace 码垛机
             {
                 Graphics gp = panel8.CreateGraphics();
                 System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new Point((int)arrayList3[4 * i], (int)arrayList3[4 * i + 1]), new Size((int)arrayList3[4 * i + 2], (int)arrayList3[4 * i + 3]));
-                //gp.DrawRectangle(new Pen(Brushes.Red, 5f), rect); //线
                 gp.FillRectangle(Brushes.Khaki, rect); //填充
                 gp.Flush();
             }
