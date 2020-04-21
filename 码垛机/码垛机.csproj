@@ -86,6 +86,7 @@
     <Compile Include="IOSettingForm.Designer.cs">
       <DependentUpon>IOSettingForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Logger.cs" />
     <Compile Include="MainSettingForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -127,6 +128,7 @@
       <DependentUpon>UserSettingForm.cs</DependentUpon>
     </Compile>
     <Compile Include="WebServiceRq.cs" />
+    <Compile Include="WebServiceWriteSapRq.cs" />
     <Compile Include="WorkingDetailForm.cs">
       <SubType>Form</SubType>
     </Compile>

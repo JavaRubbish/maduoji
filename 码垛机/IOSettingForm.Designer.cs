@@ -237,9 +237,9 @@
             this.label30.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label30.Location = new System.Drawing.Point(8, 111);
             this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(81, 26);
+            this.label30.Size = new System.Drawing.Size(119, 26);
             this.label30.TabIndex = 2;
-            this.label30.Text = "2号抬板";
+            this.label30.Text = "2号码盘报警";
             // 
             // button13
             // 

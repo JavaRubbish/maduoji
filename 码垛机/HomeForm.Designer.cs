@@ -36,10 +36,11 @@
             this.setting_btn = new System.Windows.Forms.Button();
             this.alarmhistory_btn = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.panel3 = new System.Windows.Forms.Panel();
             this.SysTime = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.timer3 = new System.Windows.Forms.Timer(this.components);
+            this.button1 = new System.Windows.Forms.Button();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -133,23 +134,12 @@
             // 
             this.panel2.BackColor = System.Drawing.Color.Transparent;
             this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel2.Controls.Add(this.panel3);
             this.panel2.Controls.Add(this.SysTime);
             this.panel2.Location = new System.Drawing.Point(12, 2);
             this.panel2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1219, 70);
             this.panel2.TabIndex = 5;
-            // 
-            // panel3
-            // 
-            this.panel3.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel3.BackgroundImage")));
-            this.panel3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panel3.Location = new System.Drawing.Point(0, 0);
-            this.panel3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(171, 70);
-            this.panel3.TabIndex = 2;
             // 
             // SysTime
             // 
@@ -164,9 +154,29 @@
             this.SysTime.Text = "欢迎登陆！";
             this.SysTime.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // timer2
             // 
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
+            // timer3
+            // 
+            this.timer3.Enabled = true;
+            this.timer3.Interval = 1800000;
+            this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(1139, 600);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(92, 47);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "TestComm";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // HomeForm
             // 
@@ -176,6 +186,7 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1244, 679);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.alarmhistory_btn);
             this.Controls.Add(this.setting_btn);
             this.Controls.Add(this.historydata_btn);
@@ -186,7 +197,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(1259, 716);
+            this.MinimumSize = new System.Drawing.Size(1258, 713);
             this.Name = "HomeForm";
             this.Text = "工作界面";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.HomeForm_FormClosing);
@@ -210,7 +221,8 @@
         private System.Windows.Forms.Label SysTime;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Timer timer2;
-        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Timer timer3;
+        private System.Windows.Forms.Button button1;
     }
 }
 

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static 码垛机.WebServiceWriteSapRq;
 
 namespace 码垛机
 {
@@ -27,10 +28,15 @@ namespace 码垛机
         public const int DBT_QUERYCHANGECONFIG = 0x0017;
         public const int DBT_USERDEFINED = 0xFFFF;
 
+
+        //今天的日期
         public static DateTime dt = DateTime.Now;
-        string destPath = null;
-        string sourcePath = "C:\\码垛机2.1.1\\码垛机\\bin\\Debug\\historydata\\day\\";
+        //昨天的日期
+        public static DateTime lastdt = DateTime.Now.AddDays(-1);
+        string destPath = null;        
+        string sourcePath = "C:\\码垛机2.1.1\\码垛机\\bin\\Debug\\todayUSBdata\\";
         string fileName = dt.ToString("yyyy-MM-dd") + "his.txt";
+        string fileName2 = lastdt.ToString("yyyy-MM-dd") + "his.txt";
         public USBForm()
         {
             SetStyle(
@@ -59,11 +65,11 @@ namespace 码垛机
             this.usblabel.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             this.usbbutton.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             this.button1.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
-
+            this.usbbutton2.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
+            this.synbtn.Font = new System.Drawing.Font("微软雅黑", 12F * width, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)134));
             foreach (Control control in ((Form)sender).Controls)
             {
                 control.Scale(new SizeF(width, heigth));
-
             }
         }
         /// <summary>
@@ -141,6 +147,11 @@ namespace 码垛机
             base.WndProc(ref m);
 
         }
+        /// <summary>
+        /// 拷贝今日数据
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void usbbutton_Click(object sender, EventArgs e)
         {
             try
@@ -150,7 +161,7 @@ namespace 码垛机
                     MessageBox.Show("未识别到U盘，请重新插入!","错误");
                     return;
                 }
-                File.Copy(System.IO.Path.Combine(sourcePath, fileName), System.IO.Path.Combine(destPath, fileName));
+                File.Copy(System.IO.Path.Combine(sourcePath, fileName), System.IO.Path.Combine(destPath, fileName),true);
                 MessageBox.Show("文件写入成功！");
             }
             catch (IOException copyError)
@@ -159,6 +170,26 @@ namespace 码垛机
                 return;
             }
         }
+
+        private void usbbutton2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (destPath == null)
+                {
+                    MessageBox.Show("未识别到U盘，请重新插入!", "错误");
+                    return;
+                }
+                File.Copy(System.IO.Path.Combine(sourcePath, fileName2), System.IO.Path.Combine(destPath, fileName2),true);
+                MessageBox.Show("文件写入成功！");
+            }
+            catch (IOException copyError)
+            {
+                MessageBox.Show(copyError.Message);
+                return;
+            }
+        }
+
 
         private void usblabel_Click(object sender, EventArgs e)
         {
@@ -189,6 +220,31 @@ namespace 码垛机
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void synbtn_Click(object sender, EventArgs e)
+        {
+            //调用写数据库接口
+            SapRetInfo sri = WebServiceWriteSapRq.WritePackinfoToSap(PrintForm.serialNo, PrintForm.orderNo, PrintForm.materialNo);
+            if (null == sri)
+            {
+                Logger.WriteLogs("Logs", "手动调用", "传入空数组");
+                return;
+            }
+            if (sri.Retmsg == "成功")
+            {
+                Logger.WriteLogs("Logs", "手动调用", sri.Retmsg);
+                PrintForm.countdown = 300;
+                PrintForm.resend = false;
+                //删除文件
+                System.IO.File.WriteAllText("C:\\码垛机2.1.1\\码垛机\\bin\\Debug\\toDB\\sapdata.txt", string.Empty);
+                MessageBox.Show("同步数据成功");
+            }
+            else
+            {
+                Logger.WriteLogs("Logs", "手动调用", sri.Retmsg);
+                MessageBox.Show("同步失败，请重试");
+            }
         }
     }
 }

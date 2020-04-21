@@ -208,8 +208,9 @@ namespace 码垛机
             SendMenuCommand(BF.sendbuf, 6);
             textBox1.Text = "0";
             textBox2.Text = "0";
+            huilingflag = false; // tmny  20200305 进入循环 对于变量huilingflag 如果为true 则死循环。
 
-            //是否已经回原点查询
+            //是否已经回原点查询   
             lock (locker)
             {
                 while (huilingflag)
